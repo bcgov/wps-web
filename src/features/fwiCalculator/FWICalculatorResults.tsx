@@ -39,7 +39,10 @@ export const FWICalculatorResults = () => {
     ([stationCode, stationResponse]) => {
       return (
         <GridItem key={stationCode} lg={6}>
-          <PercentileStationResultTable stationResponse={stationResponse} />
+          <PercentileStationResultTable
+            stationResponse={stationResponse}
+            yearRange={result.year_range}
+          />
         </GridItem>
       )
     }
