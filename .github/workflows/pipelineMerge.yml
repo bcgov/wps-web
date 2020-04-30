@@ -1,0 +1,61 @@
+name: Pipeline - Merge
+
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  variables:
+    name: Build and Deploy from Merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set and Echo Variables
+        shell: bash
+        run: |
+          echo -e "\n--- Environment Variables ---\n"
+          echo "HOME: ${HOME}"
+          echo "GITHUB_WORKFLOW: ${GITHUB_WORKFLOW}"
+          echo "GITHUB_RUN_ID: ${GITHUB_RUN_ID}"
+          echo "GITHUB_RUN_NUMBER: ${GITHUB_RUN_NUMBER}"
+          echo "GITHUB_ACTION: ${GITHUB_ACTION}"
+          echo "GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+          echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+          echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+          echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+          echo "GITHUB_EVENT_PATH: ${GITHUB_EVENT_PATH}"
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "GITHUB_REF: ${GITHUB_REF}"
+          echo "GITHUB_HEAD_REF: ${GITHUB_HEAD_REF}"
+          echo "GITHUB_BASE_REF: ${GITHUB_BASE_REF}"
+          echo -e "\n--- Workflow (Custom) Variables ---\n"
+          BRANCH=${GITHUB_BASE_REF}
+          SUFFIX="${BRANCH,,}"
+          TARGET="auzhsi-test"
+          if [ "${BRANCH}" == "master" ]; then
+            TARGET="auzhsi-prod"
+            SUFFIX="prod"
+          fi
+          echo "::set-env name=BRANCH::${BRANCH}"
+          echo "::set-env name=SUFFIX::${SUFFIX}"
+          echo "::set-env name=TARGET::${TARGET}"
+          echo "BRANCH: ${BRANCH}"
+          echo "SUFFIX: ${SUFFIX}"
+          echo "TARGET: ${TARGET}"
+
+      - name: Checkout
+        if: github.event.pull_request.merged == true
+        uses: actions/checkout@v2
+
+      - name: Build
+        if: github.event.pull_request.merged == true
+        uses: bcgov/openshift-launchpad-deployment@master
+        with:
+          AUTH_TOKEN: ${{ secrets.action_token }}
+          SCRIPT: GIT_BRANCH=${BRANCH} openshift/scripts/oc_build.sh ${SUFFIX} apply
+
+      - name: Deploy
+        if: github.event.pull_request.merged == true
+        uses: bcgov/openshift-launchpad-deployment@master
+        with:
+          AUTH_TOKEN: ${{ secrets.action_token }}
+          SCRIPT: PROJ_DEV=${TARGET} openshift/scripts/oc_deploy.sh ${SUFFIX} apply
