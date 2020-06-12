@@ -1,15 +1,13 @@
-name: Deployment
+name: CD
 
 on:
   pull_request:
-    # By default, a workflow only runs when a pull_request's activity type is opened, synchronize, or reopened
-    types: [opened, synchronize, reopened, closed]
     branches:
       - master
 
 jobs:
   build-and-deploy:
-    name: Build & Deploy to Dev
+    name: Build, Deploy to Dev & Run Zap Baseline Scan
     runs-on: ubuntu-latest
     steps:
       - name: Variables
@@ -40,31 +38,21 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Builds
-        if: github.event.pull_request.state == 'open'
         uses: bcgov/openshift-launchpad-deployment@master
         with:
           AUTH_TOKEN: ${{ secrets.OC_TOOL_TOKEN_EDIT }}
           SCRIPT: GIT_BRANCH=${GITHUB_HEAD_REF} openshift/scripts/oc_build.sh ${SUFFIX} apply
 
       - name: Deploy
-        if: github.event.pull_request.state == 'open'
         uses: bcgov/openshift-launchpad-deployment@master
         with:
           AUTH_TOKEN: ${{ secrets.OC_DEV_TOKEN_EDIT }}
           SCRIPT: openshift/scripts/oc_deploy.sh ${SUFFIX} apply
 
+      # f.y.i.: ZAP Scan must be able to log an issue or it will fail.
       - name: ZAP Scan
-        if: github.event.pull_request.state == 'open'
-        # f.y.i.: ZAP Scan must be able to log an issue or it will fail.
         uses: zaproxy/action-baseline@v0.3.0
         with:
-          target: "https://wps-web-pr-${{ github.event.number }}.pathfinder.gov.bc.ca"
+          target: 'https://wps-web-pr-${{ github.event.number }}.pathfinder.gov.bc.ca'
           # Do not return failure on warnings - TODO: this has to be resolved!
-          cmd_options: "-I"
-
-      - name: Cleanup
-        if: github.event.pull_request.state == 'closed'
-        uses: bcgov/openshift-launchpad-deployment@master
-        with:
-          AUTH_TOKEN: ${{ secrets.OC_DEV_TOKEN_EDIT }}
-          SCRIPT: openshift/scripts/oc_cleanup.sh ${SUFFIX} apply
+          cmd_options: '-I'

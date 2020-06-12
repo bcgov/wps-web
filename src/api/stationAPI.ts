@@ -3,8 +3,8 @@ import axios from 'api/axios'
 export interface Station {
   code: number
   name: string
-  lat: string
-  long: string
+  lat: number
+  long: number
 }
 
 export interface StationsResponse {

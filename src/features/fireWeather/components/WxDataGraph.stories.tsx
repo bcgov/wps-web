@@ -70,10 +70,15 @@ const getReadingValues = () => {
   return readingValues
 }
 
-storiesOf('WxDataGraph', module)
-  .add('default', () => (
-    <WxDataGraph modelValues={getModelValues()} readingValues={getReadingValues()} />
-  ))
-  .add('only model', () => (
-    <WxDataGraph modelValues={getModelValues()} readingValues={[]} />
-  ))
+storiesOf('WxDataGraph', module).add('default', () => {
+  const modelValues = getModelValues()
+  const readingValues = getReadingValues()
+
+  return (
+    <>
+      <WxDataGraph modelValues={modelValues} readingValues={readingValues} />
+      <h3>When only model values provided</h3>
+      <WxDataGraph modelValues={modelValues} readingValues={[]} />
+    </>
+  )
+})

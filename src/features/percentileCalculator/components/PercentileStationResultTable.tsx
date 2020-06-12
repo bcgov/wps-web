@@ -11,6 +11,7 @@ import {
 
 import { StationSummaryResponse } from 'api/percentileAPI'
 import { FWI_VALUES_DECIMAL } from 'utils/constants'
+import { formatMonthAndDay } from 'utils/date'
 
 interface Props {
   stationResponse: StationSummaryResponse
@@ -18,7 +19,9 @@ interface Props {
 
 export const PercentileStationResultTable = ({ stationResponse }: Props) => {
   const { season, ffmc, bui, isi, years, station } = stationResponse
-  const seasonRange = `${season.start_month}/${season.start_day} ~ ${season.end_month}/${season.end_day}`
+  const { start_month, start_day, end_month, end_day } = season
+  const seasonRange = `${formatMonthAndDay(start_month, start_day)}\
+   ~ ${formatMonthAndDay(end_month, end_day)}`
   const yearRange = years.join(', ')
 
   return (
@@ -47,7 +50,7 @@ export const PercentileStationResultTable = ({ stationResponse }: Props) => {
           </TableRow>
 
           <TableRow>
-            <TableCell>Season (mm/dd)</TableCell>
+            <TableCell>Core Fire Season</TableCell>
             <TableCell>{seasonRange}</TableCell>
           </TableRow>
           <TableRow>
@@ -55,8 +58,8 @@ export const PercentileStationResultTable = ({ stationResponse }: Props) => {
             <TableCell>{yearRange}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Percentile (%)</TableCell>
-            <TableCell>90</TableCell>
+            <TableCell>Percentile</TableCell>
+            <TableCell>90th</TableCell>
           </TableRow>
         </TableBody>
       </Table>

@@ -88,7 +88,8 @@
       "src/**/*.{ts,tsx}",
       "!src/**/*.stories.tsx",
       "!src/index.tsx",
-      "!src/serviceWorker.ts"
+      "!src/serviceWorker.ts",
+      "!src/**/*.d.ts"
     ]
   }
 }

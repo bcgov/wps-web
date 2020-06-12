@@ -12,3 +12,9 @@ export const datetimeInPDT = (dt: string | number, format?: string) =>
   moment(dt)
     .utcOffset(PDT_UTC_OFFSET)
     .format(format || 'YYYY-MM-DD HH:mm')
+
+export const formatMonthAndDay = (month: number, day: number) =>
+  moment()
+    .month(month - 1)
+    .date(day)
+    .format('D MMMM')

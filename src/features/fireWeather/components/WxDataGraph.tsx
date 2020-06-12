@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   LineChart,
   Line,
@@ -17,6 +17,7 @@ import { datetimeInPDT } from 'utils/date'
 import { MODEL_VALUE_DECIMAL } from 'utils/constants'
 import { ModelValue } from 'api/modelAPI'
 import { ReadingValue } from 'api/readingAPI'
+import WxDataToggles from 'features/fireWeather/components/WxDataToggles'
 
 const formatXAxis = (dt: string) => {
   return datetimeInPDT(dt, 'Do MMM')
@@ -95,7 +96,19 @@ interface Props {
 
 const WxDataGraph = ({ modelValues = [], readingValues = [] }: Props) => {
   const classes = useStyles()
-  const wxData: WxValue[] = [...readingValues, ...modelValues]
+  const noModels = modelValues.length === 0
+  const noReadings = readingValues.length === 0
+  const [showReadings, setShowReadings] = useState<boolean>(!noReadings)
+  const [showModels, setShowModels] = useState<boolean>(!noModels)
+
+  let wxData: WxValue[] = []
+  if (showReadings) {
+    wxData = wxData.concat(readingValues)
+  }
+  if (showModels) {
+    wxData = wxData.concat(modelValues)
+  }
+
   const { dateRange, todayDt } = getDateRangeAndToday(wxData)
 
   return (
@@ -104,6 +117,15 @@ const WxDataGraph = ({ modelValues = [], readingValues = [] }: Props) => {
         Past 5 days of hourly readings and GDPS 3 hourly model with interpolated noon
         values (PDT, UTC-7):
       </Typography>
+
+      <WxDataToggles
+        noReadings={noReadings}
+        showReadings={showReadings}
+        setShowReadings={setShowReadings}
+        noModels={noModels}
+        showModels={showModels}
+        setShowModels={setShowModels}
+      />
 
       <ResponsiveContainer width="100%" minHeight={300}>
         <LineChart margin={{ top: 10, right: 20, bottom: 5, left: 0 }}>
@@ -145,40 +167,48 @@ const WxDataGraph = ({ modelValues = [], readingValues = [] }: Props) => {
             strokeDasharray="4 4"
             strokeWidth={1.5}
           />
-          <Line
-            yAxisId="left"
-            name="Temp"
-            dataKey="temperature"
-            data={readingValues}
-            strokeWidth={1.5}
-            type="monotone"
-            stroke="crimson"
-          />
-          <Line
-            yAxisId="left"
-            name="Model Temp"
-            dataKey="temperature"
-            data={modelValues}
-            type="monotone"
-            stroke="indianred"
-          />
-          <Line
-            yAxisId="right"
-            name="RH"
-            dataKey="relative_humidity"
-            data={readingValues}
-            strokeWidth={1.5}
-            type="monotone"
-            stroke="royalblue"
-          />
-          <Line
-            yAxisId="right"
-            name="Model RH"
-            dataKey="relative_humidity"
-            data={modelValues}
-            type="monotone"
-            stroke="dodgerblue"
-          />
+          {showReadings && (
+            <Line
+              yAxisId="left"
+              name="Temp"
+              dataKey="temperature"
+              data={readingValues}
+              strokeWidth={1.5}
+              type="monotone"
+              stroke="crimson"
+            />
+          )}
+          {showModels && (
+            <Line
+              yAxisId="left"
+              name="Model Temp"
+              dataKey="temperature"
+              data={modelValues}
+              type="monotone"
+              stroke="indianred"
+            />
+          )}
+          {showReadings && (
+            <Line
+              yAxisId="right"
+              name="RH"
+              dataKey="relative_humidity"
+              data={readingValues}
+              strokeWidth={1.5}
+              type="monotone"
+              stroke="royalblue"
+            />
+          )}
+          {showModels && (
+            <Line
+              yAxisId="right"
+              name="Model RH"
+              dataKey="relative_humidity"
+              data={modelValues}
+              type="monotone"
+              stroke="dodgerblue"
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

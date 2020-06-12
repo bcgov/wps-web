@@ -47,7 +47,7 @@ const WxStationDropdown = (props: Props) => {
           data-testid="launch-map-link"
           href={WEATHER_STATION_MAP_LINK}
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           variant="body2"
         >
           <span className={classes.mapLabel}>

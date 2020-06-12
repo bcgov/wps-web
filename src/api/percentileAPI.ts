@@ -10,6 +10,8 @@ interface Season {
 interface Station {
   code: number
   name: string
+  lat: number
+  long: number
 }
 
 export interface YearRange {
