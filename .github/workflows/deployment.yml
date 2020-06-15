@@ -1,4 +1,4 @@
-name: CD
+name: Deployment
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    name: Build, Deploy to Dev & Run Zap Baseline Scan
+    name: Build, Deploy to Dev & ZAP Baseline Scan
     runs-on: ubuntu-latest
     steps:
       - name: Variables

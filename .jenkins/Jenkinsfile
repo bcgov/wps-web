@@ -23,22 +23,6 @@ pipeline {
                 }
             }
         }
-        // stage('Build') {
-        //     agent { label 'build' }
-        //     steps {
-        //         script {
-        //             sh "GIT_BRANCH=${env.CHANGE_BRANCH} ./openshift/scripts/oc_build.sh ${suffix} apply"
-        //         }
-        //     }
-        // }
-        // stage('Deploy (DEV)') {
-        //     agent { label 'deploy' }
-        //     steps {
-        //         script {
-        //             sh "./openshift/scripts/oc_deploy.sh ${suffix} apply"
-        //         }
-        //     }
-        // }
         stage('Promote (PROD)') {
             agent { label 'deploy' }
             input {
@@ -56,14 +40,6 @@ pipeline {
             steps {
                 script {
                     sh "CPU_REQUEST=1000m CPU_LIMIT=1000m MEMORY_REQUEST=2Gi MEMORY_LIMIT=2Gi REPLICAS=3 PROJ_TARGET=${projProd} ./openshift/scripts/oc_deploy.sh prod apply"
-                }
-            }
-        }
-        stage('Cleanup') {
-            agent { label 'deploy' }
-            steps {
-                script {
-                    sh "./openshift/scripts/oc_cleanup.sh ${suffix} apply"
                 }
             }
         }

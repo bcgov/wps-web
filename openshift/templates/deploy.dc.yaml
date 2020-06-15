@@ -4,8 +4,8 @@ metadata:
   name: ${NAME}
   annotations:
     openshift.io/display-name: 'wps-web'
-    description: 'Wildfire Predictive Services - Web Client'
-    openshift.io/long-description: 'Wildfire Predictive Services - Web Client'
+    description: 'Wildfire Predictive Services - Web'
+    openshift.io/long-description: 'Wildfire Predictive Services - Web'
     tags: 'wps,wps-web'
     iconClass: icon-js
     openshift.io/provider-display-name: 'Government of British Columbia'
@@ -20,8 +20,6 @@ parameters:
   - name: SUFFIX
     description: Deployment suffix, e.g. pr-###
     required: true
-  - name: DOCKER_REGISTRY
-    value: docker-registry.default.svc:5000
   - name: PROJECT_TOOLS
     value: auzhsi-tools
   - name: CPU_REQUEST
@@ -39,8 +37,6 @@ parameters:
   - name: REPLICAS
     description: Number of replicas (pods)
     value: '2'
-  - name: WPS_WEB_GLOBAL_CONFIG
-    value: wps-web-global
   - name: WPS_API_BASE_URL
     value: https://wps-api-prod.pathfinder.gov.bc.ca
 objects:
@@ -64,7 +60,7 @@ objects:
         spec:
           automountServiceAccountToken: false
           containers:
-            - image: ${DOCKER_REGISTRY}/${PROJECT_TOOLS}/${NAME}-${SUFFIX}:${SUFFIX}
+            - image: docker-registry.default.svc:5000/${PROJECT_TOOLS}/${NAME}-${SUFFIX}:${SUFFIX}
               imagePullPolicy: Always
               name: ${NAME}
               env:
@@ -73,22 +69,22 @@ objects:
                 - name: REACT_APP_FIDER_LINK
                   valueFrom:
                     configMapKeyRef:
-                      name: ${WPS_WEB_GLOBAL_CONFIG}
+                      name: ${NAME}-global
                       key: env.fider-url
                 - name: REACT_APP_KEYCLOAK_AUTH_URL
                   valueFrom:
                     configMapKeyRef:
-                      name: ${WPS_WEB_GLOBAL_CONFIG}
+                      name: ${NAME}-global
                       key: env.keycloak-auth-url
                 - name: REACT_APP_KEYCLOAK_REALM
                   valueFrom:
                     configMapKeyRef:
-                      name: ${WPS_WEB_GLOBAL_CONFIG}
+                      name: ${NAME}-global
                       key: env.keycloak-realm
                 - name: REACT_APP_KEYCLOAK_CLIENT
                   valueFrom:
                     configMapKeyRef:
-                      name: ${WPS_WEB_GLOBAL_CONFIG}
+                      name: ${NAME}-global
                       key: env.keycloak-client
               ports:
                 - containerPort: 3000
