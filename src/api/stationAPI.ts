@@ -1,10 +1,13 @@
 import axios from 'api/axios'
+import { FireSeason } from 'api/percentileAPI'
 
 export interface Station {
   code: number
   name: string
   lat: number
   long: number
+  ecodivision_name: string | null
+  core_season: FireSeason
 }
 
 export interface StationsResponse {

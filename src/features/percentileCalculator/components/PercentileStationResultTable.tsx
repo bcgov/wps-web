@@ -12,14 +12,15 @@ import {
 import { StationSummaryResponse } from 'api/percentileAPI'
 import { FWI_VALUES_DECIMAL } from 'utils/constants'
 import { formatMonthAndDay } from 'utils/date'
+import { NOT_AVAILABLE } from 'utils/strings'
 
 interface Props {
   stationResponse: StationSummaryResponse
 }
 
 export const PercentileStationResultTable = ({ stationResponse }: Props) => {
-  const { season, ffmc, bui, isi, years, station } = stationResponse
-  const { start_month, start_day, end_month, end_day } = season
+  const { ffmc, bui, isi, years, station } = stationResponse
+  const { start_month, start_day, end_month, end_day } = station.core_season
   const seasonRange = `${formatMonthAndDay(start_month, start_day)}\
    ~ ${formatMonthAndDay(end_month, end_day)}`
   const yearRange = years.join(', ')
@@ -38,17 +39,23 @@ export const PercentileStationResultTable = ({ stationResponse }: Props) => {
         <TableBody>
           <TableRow>
             <TableCell>FFMC</TableCell>
-            <TableCell>{ffmc.toFixed(FWI_VALUES_DECIMAL)}</TableCell>
+            <TableCell>
+              {ffmc ? ffmc.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>BUI</TableCell>
-            <TableCell>{bui.toFixed(FWI_VALUES_DECIMAL)}</TableCell>
+            <TableCell>{bui ? bui.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>ISI</TableCell>
-            <TableCell>{isi.toFixed(FWI_VALUES_DECIMAL)}</TableCell>
+            <TableCell>{isi ? isi.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}</TableCell>
           </TableRow>
 
+          <TableRow>
+            <TableCell>Eco-division</TableCell>
+            <TableCell>{station.ecodivision_name}</TableCell>
+          </TableRow>
           <TableRow>
             <TableCell>Core Fire Season</TableCell>
             <TableCell>{seasonRange}</TableCell>
