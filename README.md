@@ -79,7 +79,7 @@ wps-123
 
 ## License
 
-This project is licensed under the [Apache License, Version 2.0](https://github.com/bcgov/wps-web/blob/master/LICENSE).
+This project is licensed under the [Apache License, Version 2.0](https://github.com/bcgov/wps-web/blob/main/LICENSE).
 
 ## Acknowledgments
 

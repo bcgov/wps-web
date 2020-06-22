@@ -104,7 +104,7 @@ parameters:
   value: https://github.com/cvarjao-o/hello-world.git
 - name: SOURCE_GIT_BRANCH
   required: true
-  value: master
+  value: main
 - name: SOURCE_CONTEXT_DIR
   required: true
   value: .jenkins/docker-slave

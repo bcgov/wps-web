@@ -3,11 +3,11 @@ name: Static Analysis
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   coverage:
-    name: SonarQube - (master)
+    name: SonarQube - (main)
     runs-on: ubuntu-latest
     strategy:
       matrix:
