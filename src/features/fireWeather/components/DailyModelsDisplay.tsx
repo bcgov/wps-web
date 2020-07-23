@@ -68,14 +68,16 @@ const DailyModelsDisplay = ({ values }: Props) => {
               <TableRow>
                 <TableCell>Wind Dir</TableCell>
                 {values.map(v => (
-                  <TableCell key={v.datetime}>{Math.round(v.wind_direction)}</TableCell>
+                  <TableCell key={v.datetime}>
+                    {v.wind_direction != null && Math.round(v.wind_direction)}
+                  </TableCell>
                 ))}
               </TableRow>
               <TableRow>
                 <TableCell>Wind Spd (km/h)</TableCell>
                 {values.map(v => (
                   <TableCell key={v.datetime}>
-                    {v.wind_speed.toFixed(MODEL_VALUE_DECIMAL)}
+                    {v.wind_speed?.toFixed(MODEL_VALUE_DECIMAL)}
                   </TableCell>
                 ))}
               </TableRow>
@@ -83,7 +85,7 @@ const DailyModelsDisplay = ({ values }: Props) => {
                 <TableCell>Precip (mm/cm)</TableCell>
                 {values.map(v => (
                   <TableCell key={v.datetime}>
-                    {v.total_precipitation.toFixed(MODEL_VALUE_DECIMAL)}
+                    {v.total_precipitation?.toFixed(MODEL_VALUE_DECIMAL)}
                   </TableCell>
                 ))}
               </TableRow>
