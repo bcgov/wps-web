@@ -36,7 +36,7 @@ export interface ModelsResponse {
 }
 
 export async function getModels(stationCodes: number[]): Promise<Model[]> {
-  const url = '/forecasts/'
+  const url = '/models/GDPS/forecasts/'
 
   try {
     const { data } = await axios.post<ModelsResponse>(url, {

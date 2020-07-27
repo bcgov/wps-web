@@ -52,7 +52,7 @@ it('renders weather stations dropdown with data', async () => {
 
 it('renders daily model and hourly values in response to user inputs', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
-  mockAxios.onPost('/forecasts/').replyOnce(200, mockModelsResponse)
+  mockAxios.onPost('/models/GDPS/forecasts/').replyOnce(200, mockModelsResponse)
   mockAxios.onPost('/hourlies/').replyOnce(200, mockReadingsResponse)
 
   const { getByText, getByTestId } = renderWithRedux(<FireWeatherPage />)
