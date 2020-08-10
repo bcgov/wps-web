@@ -5,13 +5,15 @@ import percentilesReducer from 'features/percentileCalculator/slices/percentiles
 import authReducer from 'features/auth/slices/authenticationSlice'
 import modelsReducer from 'features/fireWeather/slices/modelsSlice'
 import readingsReducer from 'features/fireWeather/slices/readingsSlice'
+import historicModelsReducer from 'features/fireWeather/slices/historicModelsSlice'
 
 const rootReducer = combineReducers({
   stations: stationsReducer,
   percentiles: percentilesReducer,
   authentication: authReducer,
   models: modelsReducer,
-  readings: readingsReducer
+  readings: readingsReducer,
+  historicModels: historicModelsReducer
 })
 
 // Infer whatever gets returned from rootReducer and use it as the type of the root state
@@ -25,3 +27,6 @@ export const selectAuthentication = (state: RootState) => state.authentication
 export const selectToken = (state: RootState) => state.authentication.token
 export const selectModels = (state: RootState) => state.models
 export const selectReadings = (state: RootState) => state.readings
+export const selectHistoricModels = (state: RootState) => state.historicModels
+export const selectWxDataLoading = (state: RootState) =>
+  state.models.loading || state.readings.loading || state.historicModels.loading

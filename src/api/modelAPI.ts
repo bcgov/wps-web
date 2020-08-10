@@ -47,3 +47,44 @@ export async function getModels(stationCodes: number[]): Promise<Model[]> {
     throw err.toString()
   }
 }
+
+export interface HistoricModel {
+  datetime: string
+  tmp_tgl_2_5th: number
+  tmp_tgl_2_median: number
+  tmp_tgl_2_90th: number
+  rh_tgl_2_5th: number
+  rh_tgl_2_median: number
+  rh_tgl_2_90th: number
+}
+
+interface ModelInfo {
+  name: string
+  abbrev: string
+}
+
+export interface HistoricModelSummary {
+  station: Station
+  model: ModelInfo | null
+  values: HistoricModel[]
+}
+
+export interface HistoricModelSummariesResponse {
+  summaries: HistoricModelSummary[]
+}
+
+export async function getHistoricModels(
+  stationCodes: number[],
+  model: 'GDPS'
+): Promise<HistoricModelSummary[]> {
+  const url = `/models/${model}/forecasts/summaries/`
+  try {
+    const { data } = await axios.post<HistoricModelSummariesResponse>(url, {
+      stations: stationCodes
+    })
+
+    return data.summaries
+  } catch (err) {
+    throw err.toString()
+  }
+}

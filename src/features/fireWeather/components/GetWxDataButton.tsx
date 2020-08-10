@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux'
 
 import { ErrorMessage, Button } from 'components'
 import { Station } from 'api/stationAPI'
-import { selectReadings, selectModels } from 'app/rootReducer'
+import {
+  selectReadings,
+  selectModels,
+  selectHistoricModels,
+  selectWxDataLoading
+} from 'app/rootReducer'
 
 interface Props {
   onBtnClick: () => void
@@ -11,12 +16,10 @@ interface Props {
 }
 
 const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
-  const { loading: loadingReadings, error: errorFetchingReadings } = useSelector(
-    selectReadings
-  )
-  const { loading: loadingModels, error: errorFetchingModels } = useSelector(selectModels)
-
-  const wxDataLoading = loadingModels || loadingReadings
+  const { error: errFetchingReadings } = useSelector(selectReadings)
+  const { error: errFetchingModels } = useSelector(selectModels)
+  const { error: errFetchingHistoricModels } = useSelector(selectHistoricModels)
+  const wxDataLoading = useSelector(selectWxDataLoading)
   const isBtnDisabled = selectedStations.length === 0
 
   return (
@@ -29,21 +32,29 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         variant="contained"
         color="primary"
       >
-        Get Historic Readings &amp; Global Model Data
+        Get Weather Data
       </Button>
 
-      {errorFetchingModels && (
+      {errFetchingModels && (
         <ErrorMessage
-          error={errorFetchingModels}
+          error={errFetchingModels}
           context="while fetching global model data"
           marginTop={5}
         />
       )}
 
-      {errorFetchingReadings && (
+      {errFetchingReadings && (
         <ErrorMessage
-          error={errorFetchingReadings}
+          error={errFetchingReadings}
           context="while fetching hourly readings"
+          marginTop={5}
+        />
+      )}
+
+      {errFetchingHistoricModels && (
+        <ErrorMessage
+          error={errFetchingHistoricModels}
+          context="while fetching historic global model data"
           marginTop={5}
         />
       )}

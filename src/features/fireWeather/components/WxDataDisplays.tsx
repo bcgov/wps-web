@@ -5,9 +5,14 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import DailyModelsDisplay from 'features/fireWeather/components/DailyModelsDisplay'
 import HourlyReadingsDisplay from 'features/fireWeather/components/HourlyReadingsDisplay'
-import WxGraphByStation from 'features/fireWeather/components/WxDataGraph'
+import WxDataGraph from 'features/fireWeather/components/WxDataGraph'
 import { Station } from 'api/stationAPI'
-import { selectReadings, selectModels } from 'app/rootReducer'
+import {
+  selectReadings,
+  selectModels,
+  selectHistoricModels,
+  selectWxDataLoading
+} from 'app/rootReducer'
 
 const useStyles = makeStyles({
   displays: {
@@ -22,6 +27,9 @@ const useStyles = makeStyles({
     fontSize: '1.1rem',
     paddingTop: 8,
     paddingBottom: 8
+  },
+  noDataAvailable: {
+    paddingBottom: 8
   }
 })
 
@@ -32,12 +40,10 @@ interface Props {
 const WxDataDisplays = ({ requestedStations }: Props) => {
   const classes = useStyles()
 
-  const { loading: loadingReadings, readingsByStation } = useSelector(selectReadings)
-  const { loading: loadingModels, noonModelsByStation, modelsByStation } = useSelector(
-    selectModels
-  )
-
-  const wxDataLoading = loadingModels || loadingReadings
+  const { readingsByStation } = useSelector(selectReadings)
+  const { noonModelsByStation, modelsByStation } = useSelector(selectModels)
+  const { historicModelsByStation } = useSelector(selectHistoricModels)
+  const wxDataLoading = useSelector(selectWxDataLoading)
 
   return (
     <div className={classes.displays}>
@@ -46,20 +52,26 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
           const readingValues = readingsByStation[s.code]
           const modelValues = modelsByStation[s.code]
           const noonModelValues = noonModelsByStation[s.code]
-          const nothingToDisplay = !readingValues && !modelValues
-
-          if (nothingToDisplay) {
-            return null
-          }
+          const historicModels = historicModelsByStation[s.code]
+          const nothingToDisplay = !readingValues && !modelValues && !historicModels
 
           return (
             <Paper key={s.code} className={classes.paper} elevation={3}>
               <Typography className={classes.station} variant="subtitle1" component="div">
                 Weather station: {`${s.name} (${s.code})`}
               </Typography>
+              {nothingToDisplay && (
+                <Typography className={classes.noDataAvailable} variant="body2">
+                  Data is not available.
+                </Typography>
+              )}
               <HourlyReadingsDisplay values={readingValues} />
               <DailyModelsDisplay values={noonModelValues} />
-              <WxGraphByStation modelValues={modelValues} readingValues={readingValues} />
+              <WxDataGraph
+                modelValues={modelValues}
+                readingValues={readingValues}
+                historicModels={historicModels}
+              />
             </Paper>
           )
         })}

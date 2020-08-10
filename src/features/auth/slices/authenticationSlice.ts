@@ -68,10 +68,17 @@ export default authSlice.reducer
 
 export const authenticate = (): AppThunk => dispatch => {
   dispatch(authenticateStart())
+
+  if (!kcInstance) {
+    return dispatch(
+      authenticateError('Failed to authenticate (Unable to fetch keycloak-js).')
+    )
+  }
+
   kcInstance
     .init(kcInitOption)
     .then(isAuthenticated => {
-      dispatch(authenticateFinished({ isAuthenticated, token: kcInstance.token }))
+      dispatch(authenticateFinished({ isAuthenticated, token: kcInstance?.token }))
     })
     .catch(err => {
       console.error(err)
@@ -80,12 +87,12 @@ export const authenticate = (): AppThunk => dispatch => {
   // Set a callback that will be triggered when the access token is expired
   kcInstance.onTokenExpired = () => {
     kcInstance
-      .updateToken(0)
+      ?.updateToken(0)
       .then(tokenRefreshed => {
-        dispatch(refreshTokenFinished({ tokenRefreshed, token: kcInstance.token }))
+        dispatch(refreshTokenFinished({ tokenRefreshed, token: kcInstance?.token }))
       })
       .catch(() => {
-        // Restart the flow
+        // Restart the authentication flow
         dispatch(authenticate())
       })
   }

@@ -25,14 +25,14 @@ const modelsSlice = createSlice({
   initialState,
   reducers: {
     getModelsStart(state: State) {
+      state.error = null
       state.loading = true
     },
     getModelsFailed(state: State, action: PayloadAction<string>) {
-      state.loading = false
       state.error = action.payload
+      state.loading = false
     },
     getModelsSuccess(state: State, action: PayloadAction<Model[]>) {
-      state.loading = false
       state.error = null
       state.models = action.payload
       action.payload.forEach(model => {
@@ -44,6 +44,7 @@ const modelsSlice = createSlice({
           )
         }
       })
+      state.loading = false
     }
   }
 })

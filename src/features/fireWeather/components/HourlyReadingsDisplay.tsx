@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography'
 
 import { HOURLY_VALUES_DECIMAL } from 'utils/constants'
 import { ReadingValue } from 'api/readingAPI'
-import { datetimeInPDT } from 'utils/date'
+import { formatDateInPDT } from 'utils/date'
 
 const useStyles = makeStyles({
   display: {
@@ -49,7 +49,7 @@ const HourlyReadingsDisplay = ({ values }: Props) => {
               <TableRow>
                 <TableCell>Date (PDT)</TableCell>
                 {values.map(v => (
-                  <TableCell key={v.datetime}>{datetimeInPDT(v.datetime)}</TableCell>
+                  <TableCell key={v.datetime}>{formatDateInPDT(v.datetime)}</TableCell>
                 ))}
               </TableRow>
               <TableRow>
