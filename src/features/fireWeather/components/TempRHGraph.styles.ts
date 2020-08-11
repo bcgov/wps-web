@@ -61,6 +61,16 @@ export const useStyles = makeStyles({
       stroke: '#03a1fc',
       fill: 'none',
       cursor: 'pointer'
+    },
+    '& .forecastTempDot': {
+      stroke: '#ec03fc',
+      fill: 'none',
+      cursor: 'pointer'
+    },
+    '& .forecastRHDot': {
+      stroke: '#5e03fc',
+      fill: 'none',
+      cursor: 'pointer'
     }
   },
   title: {

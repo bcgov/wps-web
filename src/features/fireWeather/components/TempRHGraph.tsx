@@ -6,6 +6,7 @@ import { ReadingValue } from 'api/readingAPI'
 import { formatDateInPDT } from 'utils/date'
 import { useStyles } from 'features/fireWeather/components/TempRHGraph.styles'
 import { getNearestBasedOnDate, formatDateInMonthAndDay, storeDaysLookup } from 'utils/d3'
+import { NoonForecastValue } from 'api/forecastAPI'
 
 interface WeatherValue {
   date: Date
@@ -13,6 +14,8 @@ interface WeatherValue {
   rh?: number
   modelTemp?: number
   modelRH?: number
+  forecastTemp?: number
+  forecastRH?: number
 }
 type HistoricModel = Omit<_HistoricModel, 'datetime'> & { date: Date }
 
@@ -20,12 +23,14 @@ interface Props {
   readingValues: ReadingValue[]
   modelValues: ModelValue[]
   historicModels: _HistoricModel[]
+  forecastValues: NoonForecastValue[]
 }
 
 const TempRHGraph = ({
   readingValues: _readingValues = [],
   modelValues: _modelValues = [],
-  historicModels: _historicModels = []
+  historicModels: _historicModels = [],
+  forecastValues: _forecastValues = []
 }: Props) => {
   const classes = useStyles()
   const svgRef = useRef(null)
@@ -40,7 +45,7 @@ const TempRHGraph = ({
       /* Prepare for data */
       const daysLookup: { [k: string]: Date } = {} // will help to create the date label on x axis
       const allDates: Date[] = [] // will be used to determine x axis range
-      const readingsAndModelsLookup: { [k: string]: WeatherValue } = {}
+      const readingsForecastsAndModelsLookup: { [k: string]: WeatherValue } = {}
       const readingValues = _readingValues.map(d => {
         const date = storeDaysLookup(daysLookup, d.datetime)
         const reading = {
@@ -48,7 +53,7 @@ const TempRHGraph = ({
           temp: Number(d.temperature.toFixed(2)),
           rh: Math.round(d.relative_humidity)
         }
-        readingsAndModelsLookup[d.datetime] = reading
+        readingsForecastsAndModelsLookup[d.datetime] = reading
         allDates.push(date)
 
         return reading
@@ -61,8 +66,8 @@ const TempRHGraph = ({
           modelRH: Math.round(d.relative_humidity)
         }
         // combine with the existing reading value
-        readingsAndModelsLookup[d.datetime] = {
-          ...readingsAndModelsLookup[d.datetime],
+        readingsForecastsAndModelsLookup[d.datetime] = {
+          ...readingsForecastsAndModelsLookup[d.datetime],
           ...model
         }
         allDates.push(date)
@@ -75,7 +80,25 @@ const TempRHGraph = ({
 
         return { ...d, date }
       })
-      const readingAndModelValues = Object.values(readingsAndModelsLookup)
+      const forecastValues = _forecastValues.map(d => {
+        const date = storeDaysLookup(daysLookup, d.datetime)
+        const forecast = {
+          date,
+          forecastTemp: Number(d.temperature.toFixed(2)),
+          forecastRH: Math.round(d.relative_humidity)
+        }
+        // combine with existing readings and models values
+        readingsForecastsAndModelsLookup[d.datetime] = {
+          ...readingsForecastsAndModelsLookup[d.datetime],
+          ...forecast
+        }
+        allDates.push(date)
+
+        return forecast
+      })
+      const readingForecastAndModelValues = Object.values(
+        readingsForecastsAndModelsLookup
+      ).sort((a, b) => a.date.valueOf() - b.date.valueOf())
       const minAndMaxDate = d3.extent(allDates) as [Date, Date]
       const xTickValues = Object.values(daysLookup)
         .sort((a, b) => a.valueOf() - b.valueOf()) // sort in ascending order
@@ -148,6 +171,16 @@ const TempRHGraph = ({
         .attr('cy', d => yTempScale(d.modelTemp))
         .attr('r', 1)
         .attr('data-testid', 'wx-data-model-temp-dot')
+      svg
+        .selectAll('.forecastTempDot')
+        .data(forecastValues)
+        .enter()
+        .append('circle')
+        .attr('class', 'forecastTempDot')
+        .attr('cx', d => xScale(d.date))
+        .attr('cy', d => yTempScale(d.forecastTemp))
+        .attr('r', 1)
+        .attr('data-testid', 'wx-data-forecast-temp-dot')
 
       /* Render area and dots for RH */
       const historicModelRHArea = d3
@@ -178,6 +211,15 @@ const TempRHGraph = ({
         .attr('class', 'modelRHDot')
         .attr('cx', d => xScale(d.date))
         .attr('cy', d => yRHScale(d.modelRH))
+        .attr('r', 1)
+      svg
+        .selectAll('.forecastRHDot')
+        .data(forecastValues)
+        .enter()
+        .append('circle')
+        .attr('class', 'forecastRHDot')
+        .attr('cx', d => xScale(d.date))
+        .attr('cy', d => yRHScale(d.forecastRH))
         .attr('r', 1)
 
       /* Render the current time reference line */
@@ -327,7 +369,7 @@ const TempRHGraph = ({
       svg.on('touchmove mousemove', function() {
         const mx = d3.mouse(this)[0]
         const invertedDate = xScale.invert(mx)
-        const nearest = getNearestBasedOnDate(invertedDate, readingAndModelValues)
+        const nearest = getNearestBasedOnDate(invertedDate, readingForecastAndModelValues)
         if (!nearest) return // couldn't find the nearest, so don't render the tooltip
         const nearestX = xScale(nearest.date)
         const whichDirection = width / 2 > nearestX ? 'right' : 'left'
@@ -339,10 +381,14 @@ const TempRHGraph = ({
               return `Temp: ${value} (°C)`
             } else if (key === 'modelTemp') {
               return `Model Temp: ${value} (°C)`
+            } else if (key === 'forecastTemp') {
+              return `Forecast Temp: ${value} (°C)`
             } else if (key === 'rh') {
               return `RH: ${value} (%)`
             } else if (key === 'modelRH') {
               return `Model RH: ${value} (%)`
+            } else if (key === 'forecastRH') {
+              return `Forecast RH: ${value} (%)`
             }
             return ''
           })
@@ -357,7 +403,7 @@ const TempRHGraph = ({
         tooltipCursor.style('opacity', 0)
       })
     }
-  }, [classes.root, _readingValues, _modelValues, _historicModels])
+  }, [classes.root, _readingValues, _modelValues, _historicModels, _forecastValues])
 
   return (
     <div className={classes.root}>

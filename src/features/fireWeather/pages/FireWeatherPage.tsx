@@ -15,6 +15,7 @@ import { fetchWxStations } from 'features/stations/slices/stationsSlice'
 import { fetchModels } from 'features/fireWeather/slices/modelsSlice'
 import { fetchReadings } from 'features/fireWeather/slices/readingsSlice'
 import GetWxDataButton from '../components/GetWxDataButton'
+import { fetchForecasts } from '../slices/forecastsSlice'
 import { fetchHistoricModels } from '../slices/historicModelsSlice'
 
 const useStyles = makeStyles({
@@ -57,6 +58,7 @@ const FireWeatherPage = () => {
     const stationCodes = selectedStations.map(s => s.code)
     dispatch(fetchModels(stationCodes))
     dispatch(fetchReadings(stationCodes))
+    dispatch(fetchForecasts(stationCodes))
     dispatch(fetchHistoricModels(stationCodes))
   }
 

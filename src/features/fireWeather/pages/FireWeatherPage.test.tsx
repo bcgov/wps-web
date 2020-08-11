@@ -10,9 +10,11 @@ import {
   mockStations,
   mockModelsResponse,
   mockReadingsResponse,
+  mockForecastsResponse,
   mockHistoricModelsResponse,
   emptyModelsResponse,
   emptyReadingsResponse,
+  emptyForecastsResponse,
   emptyHistoricModelsResponse
 } from 'features/fireWeather/pages/FireWeatherPage.mock'
 
@@ -58,6 +60,7 @@ it('renders no data available message if there is no weather data returned', asy
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
   mockAxios.onPost('/models/GDPS/forecasts/').replyOnce(200, emptyModelsResponse)
   mockAxios.onPost('/hourlies/').replyOnce(200, emptyReadingsResponse)
+  mockAxios.onPost('/noon_forecasts/').replyOnce(200, emptyForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/forecasts/summaries/')
     .replyOnce(200, emptyHistoricModelsResponse)
@@ -82,8 +85,13 @@ it('renders no data available message if there is no weather data returned', asy
   await waitForElement(() => queryByText(/Data is not available./i))
 
   // There shouldn't be any display rendered
-  expect(queryByTestId('daily-models-display')).not.toBeInTheDocument()
+  expect(
+    queryByTestId(`daily-models-table-` + mockStations[0].code)
+  ).not.toBeInTheDocument()
   expect(queryByTestId('hourly-readings-display')).not.toBeInTheDocument()
+  expect(
+    queryByTestId(`noon-forecasts-table-` + mockStations[0].code)
+  ).not.toBeInTheDocument()
   expect(queryByTestId('wx-data-graph')).not.toBeInTheDocument()
 })
 
@@ -91,6 +99,7 @@ it('renders error messages in response to network errors', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
   mockAxios.onPost('/models/GDPS/forecasts/').replyOnce(400)
   mockAxios.onPost('/hourlies/').replyOnce(400)
+  mockAxios.onPost('/noon_forecasts/').replyOnce(400)
   mockAxios.onPost('/models/GDPS/forecasts/summaries/').replyOnce(400)
 
   const { getByText, getByTestId, queryByText } = renderWithRedux(<FireWeatherPage />)
@@ -113,14 +122,16 @@ it('renders error messages in response to network errors', async () => {
     queryByText(/while fetching global model data/i),
     queryByText(/while fetching hourly readings/i),
     queryByText(/while fetching historic global model data/i),
+    queryByText(/while fetching noon forecasts/i),
     queryByText(/Data is not available./i)
   ])
 })
 
-it('renders daily model and hourly values in response to user inputs', async () => {
+it('renders daily model, forecast, and hourly values in response to user inputs', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
   mockAxios.onPost('/models/GDPS/forecasts/').replyOnce(200, mockModelsResponse)
   mockAxios.onPost('/hourlies/').replyOnce(200, mockReadingsResponse)
+  mockAxios.onPost('/noon_forecasts/').replyOnce(200, mockForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/forecasts/summaries/')
     .replyOnce(200, mockHistoricModelsResponse)
@@ -142,23 +153,26 @@ it('renders daily model and hourly values in response to user inputs', async () 
 
   // Wait until all the displays show up
   await waitForElement(() => [
-    getByTestId('daily-models-display'),
+    getByTestId(`noon-models-table-` + mockStations[0].code),
+    getByTestId(`noon-forecasts-table-` + mockStations[0].code),
     getByTestId('hourly-readings-display'),
     getByTestId('wx-data-graph'),
     getByTestId('wx-data-reading-toggle'),
-    getByTestId('wx-data-model-toggle')
+    getByTestId('wx-data-model-toggle'),
+    getByTestId('wx-data-forecast-toggle')
   ])
 
   // Check to see if some of SVG are rendered in the graph (dots, area, and tooltip)
   getAllByTestId('wx-data-model-temp-dot')
   getAllByTestId('wx-data-reading-temp-dot')
+  getAllByTestId('wx-data-forecast-temp-dot')
   getByTestId('historic-model-temp-area')
   const graphBg = getByTestId('wx-data-graph-background')
   fireEvent.mouseMove(graphBg)
   fireEvent.mouseLeave(graphBg)
 
-  // There should have been 3 post requests (models, hourly readings, and historic models).
-  expect(mockAxios.history.post.length).toBe(3)
+  // There should have been 4 post requests (models, hourly readings, noon forecasts, and historic models).
+  expect(mockAxios.history.post.length).toBe(4)
   // all post requests should include station codes in the body
   mockAxios.history.post.forEach(post => {
     expect(post.data).toBe(

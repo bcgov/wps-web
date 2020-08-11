@@ -7,6 +7,7 @@ import {
   selectReadings,
   selectModels,
   selectHistoricModels,
+  selectForecasts,
   selectWxDataLoading
 } from 'app/rootReducer'
 
@@ -19,6 +20,7 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
   const { error: errFetchingReadings } = useSelector(selectReadings)
   const { error: errFetchingModels } = useSelector(selectModels)
   const { error: errFetchingHistoricModels } = useSelector(selectHistoricModels)
+  const { error: errFetchingForecasts } = useSelector(selectForecasts)
   const wxDataLoading = useSelector(selectWxDataLoading)
   const isBtnDisabled = selectedStations.length === 0
 
@@ -55,6 +57,14 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         <ErrorMessage
           error={errFetchingHistoricModels}
           context="while fetching historic global model data"
+          marginTop={5}
+        />
+      )}
+
+      {errFetchingForecasts && (
+        <ErrorMessage
+          error={errFetchingForecasts}
+          context="while fetching forecasts"
           marginTop={5}
         />
       )}
