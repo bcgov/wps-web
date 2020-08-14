@@ -32,17 +32,17 @@ export interface Model {
 }
 
 export interface ModelsResponse {
-  forecasts: Model[]
+  predictions: Model[]
 }
 
 export async function getModels(stationCodes: number[]): Promise<Model[]> {
-  const url = '/models/GDPS/forecasts/'
+  const url = '/models/GDPS/predictions/'
 
   try {
     const { data } = await axios.post<ModelsResponse>(url, {
       stations: stationCodes
     })
-    return data.forecasts
+    return data.predictions
   } catch (err) {
     throw err.toString()
   }
@@ -77,7 +77,7 @@ export async function getHistoricModels(
   stationCodes: number[],
   model: 'GDPS'
 ): Promise<HistoricModelSummary[]> {
-  const url = `/models/${model}/forecasts/summaries/`
+  const url = `/models/${model}/predictions/summaries/`
   try {
     const { data } = await axios.post<HistoricModelSummariesResponse>(url, {
       stations: stationCodes

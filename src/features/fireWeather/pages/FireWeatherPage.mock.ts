@@ -8,11 +8,11 @@ export const mockStations = [
 ]
 
 export const emptyModelsResponse = {
-  forecasts: []
+  predictions: []
 }
 
 export const mockModelsResponse: RecursivePartial<ModelsResponse> = {
-  forecasts: [
+  predictions: [
     {
       station: mockStations[0],
       values: [
