@@ -27,7 +27,7 @@ parameters:
     value: 750m
   - name: CPU_LIMIT
     description: CPU upper limit
-    value: 750m
+    value: 1000m
   - name: MEMORY_REQUEST
     description: Requested memory
     value: 1Gi
