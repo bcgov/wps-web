@@ -4,15 +4,16 @@ import { Paper, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import HourlyReadingsDisplay from 'features/fireWeather/components/HourlyReadingsDisplay'
-import DailyForecastDisplay from 'features/fireWeather/components/DailyForecastDisplay'
-import WxDataGraph from 'features/fireWeather/components/WxDataGraph'
+import NoonForecastDisplay from 'features/fireWeather/components/NoonForecastDisplay'
+import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
 import { Station } from 'api/stationAPI'
 import {
   selectReadings,
   selectModels,
-  selectHistoricModels,
+  selectModelSummaries,
   selectForecasts,
-  selectWxDataLoading
+  selectWxDataLoading,
+  selectForecastSummaries
 } from 'app/rootReducer'
 
 const useStyles = makeStyles({
@@ -38,16 +39,18 @@ interface Props {
   requestedStations: Station[]
 }
 
-const modelsTableTitle = '10 days of interpolated GDPS noon (12pm PST) values: '
-const forecastTableTitle = 'Forecast noon values: '
-
 const WxDataDisplays = ({ requestedStations }: Props) => {
   const classes = useStyles()
 
   const { readingsByStation } = useSelector(selectReadings)
   const { noonModelsByStation, modelsByStation } = useSelector(selectModels)
-  const { historicModelsByStation } = useSelector(selectHistoricModels)
-  const { noonForecastsByStation } = useSelector(selectForecasts)
+  const { modelSummariesByStation } = useSelector(selectModelSummaries)
+  const {
+    noonForecastsByStation,
+    pastNoonForecastsByStation,
+    allNoonForecastsByStation
+  } = useSelector(selectForecasts)
+  const { forecastSummariesByStation } = useSelector(selectForecastSummaries)
   const wxDataLoading = useSelector(selectWxDataLoading)
 
   return (
@@ -57,10 +60,17 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
           const readingValues = readingsByStation[s.code]
           const modelValues = modelsByStation[s.code]
           const noonModelValues = noonModelsByStation[s.code]
-          const historicModels = historicModelsByStation[s.code]
-          const noonForecastValues = noonForecastsByStation[s.code]
+          const modelSummaries = modelSummariesByStation[s.code]
+          const allForecasts = allNoonForecastsByStation[s.code]
+          const forecastValues = noonForecastsByStation[s.code]
+          const pastForecastValues = pastNoonForecastsByStation[s.code]
+          const forecastSummaries = forecastSummariesByStation[s.code]
           const nothingToDisplay =
-            !readingValues && !modelValues && !historicModels && !noonForecastValues
+            !readingValues &&
+            !modelValues &&
+            !modelSummaries &&
+            !allForecasts &&
+            !forecastSummaries
 
           return (
             <Paper key={s.code} className={classes.paper} elevation={3}>
@@ -72,22 +82,27 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
                   Data is not available.
                 </Typography>
               )}
-              <HourlyReadingsDisplay values={readingValues} />
-              <DailyForecastDisplay
-                values={noonModelValues}
-                testId={`noon-models-table-` + s.code}
-                title={modelsTableTitle}
+              <HourlyReadingsDisplay
+                title="Past 5 days of hourly readings from station: "
+                values={readingValues}
               />
-              <DailyForecastDisplay
-                values={noonForecastValues}
-                testId={`noon-forecasts-table-` + s.code}
-                title={forecastTableTitle}
+              <NoonForecastDisplay
+                testId={`noon-models-table-${s.code}`}
+                title="Interpolated global model noon values (20:00 UTC): "
+                values={noonModelValues}
+              />
+              <NoonForecastDisplay
+                testId={`noon-forecasts-table-${s.code}`}
+                title="Weather forecast noon values (20:00 UTC): "
+                values={allForecasts}
               />
               <WxDataGraph
                 modelValues={modelValues}
                 readingValues={readingValues}
-                historicModels={historicModels}
-                forecastValues={noonForecastValues}
+                modelSummaries={modelSummaries}
+                forecastValues={forecastValues}
+                pastForecastValues={pastForecastValues}
+                forecastSummaries={forecastSummaries}
               />
             </Paper>
           )

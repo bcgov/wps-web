@@ -26,10 +26,11 @@ const useStyles = makeStyles({
 })
 
 interface Props {
+  title: string
   values: ReadingValue[] | undefined
 }
 
-const HourlyReadingsDisplay = ({ values }: Props) => {
+const HourlyReadingsDisplay = ({ title, values }: Props) => {
   const classes = useStyles()
 
   if (!values) {
@@ -39,7 +40,7 @@ const HourlyReadingsDisplay = ({ values }: Props) => {
   return (
     <div className={classes.display} data-testid="hourly-readings-display">
       <Typography className={classes.title} component="div" variant="subtitle2">
-        Past 5 days of hourly readings from station:
+        {title}
       </Typography>
 
       <Paper elevation={1}>

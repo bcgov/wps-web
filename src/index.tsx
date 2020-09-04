@@ -7,6 +7,7 @@ import store from 'app/store'
 import * as serviceWorker from 'serviceWorker'
 
 const render = () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const App = require('app/App').default
 
   ReactDOM.render(

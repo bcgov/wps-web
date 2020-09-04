@@ -39,7 +39,7 @@ const TIME_RANGE_OPTIONS = [
   }
 ]
 
-export const TimeRangeSlider = (props: Props) => {
+export const TimeRangeSlider: React.FunctionComponent<Props> = (props: Props) => {
   const classes = useStyles()
   return (
     <div className={classes.root} data-testid="time-range-slider">

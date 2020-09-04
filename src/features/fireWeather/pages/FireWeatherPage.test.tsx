@@ -11,11 +11,13 @@ import {
   mockModelsResponse,
   mockReadingsResponse,
   mockForecastsResponse,
-  mockHistoricModelsResponse,
+  mockModelSummariesResponse,
+  mockForecastSummariesResponse,
   emptyModelsResponse,
   emptyReadingsResponse,
   emptyForecastsResponse,
-  emptyHistoricModelsResponse
+  emptyModelSummariesResponse,
+  emptyForecastSummariesResponse
 } from 'features/fireWeather/pages/FireWeatherPage.mock'
 
 const mockAxios = new MockAdapter(axios)
@@ -63,7 +65,11 @@ it('renders no data available message if there is no weather data returned', asy
   mockAxios.onPost('/noon_forecasts/').replyOnce(200, emptyForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/predictions/summaries/')
-    .replyOnce(200, emptyHistoricModelsResponse)
+    .replyOnce(200, emptyModelSummariesResponse)
+  mockAxios
+    .onPost('/noon_forecasts/summaries')
+    .replyOnce(200, emptyForecastSummariesResponse)
+
   const { getByText, getByTestId, queryByText, queryByTestId } = renderWithRedux(
     <FireWeatherPage />
   )
@@ -92,7 +98,7 @@ it('renders no data available message if there is no weather data returned', asy
   expect(
     queryByTestId(`noon-forecasts-table-` + mockStations[0].code)
   ).not.toBeInTheDocument()
-  expect(queryByTestId('wx-data-graph')).not.toBeInTheDocument()
+  expect(queryByTestId('temp-rh-graph')).not.toBeInTheDocument()
 })
 
 it('renders error messages in response to network errors', async () => {
@@ -101,6 +107,7 @@ it('renders error messages in response to network errors', async () => {
   mockAxios.onPost('/hourlies/').replyOnce(400)
   mockAxios.onPost('/noon_forecasts/').replyOnce(400)
   mockAxios.onPost('/models/GDPS/predictions/summaries/').replyOnce(400)
+  mockAxios.onPost('/noon_forecasts/summaries/').replyOnce(400)
 
   const { getByText, getByTestId, queryByText } = renderWithRedux(<FireWeatherPage />)
 
@@ -119,10 +126,11 @@ it('renders error messages in response to network errors', async () => {
 
   // Wait until all the error messages show up
   await waitForElement(() => [
-    queryByText(/while fetching global model data/i),
+    queryByText(/while fetching global models/i),
     queryByText(/while fetching hourly readings/i),
-    queryByText(/while fetching historic global model data/i),
+    queryByText(/while fetching global model summaries/i),
     queryByText(/while fetching noon forecasts/i),
+    queryByText(/while fetching noon forecast summaries/i),
     queryByText(/Data is not available./i)
   ])
 })
@@ -134,7 +142,10 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   mockAxios.onPost('/noon_forecasts/').replyOnce(200, mockForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/predictions/summaries/')
-    .replyOnce(200, mockHistoricModelsResponse)
+    .replyOnce(200, mockModelSummariesResponse)
+  mockAxios
+    .onPost('/noon_forecasts/summaries/')
+    .replyOnce(200, mockForecastSummariesResponse)
 
   const { getByText, getByTestId, getAllByTestId } = renderWithRedux(<FireWeatherPage />)
 
@@ -156,23 +167,24 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
     getByTestId(`noon-models-table-` + mockStations[0].code),
     getByTestId(`noon-forecasts-table-` + mockStations[0].code),
     getByTestId('hourly-readings-display'),
-    getByTestId('wx-data-graph'),
-    getByTestId('wx-data-reading-toggle'),
-    getByTestId('wx-data-model-toggle'),
-    getByTestId('wx-data-forecast-toggle')
+    getByTestId('temp-rh-graph'),
+    getByTestId('wx-graph-reading-toggle'),
+    getByTestId('wx-graph-model-toggle'),
+    getByTestId('wx-graph-model-summary-toggle'),
+    getByTestId('wx-graph-forecast-summary-toggle')
   ])
 
   // Check to see if some of SVG are rendered in the graph (dots, area, and tooltip)
-  getAllByTestId('wx-data-model-temp-dot')
-  getAllByTestId('wx-data-reading-temp-dot')
-  getAllByTestId('wx-data-forecast-temp-dot')
-  getByTestId('historic-model-temp-area')
-  const graphBg = getByTestId('wx-data-graph-background')
+  getAllByTestId('hourly-reading-temp-dot')
+  getAllByTestId('forecast-summary-temp-line')
+  getByTestId('model-summary-temp-area')
+  const graphBg = getByTestId('temp-rh-graph-background')
   fireEvent.mouseMove(graphBg)
   fireEvent.mouseLeave(graphBg)
 
-  // There should have been 4 post requests (models, hourly readings, noon forecasts, and historic models).
-  expect(mockAxios.history.post.length).toBe(4)
+  // There should have been 5 post requests
+  // (models, hourly readings, models, noon forecasts, and two summaries).
+  expect(mockAxios.history.post.length).toBe(5)
   // all post requests should include station codes in the body
   mockAxios.history.post.forEach(post => {
     expect(post.data).toBe(

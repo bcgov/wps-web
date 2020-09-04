@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { getPercentiles, PercentilesResponse, YearRange } from 'api/percentileAPI'
 import { AppThunk } from 'app/store'
+import { logError } from 'utils/error'
 
 interface PercentilesState {
   loading: boolean
@@ -59,6 +60,7 @@ export const fetchPercentiles = (
     const result = await getPercentiles(stationCodes, percentile, yearRange)
     dispatch(getPercentilesSuccess(result))
   } catch (err) {
-    dispatch(getPercentilesFailed(err))
+    dispatch(getPercentilesFailed(err.toString()))
+    logError(err)
   }
 }

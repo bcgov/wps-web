@@ -9,7 +9,7 @@ const shouldShowDisclaimer = HIDE_DISCLAIMER === undefined
 
 const NoMatch = () => <div>Page not found.</div>
 
-export const Routes = () => {
+export const Routes: React.FunctionComponent = () => {
   return (
     <Router>
       <Switch>

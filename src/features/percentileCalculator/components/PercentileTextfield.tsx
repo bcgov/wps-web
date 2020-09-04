@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   }
 })
 
-export const PercentileTextfield = () => {
+export const PercentileTextfield: React.FunctionComponent = () => {
   const classes = useStyles()
 
   return (

@@ -2,16 +2,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { Forecast, getNoonForecasts, NoonForecastValue } from 'api/forecastAPI'
 import { AppThunk } from 'app/store'
+import { logError } from 'utils/error'
 
 interface State {
   loading: boolean
   error: string | null
+  allNoonForecastsByStation: Record<number, NoonForecastValue[] | undefined>
+  pastNoonForecastsByStation: Record<number, NoonForecastValue[] | undefined>
   noonForecastsByStation: Record<number, NoonForecastValue[] | undefined>
 }
 
 const initialState: State = {
   loading: false,
   error: null,
+  allNoonForecastsByStation: {},
+  pastNoonForecastsByStation: {},
   noonForecastsByStation: {}
 }
 
@@ -28,20 +33,35 @@ const forecastsSlice = createSlice({
     },
     getForecastsSuccess(state: State, action: PayloadAction<Forecast[]>) {
       action.payload.forEach(forecast => {
-        if (forecast.station_code) {
-          const code = forecast.station_code
-          let previousDatetime: string
-          const mostRecentForecasts: NoonForecastValue[] = []
+        const sCode = forecast.station_code
+        if (sCode) {
+          const allForecasts: NoonForecastValue[] = []
+
+          const currDate = new Date()
+          const pastForecasts: NoonForecastValue[] = []
+
           // only add the most recent forecast for the station and datetime
           // (query returns forecasts in order for each datetime, from most recently
           // issued down to first issued)
+          let prevDatetime: string
+          const mostRecentForecasts: NoonForecastValue[] = []
           forecast.values.forEach(value => {
-            if (previousDatetime !== value.datetime) {
-              mostRecentForecasts.push(value)
-              previousDatetime = value.datetime
+            const isDiffDatetime = prevDatetime !== value.datetime
+            if (isDiffDatetime) {
+              const isFutureForecast = new Date(value.datetime) >= currDate
+              if (isFutureForecast) {
+                mostRecentForecasts.push(value)
+              } else {
+                pastForecasts.push(value)
+              }
+
+              allForecasts.push(value)
+              prevDatetime = value.datetime
             }
           })
-          state.noonForecastsByStation[code] = mostRecentForecasts
+          state.allNoonForecastsByStation[sCode] = allForecasts
+          state.pastNoonForecastsByStation[sCode] = pastForecasts
+          state.noonForecastsByStation[sCode] = mostRecentForecasts
         }
       })
       state.loading = false
@@ -64,6 +84,7 @@ export const fetchForecasts = (stationCodes: number[]): AppThunk => async dispat
     const forecasts = await getNoonForecasts(stationCodes)
     dispatch(getForecastsSuccess(forecasts))
   } catch (err) {
-    dispatch(getForecastsFailed(err))
+    dispatch(getForecastsFailed(err.toString()))
+    logError(err)
   }
 }

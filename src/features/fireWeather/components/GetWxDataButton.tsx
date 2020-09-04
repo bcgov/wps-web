@@ -6,9 +6,10 @@ import { Station } from 'api/stationAPI'
 import {
   selectReadings,
   selectModels,
-  selectHistoricModels,
+  selectModelSummaries,
   selectForecasts,
-  selectWxDataLoading
+  selectWxDataLoading,
+  selectForecastSummaries
 } from 'app/rootReducer'
 
 interface Props {
@@ -19,8 +20,9 @@ interface Props {
 const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
   const { error: errFetchingReadings } = useSelector(selectReadings)
   const { error: errFetchingModels } = useSelector(selectModels)
-  const { error: errFetchingHistoricModels } = useSelector(selectHistoricModels)
+  const { error: errFetchingModelSummaries } = useSelector(selectModelSummaries)
   const { error: errFetchingForecasts } = useSelector(selectForecasts)
+  const { error: errFetchingForecastSummaries } = useSelector(selectForecastSummaries)
   const wxDataLoading = useSelector(selectWxDataLoading)
   const isBtnDisabled = selectedStations.length === 0
 
@@ -40,7 +42,7 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
       {errFetchingModels && (
         <ErrorMessage
           error={errFetchingModels}
-          context="while fetching global model data"
+          context="while fetching global models"
           marginTop={5}
         />
       )}
@@ -53,10 +55,10 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         />
       )}
 
-      {errFetchingHistoricModels && (
+      {errFetchingModelSummaries && (
         <ErrorMessage
-          error={errFetchingHistoricModels}
-          context="while fetching historic global model data"
+          error={errFetchingModelSummaries}
+          context="while fetching global model summaries"
           marginTop={5}
         />
       )}
@@ -64,7 +66,15 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
       {errFetchingForecasts && (
         <ErrorMessage
           error={errFetchingForecasts}
-          context="while fetching forecasts"
+          context="while fetching noon forecasts"
+          marginTop={5}
+        />
+      )}
+
+      {errFetchingForecastSummaries && (
+        <ErrorMessage
+          error={errFetchingForecastSummaries}
+          context="while fetching noon forecast summaries"
           marginTop={5}
         />
       )}

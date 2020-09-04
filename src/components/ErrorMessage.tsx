@@ -14,7 +14,7 @@ interface Props {
   marginTop?: number
 }
 
-export const ErrorMessage = (props: Props) => {
+export const ErrorMessage: React.FunctionComponent<Props> = (props: Props) => {
   const classes = useStyles(props)
   const message = props.context ? `Error occurred (${props.context}).` : 'Error occurred.'
 

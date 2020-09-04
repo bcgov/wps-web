@@ -43,7 +43,7 @@ interface Props {
   title: string
 }
 
-export const PageHeader = ({ title }: Props) => {
+export const PageHeader: React.FunctionComponent<Props> = ({ title }: Props) => {
   const classes = useStyles()
 
   return (

@@ -1,4 +1,5 @@
 import axios from 'api/axios'
+import { Station } from 'api/stationAPI'
 
 export interface NoonForecastValue {
   datetime: string
@@ -30,12 +31,37 @@ export interface ForecastResponse {
 export async function getNoonForecasts(stationCodes: number[]): Promise<Forecast[]> {
   const url = '/noon_forecasts/'
 
-  try {
-    const { data } = await axios.post<ForecastResponse>(url, {
-      stations: stationCodes
-    })
-    return data.noon_forecasts
-  } catch (err) {
-    throw err.toString()
-  }
+  const { data } = await axios.post<ForecastResponse>(url, {
+    stations: stationCodes
+  })
+  return data.noon_forecasts
+}
+
+export interface ForecastSummary {
+  datetime: string
+  tmp_min: number
+  tmp_max: number
+  rh_min: number
+  rh_max: number
+}
+
+// List of noon forecast summaries for each datetime with station info
+export interface ForecastSummariesForStation {
+  station: Station
+  values: ForecastSummary[]
+}
+
+export interface ForecastSummariesResponse {
+  summaries: ForecastSummariesForStation[]
+}
+
+export async function getForecastSummaries(
+  stationCodes: number[]
+): Promise<ForecastSummariesForStation[]> {
+  const url = `/noon_forecasts/summaries/`
+  const { data } = await axios.post<ForecastSummariesResponse>(url, {
+    stations: stationCodes
+  })
+
+  return data.summaries
 }

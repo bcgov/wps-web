@@ -18,7 +18,9 @@ interface Props {
   stationResponse: StationSummaryResponse
 }
 
-export const PercentileStationResultTable = ({ stationResponse }: Props) => {
+export const PercentileStationResultTable: React.FunctionComponent<Props> = ({
+  stationResponse
+}: Props) => {
   const { ffmc, bui, isi, years, station } = stationResponse
   const { start_month, start_day, end_month, end_day } = station.core_season
   const seasonRange = `${formatMonthAndDay(start_month, start_day)}\

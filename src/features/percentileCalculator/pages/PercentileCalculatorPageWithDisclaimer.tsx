@@ -39,7 +39,9 @@ interface Props {
   showDisclaimer: boolean
 }
 
-export const PercentileCalculatorPageWithDisclaimer = (props: Props) => {
+export const PercentileCalculatorPageWithDisclaimer: React.FunctionComponent<Props> = (
+  props: Props
+) => {
   const classes = useStyles()
   const [show, setShow] = React.useState(props.showDisclaimer)
 

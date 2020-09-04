@@ -17,7 +17,7 @@ import { TimeRangeSlider } from 'features/percentileCalculator/components/TimeRa
 const defaultTimeRange = 10
 const defaultPercentile = 90
 
-export const PercentileCalculatorPage = () => {
+export const PercentileCalculatorPage: React.FunctionComponent = () => {
   const dispatch = useDispatch()
 
   const [selectedStations, setStations] = useState<Station[]>([])

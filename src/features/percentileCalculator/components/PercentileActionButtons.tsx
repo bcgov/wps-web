@@ -19,7 +19,7 @@ interface Props {
   onResetClick: () => void
 }
 
-export const PercentileActionButtons = ({
+export const PercentileActionButtons: React.FunctionComponent<Props> = ({
   stations,
   onCalculateClick,
   onResetClick

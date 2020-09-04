@@ -25,13 +25,9 @@ export interface ReadingsResponse {
 
 export async function getReadings(stationCodes: number[]): Promise<Reading[]> {
   const url = '/hourlies/'
+  const { data } = await axios.post<ReadingsResponse>(url, {
+    stations: stationCodes
+  })
 
-  try {
-    const { data } = await axios.post<ReadingsResponse>(url, {
-      stations: stationCodes
-    })
-    return data.hourlies
-  } catch (err) {
-    throw err.toString()
-  }
+  return data.hourlies
 }

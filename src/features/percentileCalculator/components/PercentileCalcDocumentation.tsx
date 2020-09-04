@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   }
 })
 
-export const PercentileCalcDocumentation = () => {
+export const PercentileCalcDocumentation: React.FunctionComponent = () => {
   const classes = useStyles()
 
   return (

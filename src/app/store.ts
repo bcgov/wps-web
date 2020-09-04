@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'development' && module.hot) {
   // the new version of the root reducer function whenever it's been recompiled,
   // and tell the store to use the new version instead.
   module.hot.accept('app/rootReducer', () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const newRootReducer = require('app/rootReducer').default
     store.replaceReducer(newRootReducer)
   })

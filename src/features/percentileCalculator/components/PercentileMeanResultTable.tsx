@@ -24,7 +24,9 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const PercentileMeanResultTable = ({ meanValues }: Props) => {
+export const PercentileMeanResultTable: React.FunctionComponent<Props> = ({
+  meanValues
+}: Props) => {
   const classes = useStyles()
   const { ffmc, bui, isi } = meanValues
 

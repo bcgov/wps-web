@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { Reading, ReadingValue, getReadings } from 'api/readingAPI'
 import { AppThunk } from 'app/store'
+import { logError } from 'utils/error'
 
 interface State {
   loading: boolean
@@ -56,6 +57,7 @@ export const fetchReadings = (stationCodes: number[]): AppThunk => async dispatc
     const readings = await getReadings(stationCodes)
     dispatch(getReadingsSuccess(readings))
   } catch (err) {
-    dispatch(getReadingsFailed(err))
+    dispatch(getReadingsFailed(err.toString()))
+    logError(err)
   }
 }

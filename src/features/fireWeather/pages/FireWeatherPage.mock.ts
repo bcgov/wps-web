@@ -1,6 +1,13 @@
-import { ModelsResponse, HistoricModelSummariesResponse } from 'api/modelAPI'
+import { ModelsResponse, ModelSummariesResponse } from 'api/modelAPI'
 import { ReadingsResponse } from 'api/readingAPI'
-import { ForecastResponse } from 'api/forecastAPI'
+import { ForecastResponse, ForecastSummariesResponse } from 'api/forecastAPI'
+import moment from 'moment'
+
+const mockNow = moment()
+  .utc()
+  .set({ hour: 0, minute: 0, second: 0 })
+
+const mockPast = mockNow.subtract(2, 'days')
 
 export const mockStations = [
   { code: 1, name: 'Station 1', lat: 1, long: 1 },
@@ -17,7 +24,7 @@ export const mockModelsResponse: RecursivePartial<ModelsResponse> = {
       station: mockStations[0],
       values: [
         {
-          datetime: '2020-04-30T12:00:00',
+          datetime: mockNow.format(),
           temperature: 7.4,
           relative_humidity: 69,
           wind_direction: 230,
@@ -25,7 +32,7 @@ export const mockModelsResponse: RecursivePartial<ModelsResponse> = {
           total_precipitation: 0
         },
         {
-          datetime: '2020-04-30T15:00:00',
+          datetime: mockNow.add(3, 'hours').format(),
           temperature: 17.4,
           relative_humidity: 80,
           wind_direction: 234,
@@ -47,7 +54,7 @@ export const mockReadingsResponse: RecursivePartial<ReadingsResponse> = {
       station: mockStations[0],
       values: [
         {
-          datetime: '2020-05-15T11:00:00',
+          datetime: mockPast.format(),
           temperature: 16.9,
           relative_humidity: 37.0,
           wind_speed: 9.0,
@@ -59,7 +66,7 @@ export const mockReadingsResponse: RecursivePartial<ReadingsResponse> = {
           fwi: undefined
         },
         {
-          datetime: '2020-05-15T12:00:00',
+          datetime: mockPast.add(1, 'hours').format(),
           temperature: 19.9,
           relative_humidity: 45.0,
           wind_speed: 9.0,
@@ -75,18 +82,18 @@ export const mockReadingsResponse: RecursivePartial<ReadingsResponse> = {
   ]
 }
 
-export const emptyHistoricModelsResponse = {
+export const emptyModelSummariesResponse = {
   summaries: []
 }
 
-export const mockHistoricModelsResponse: RecursivePartial<HistoricModelSummariesResponse> = {
+export const mockModelSummariesResponse: RecursivePartial<ModelSummariesResponse> = {
   summaries: [
     {
       station: mockStations[0],
       model: { name: 'Global Deterministic Prediction System', abbrev: 'GDPS' },
       values: [
         {
-          datetime: '2020-08-01T00:00:00+00:00',
+          datetime: mockPast.format(),
           tmp_tgl_2_5th: 20.0,
           tmp_tgl_2_90th: 24.0,
           tmp_tgl_2_median: 23.0,
@@ -95,7 +102,7 @@ export const mockHistoricModelsResponse: RecursivePartial<HistoricModelSummaries
           rh_tgl_2_median: 61.0
         },
         {
-          datetime: '2020-08-01T03:00:00+00:00',
+          datetime: mockPast.add(1, 'hours').format(),
           tmp_tgl_2_5th: 20.3,
           tmp_tgl_2_90th: 23.3,
           tmp_tgl_2_median: 22.3,
@@ -118,7 +125,7 @@ export const mockForecastsResponse: RecursivePartial<ForecastResponse> = {
       station_code: mockStations[0]['code'],
       values: [
         {
-          datetime: '2020-07-23T12:00:00',
+          datetime: mockNow.format(),
           temperature: 21,
           relative_humidity: 38,
           wind_direction: 290,
@@ -132,10 +139,10 @@ export const mockForecastsResponse: RecursivePartial<ForecastResponse> = {
           bui: 82.7119,
           fwi: 19.99413,
           danger_rating: 2,
-          created_at: '2020-07-21T15:30:00'
+          created_at: mockNow.format()
         },
         {
-          datetime: '2020-07-24T12:00:00',
+          datetime: mockNow.add(1, 'days').format(),
           temperature: 24,
           relative_humidity: 38,
           wind_direction: 290,
@@ -154,4 +161,25 @@ export const mockForecastsResponse: RecursivePartial<ForecastResponse> = {
       ]
     }
   ]
+}
+
+export const mockForecastSummariesResponse: RecursivePartial<ForecastSummariesResponse> = {
+  summaries: [
+    {
+      station: mockStations[0],
+      values: [
+        {
+          datetime: mockPast.format(),
+          tmp_max: 24,
+          tmp_min: 21,
+          rh_max: 44,
+          rh_min: 43
+        }
+      ]
+    }
+  ]
+}
+
+export const emptyForecastSummariesResponse = {
+  summaries: []
 }

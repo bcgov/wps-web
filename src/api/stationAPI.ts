@@ -16,11 +16,7 @@ export interface StationsResponse {
 
 export async function getStations(): Promise<Station[]> {
   const url = '/stations/'
+  const { data } = await axios.get<StationsResponse>(url)
 
-  try {
-    const { data } = await axios.get<StationsResponse>(url)
-    return data.weather_stations
-  } catch (err) {
-    throw err.toString()
-  }
+  return data.weather_stations
 }

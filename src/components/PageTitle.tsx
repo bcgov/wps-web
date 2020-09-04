@@ -19,7 +19,7 @@ interface Props {
   title: string
 }
 
-export const PageTitle = ({ title }: Props) => {
+export const PageTitle: React.FunctionComponent<Props> = ({ title }: Props) => {
   const classes = useStyles()
 
   return (

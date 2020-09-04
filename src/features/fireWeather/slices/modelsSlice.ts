@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Model, getModels, ModelValue } from 'api/modelAPI'
 import { AppThunk } from 'app/store'
 import { isNoonInPST } from 'utils/date'
+import { logError } from 'utils/error'
 
 interface State {
   loading: boolean
@@ -59,6 +60,7 @@ export const fetchModels = (stationCodes: number[]): AppThunk => async dispatch 
     const forecasts = await getModels(stationCodes)
     dispatch(getModelsSuccess(forecasts))
   } catch (err) {
-    dispatch(getModelsFailed(err))
+    dispatch(getModelsFailed(err.toString()))
+    logError(err)
   }
 }

@@ -42,15 +42,11 @@ export async function getPercentiles(
   yearRange: YearRange
 ): Promise<PercentilesResponse> {
   const url = '/percentiles/'
+  const { data } = await axios.post(url, {
+    stations: stationCodes,
+    percentile,
+    year_range: yearRange
+  })
 
-  try {
-    const { data } = await axios.post(url, {
-      stations: stationCodes,
-      percentile,
-      year_range: yearRange
-    })
-    return data
-  } catch (err) {
-    throw err.toString()
-  }
+  return data
 }

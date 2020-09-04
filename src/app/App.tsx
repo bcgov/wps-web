@@ -5,7 +5,7 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import { Routes } from 'app/Routes'
 import { theme } from 'app/theme'
 
-const App = () => {
+const App: React.FunctionComponent = () => {
   return (
     <React.StrictMode>
       <CssBaseline />

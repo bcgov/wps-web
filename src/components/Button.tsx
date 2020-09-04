@@ -19,7 +19,12 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const Button = ({ loading, className, disabled, ...buttonProps }: Props) => {
+export const Button: React.FunctionComponent<Props> = ({
+  loading,
+  className,
+  disabled,
+  ...buttonProps
+}: Props) => {
   const classes = useStyles()
   const buttonClassName = clsx(classes.root, className)
 

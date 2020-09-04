@@ -16,10 +16,13 @@
     "es6": true
   },
   "rules": {
-    "prettier/prettier": ["error", { "singleQuote": true, "semi": false, "printWidth": 90 }],
-    "@typescript-eslint/explicit-function-return-type": "off",
+    "prettier/prettier": [
+      "error",
+      { "singleQuote": true, "semi": false, "printWidth": 90 }
+    ],
     "no-useless-catch": "off",
-    "@typescript-eslint/camelcase": "off"
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
   },
   "settings": {
     "react": {

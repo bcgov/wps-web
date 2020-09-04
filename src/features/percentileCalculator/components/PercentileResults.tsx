@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   }
 })
 
-export const PercentileResults = () => {
+export const PercentileResults: React.FunctionComponent = () => {
   const classes = useStyles()
   const { result, error } = useSelector(selectPercentiles)
 

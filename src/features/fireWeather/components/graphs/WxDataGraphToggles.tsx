@@ -21,9 +21,15 @@ interface Props {
   noModels: boolean
   showModels: boolean
   setShowModels: (checked: boolean) => void
+  noModelSummaries: boolean
+  showModelSummaries: boolean
+  setShowModelSummaries: (checked: boolean) => void
   noForecasts: boolean
   showForecasts: boolean
   setShowForecasts: (checked: boolean) => void
+  noPastForecasts: boolean
+  showPastForecasts: boolean
+  setShowPastForecasts: (checked: boolean) => void
 }
 
 const WxDataToggles = ({
@@ -33,9 +39,15 @@ const WxDataToggles = ({
   noModels,
   showModels,
   setShowModels,
+  noModelSummaries,
+  showModelSummaries,
+  setShowModelSummaries,
   noForecasts,
   showForecasts,
-  setShowForecasts
+  setShowForecasts,
+  noPastForecasts,
+  showPastForecasts,
+  setShowPastForecasts
 }: Props) => {
   const classes = useStyles()
 
@@ -46,7 +58,7 @@ const WxDataToggles = ({
         control={
           <Switch
             name="showReadings"
-            data-testid="wx-data-reading-toggle"
+            data-testid="wx-graph-reading-toggle"
             checked={showReadings}
             disabled={noReadings}
             size="small"
@@ -57,7 +69,47 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Weather Readings
+            Reading from Station
+          </Typography>
+        }
+      />
+      <FormControlLabel
+        className={classes.formControlLabel}
+        control={
+          <Switch
+            name="showModelSummaries"
+            data-testid="wx-graph-model-summary-toggle"
+            checked={showModelSummaries}
+            disabled={noModelSummaries}
+            size="small"
+            onChange={(_, checked) => {
+              setShowModelSummaries(checked)
+            }}
+          />
+        }
+        label={
+          <Typography className={classes.label} variant="body2">
+            Historic Model
+          </Typography>
+        }
+      />
+      <FormControlLabel
+        className={classes.formControlLabel}
+        control={
+          <Switch
+            name="showPastForecasts"
+            data-testid="wx-graph-forecast-summary-toggle"
+            checked={showPastForecasts}
+            disabled={noPastForecasts}
+            size="small"
+            onChange={(_, checked) => {
+              setShowPastForecasts(checked)
+            }}
+          />
+        }
+        label={
+          <Typography className={classes.label} variant="body2">
+            Historic Noon Forecast
           </Typography>
         }
       />
@@ -66,7 +118,7 @@ const WxDataToggles = ({
         control={
           <Switch
             name="showModels"
-            data-testid="wx-data-model-toggle"
+            data-testid="wx-graph-model-toggle"
             checked={showModels}
             disabled={noModels}
             size="small"
@@ -77,7 +129,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Weather Model
+            Global Model
           </Typography>
         }
       />
@@ -86,7 +138,7 @@ const WxDataToggles = ({
         control={
           <Switch
             name="showForecasts"
-            data-testid="wx-data-forecast-toggle"
+            data-testid="wx-graph-forecast-toggle"
             checked={showForecasts}
             disabled={noForecasts}
             size="small"
@@ -97,7 +149,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Noon Forecasts
+            Noon Forecast
           </Typography>
         }
       />

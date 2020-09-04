@@ -9,7 +9,6 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 
 import { MODEL_VALUE_DECIMAL } from 'utils/constants'
-import { formatDateInPDT } from 'utils/date'
 import { ModelValue } from 'api/modelAPI'
 import { NoonForecastValue } from 'api/forecastAPI'
 
@@ -36,7 +35,7 @@ interface Props {
   title: string
 }
 
-const DailyForecastDisplay = ({ values, testId, title }: Props) => {
+const NoonForecastDisplay = ({ values, testId, title }: Props) => {
   const classes = useStyles()
 
   if (!values) {
@@ -55,7 +54,7 @@ const DailyForecastDisplay = ({ values, testId, title }: Props) => {
               <TableRow>
                 <TableCell>Date</TableCell>
                 {values.map(v => (
-                  <TableCell key={v.datetime}>{formatDateInPDT(v.datetime)}</TableCell>
+                  <TableCell key={v.datetime}>{v.datetime.slice(0, 10)}</TableCell>
                 ))}
               </TableRow>
               <TableRow>
@@ -106,4 +105,4 @@ const DailyForecastDisplay = ({ values, testId, title }: Props) => {
   )
 }
 
-export default React.memo(DailyForecastDisplay)
+export default React.memo(NoonForecastDisplay)
