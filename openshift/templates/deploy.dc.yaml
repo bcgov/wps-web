@@ -38,7 +38,7 @@ parameters:
     description: Number of replicas (pods)
     value: '2'
   - name: WPS_API_BASE_URL
-    value: https://wps-api-prod.pathfinder.gov.bc.ca
+    value: https://wps-api-prod.pathfinder.gov.bc.ca/api
 objects:
   - apiVersion: v1
     kind: DeploymentConfig
