@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 
-import { useStyles } from 'features/fireWeather/components/graphs/TempRHGraph.styles'
 import { ReadingValue } from 'api/readingAPI'
 import { ModelSummary as _ModelSummary, ModelValue } from 'api/modelAPI'
 import { ForecastSummary as _ForecastSummary, NoonForecastValue } from 'api/forecastAPI'
 import { formatDateInPDT } from 'utils/date'
+import * as styles from 'features/fireWeather/components/graphs/TempRHGraph.styles'
 import * as d3Utils from 'utils/d3'
 
 interface WeatherValue {
@@ -37,7 +37,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
   pastForecastValues: _pastForecastValues,
   forecastSummaries: _forecastSummaries
 }: Props) => {
-  const classes = useStyles()
+  const classes = styles.useStyles()
   const svgRef = useRef(null)
 
   useEffect(() => {
@@ -140,9 +140,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         })
 
       /* Set the dimensions and margins of the graph */
-      const margin = { top: 10, right: 40, bottom: 40, left: 40 }
+      const margin = { top: 10, right: 40, bottom: 70, left: 40 }
       const widthValue = 600
-      const heightValue = 220
+      const heightValue = 240
       const width = widthValue - margin.left - margin.right
       const height = heightValue - margin.top - margin.bottom
       const svg = d3
@@ -342,6 +342,92 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         .attr('class', 'yAxisLabel')
         .text('RH (%)')
 
+      /* Render legends */
+      let legendY = height + margin.bottom - 25
+      let legendX = 0
+      d3Utils.addLegend({
+        svg,
+        text: 'Reading Temp',
+        color: styles.readingTempDotColor,
+        fill: 'none',
+        shapeX: legendX,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'Reading RH',
+        color: styles.readingRHDotColor,
+        fill: 'none',
+        shapeX: legendX += 78,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'Forecast Temp',
+        color: styles.forecastTempDotColor,
+        shapeX: legendX += 67,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'Forecast RH',
+        color: styles.forecastRHDotColor,
+        shapeX: legendX += 80,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'Model Temp',
+        color: styles.modelTempDotColor,
+        fill: 'none',
+        shapeX: legendX += 69,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'Model RH',
+        color: styles.modelRHDotColor,
+        fill: 'none',
+        shapeX: legendX += 70,
+        shapeY: legendY,
+        textX: legendX += 7,
+        textY: legendY + 3
+      })
+      // New line
+      legendX = 0
+      legendY += 16
+      d3Utils.addLegend({
+        svg,
+        shape: 'rect',
+        text: 'Model Temp 5th - 90th percentiles',
+        color: styles.modelSummaryTempAreaColor,
+        shapeX: legendX - 2,
+        shapeY: legendY - 4,
+        textX: legendX += 11,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg,
+        shape: 'rect',
+        text: 'Model RH 5th - 90th percentiles',
+        color: styles.modelSummaryRHAreaColor,
+        shapeX: legendX += 166,
+        shapeY: legendY - 4,
+        textX: legendX += 13,
+        textY: legendY + 3
+      })
+
+      /* Attach tooltip listener */
       d3Utils.addTooltipListener({
         svg,
         xScale,

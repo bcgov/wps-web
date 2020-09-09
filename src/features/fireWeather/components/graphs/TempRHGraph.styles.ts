@@ -1,20 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 const currLineColor = 'green'
-const readingTempDotColor = '#ff6380'
-const readingRHDotColor = '#5e97ff'
-const modelSummaryTempAreaColor = '#ff91a5'
-const modelSummaryRHAreaColor = '#87b1ff'
-const modelTempDotColor = '#ff143f'
-const modelRHDotColor = '#1768ff'
-const forecastTempDotColor = '#ec03fc'
-const forecastRHDotColor = '#5e03fc'
-const forecastSummaryTempLineColor = '#ec03fc'
-const forecastSummaryRHLineColor = '#5e03fc'
+export const readingTempDotColor = '#ff6984'
+export const readingRHDotColor = '#6198ff'
+export const modelSummaryTempAreaColor = '#ff96aa'
+export const modelSummaryRHAreaColor = '#94b9ff'
+export const modelTempDotColor = '#ff143f'
+export const modelRHDotColor = '#1768ff'
+export const forecastTempDotColor = '#f23bff'
+export const forecastRHDotColor = '#7a2eff'
+const forecastSummaryTempLineColor = forecastTempDotColor
+const forecastSummaryRHLineColor = forecastRHDotColor
 
 export const useStyles = makeStyles({
   // Give styling through classes for svg elements
   root: {
+    paddingBottom: 15,
     '& .xAxisLabel': {
       textAnchor: 'start',
       font: '9px sans-serif'
@@ -90,11 +91,13 @@ export const useStyles = makeStyles({
     },
     '& .forecastSummaryTempLine': {
       stroke: forecastSummaryTempLineColor,
-      strokeWidth: 1.5
+      strokeWidth: 1.5,
+      opacity: 0.8
     },
     '& .forecastSummaryRHLine': {
       stroke: forecastSummaryRHLineColor,
-      strokeWidth: 1.5
+      strokeWidth: 1.5,
+      opacity: 0.8
     }
   }
 })

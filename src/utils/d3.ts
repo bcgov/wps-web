@@ -136,6 +136,58 @@ export const drawArea = <T>({
   }
 }
 
+export const addLegend = ({
+  svg,
+  shape = 'circle',
+  text,
+  fill,
+  color,
+  shapeX,
+  shapeY,
+  textX,
+  textY,
+  radius = 2, // circle radius
+  length = 8 // rect length
+}: {
+  svg: d3.Selection<SVGGElement, unknown, null, undefined>
+  shape?: 'circle' | 'rect'
+  text: string
+  color: string
+  fill?: string | 'none'
+  shapeX: number
+  shapeY: number
+  textX: number
+  textY: number
+  radius?: number
+  length?: number
+}): void => {
+  if (shape === 'circle') {
+    svg
+      .append('circle')
+      .attr('cx', shapeX)
+      .attr('cy', shapeY)
+      .attr('r', radius)
+      .style('stroke', color)
+      .style('fill', fill || color)
+  } else if (shape === 'rect') {
+    svg
+      .append('rect')
+      .attr('x', shapeX)
+      .attr('y', shapeY)
+      .attr('width', length)
+      .attr('height', length)
+      .style('stroke', color)
+      .attr('fill', fill || color)
+  }
+  svg
+    .append('text')
+    .attr('x', textX)
+    .attr('y', textY)
+    .text(text)
+    .style('font-size', '9px')
+    .style('fill', color)
+}
+
 /**
  * Render tooltip and attach its listeners inspired by: https://observablehq.com/@d3/line-chart-with-tooltip
  * Note: .tooltip, .tooltip--hidden, and .tooltipCursor classes need to be defined

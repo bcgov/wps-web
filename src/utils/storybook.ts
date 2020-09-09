@@ -35,13 +35,14 @@ const getPastValues = () => {
   const _readingValues = []
   const _modelSummaries = []
   const _forecastSummaries = []
+  const _pastForecastValues = []
 
   const days = 3
   const first = moment()
     .utc()
     .set({ hour: 0, minute: 0, second: 0 })
     .subtract(days, 'days')
-  const last = moment(first).add(days, 'days')
+  const last = moment(first).add(days - 1, 'days')
 
   while (last.diff(first, 'days') >= 0) {
     for (let length = 0; length < 24; length++) {
@@ -50,15 +51,23 @@ const getPastValues = () => {
 
       // every 12 hour
       if (length % 12 === 0) {
+        _pastForecastValues.push({
+          datetime: moment(first)
+            .add(length, 'hours')
+            .utc()
+            .format(),
+          temperature: temp + Math.random(),
+          relative_humidity: rh + Math.random()
+        })
         _forecastSummaries.push({
           datetime: moment(first)
             .add(length, 'hours')
             .utc()
             .format(),
           tmp_min: temp + Math.random() * 1,
-          tmp_max: temp + Math.random() * 3,
+          tmp_max: temp + Math.random() * 4,
           rh_min: rh + Math.random() * 1,
-          rh_max: rh + Math.random() * 3
+          rh_max: rh + Math.random() * 4
         })
       }
       // every 3 hour
@@ -97,7 +106,12 @@ const getPastValues = () => {
     first.add(1, 'days')
   }
 
-  return [_readingValues, _modelSummaries, _forecastSummaries]
+  return {
+    readingValues: _readingValues,
+    modelSummaries: _modelSummaries,
+    pastForecastValues: _pastForecastValues,
+    forecastSummaries: _forecastSummaries
+  }
 }
 
 const getForecastValues = () => {
@@ -114,18 +128,7 @@ const getForecastValues = () => {
         .utc()
         .format(),
       temperature: Math.random() * 30,
-      relative_humidity: Math.random() * 101,
-      wind_speed: Math.random() * 10,
-      wind_direction: Math.random() * 100,
-      total_precipitation: Math.random() * 10,
-      gc: null,
-      ffmc: null,
-      dmc: null,
-      dc: null,
-      isi: null,
-      bui: null,
-      fwi: null,
-      danger_rating: 2
+      relative_humidity: Math.random() * 101
     })
 
     first.add(1, 'days')
@@ -134,5 +137,10 @@ const getForecastValues = () => {
 }
 
 export const modelValues = getModelValues()
-export const [readingValues, modelSummaries, forecastSummaries] = getPastValues()
+export const {
+  readingValues,
+  modelSummaries,
+  pastForecastValues,
+  forecastSummaries
+} = getPastValues()
 export const forecastValues = getForecastValues()

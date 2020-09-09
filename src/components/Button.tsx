@@ -15,7 +15,11 @@ const useStyles = makeStyles(theme => ({
   },
   spinner: {
     color: theme.palette.primary.light,
-    position: 'absolute'
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -10,
+    top: '50%',
+    marginTop: -10
   }
 }))
 

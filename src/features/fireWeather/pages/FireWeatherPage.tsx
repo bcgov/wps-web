@@ -67,7 +67,7 @@ const FireWeatherPage = () => {
   return (
     <div data-testid="fire-weather-page">
       <PageHeader title="Predictive Services Unit" />
-      <PageTitle title="MoreCast" />
+      <PageTitle title="MoreCast - Weather Forecast Validation Tool" />
       <Container>
         <WxStationDropdown
           className={classes.stationDropdown}
