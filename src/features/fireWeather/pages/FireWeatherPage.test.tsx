@@ -13,11 +13,13 @@ import {
   mockForecastsResponse,
   mockModelSummariesResponse,
   mockForecastSummariesResponse,
+  mockRecentHistoricModelsResponse,
   emptyModelsResponse,
   emptyReadingsResponse,
   emptyForecastsResponse,
   emptyModelSummariesResponse,
-  emptyForecastSummariesResponse
+  emptyForecastSummariesResponse,
+  emptyRecentHistoricModelsResponse
 } from 'features/fireWeather/pages/FireWeatherPage.mock'
 
 const mockAxios = new MockAdapter(axios)
@@ -69,6 +71,9 @@ it('renders no data available message if there is no weather data returned', asy
   mockAxios
     .onPost('/noon_forecasts/summaries')
     .replyOnce(200, emptyForecastSummariesResponse)
+  mockAxios
+    .onPost('/models/GDPS/predictions/historic/most_recent/')
+    .replyOnce(200, emptyRecentHistoricModelsResponse)
 
   const { getByText, getByTestId, queryByText, queryByTestId } = renderWithRedux(
     <FireWeatherPage />
@@ -108,6 +113,7 @@ it('renders error messages in response to network errors', async () => {
   mockAxios.onPost('/noon_forecasts/').replyOnce(400)
   mockAxios.onPost('/models/GDPS/predictions/summaries/').replyOnce(400)
   mockAxios.onPost('/noon_forecasts/summaries/').replyOnce(400)
+  mockAxios.onPost('/models/GDPS/predictions/historic/most_recent/').replyOnce(400)
 
   const { getByText, getByTestId, queryByText } = renderWithRedux(<FireWeatherPage />)
 
@@ -146,6 +152,9 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   mockAxios
     .onPost('/noon_forecasts/summaries/')
     .replyOnce(200, mockForecastSummariesResponse)
+  mockAxios
+    .onPost('/models/GDPS/predictions/historic/most_recent/')
+    .replyOnce(200, mockRecentHistoricModelsResponse)
 
   const { getByText, getByTestId, getAllByTestId } = renderWithRedux(<FireWeatherPage />)
 
@@ -178,13 +187,14 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   getAllByTestId('hourly-reading-temp-dot')
   getAllByTestId('forecast-summary-temp-line')
   getByTestId('model-summary-temp-area')
+  getAllByTestId('historic-model-temp-dot')
   const graphBg = getByTestId('temp-rh-graph-background')
   fireEvent.mouseMove(graphBg)
   fireEvent.mouseLeave(graphBg)
 
-  // There should have been 5 post requests
-  // (models, hourly readings, models, noon forecasts, and two summaries).
-  expect(mockAxios.history.post.length).toBe(5)
+  // There should have been 6 post requests
+  // (models, hourly readings, most recent historic models, noon forecasts, and two summaries).
+  expect(mockAxios.history.post.length).toBe(6)
   // all post requests should include station codes in the body
   mockAxios.history.post.forEach(post => {
     expect(post.data).toBe(

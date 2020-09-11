@@ -9,6 +9,7 @@ import {
   modelSummaries,
   forecastValues,
   forecastSummaries,
+  recentHistoricModelValues,
   pastForecastValues
 } from 'utils/storybook'
 
@@ -22,6 +23,7 @@ storiesOf('WxDataGraph', module).add('default', () => {
         forecastValues={forecastValues}
         pastForecastValues={pastForecastValues}
         forecastSummaries={forecastSummaries}
+        recentHistoricModelValues={recentHistoricModelValues}
       />
     </>
   )
