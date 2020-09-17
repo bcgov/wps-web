@@ -15,6 +15,7 @@ interface Station {
   STATION_NAME: string
 }
 
+// Base map layers for Leaflet
 const getArcGISMapUrl = (service: string): string =>
   `https://server.arcgisonline.com/ArcGIS/rest/services/${service}/MapServer/tile/{z}/{y}/{x}`
 const arcGISMapAttr = {
@@ -27,25 +28,14 @@ const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 })
 const satelliteLayer = L.tileLayer(getArcGISMapUrl('World_Imagery'), arcGISMapAttr)
-const stationMarker = { fillColor: 'gray', radius: 3 }
-const stationOverlay = L.geoJSON(WeatherStationsGeoJson, {
-  pointToLayer: (feature, latlng) => {
-    return L.circleMarker(latlng, {
-      radius: stationMarker.radius,
-      fillColor: stationMarker.fillColor,
-      color: '#000',
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    })
-  }
-}).bindTooltip(
-  layer => {
-    const station = (layer as CircleMarker)?.feature?.properties as Station
-    return `${station.STATION_NAME}`
-  },
-  { direction: 'top', offset: L.point(0, -5) }
-)
+const baseMaps = {
+  Topographic: topoLayer,
+  Terrain: terrainLayer,
+  Streets: streetLayer,
+  Satellite: satelliteLayer
+}
+
+// Overlays for Leaflet
 const getEnvCanadaModelLayer = (layers: string) =>
   L.tileLayer.wms('https://geo.weather.gc.ca/geomet?', {
     layers,
@@ -54,16 +44,8 @@ const getEnvCanadaModelLayer = (layers: string) =>
   })
 const tempModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_TT') // 'HRDPS.CONTINENTAL_TT'
 const rhModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_HR') // 'HRDPS.CONTINENTAL_TT'
-// RH legend img: https://geo.weather.gc.ca/geomet?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=RDPS.ETA_HR&format=image/png&STYLE=HUMIDITYREL-LINEAR
-
-const baseMaps = {
-  Topographic: topoLayer,
-  Terrain: terrainLayer,
-  Streets: streetLayer,
-  Satellite: satelliteLayer
-}
-const overlayMaps = {
-  Stations: stationOverlay,
+// TODO: Render legend img: https://geo.weather.gc.ca/geomet?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=RDPS.ETA_HR&format=image/png&STYLE=HUMIDITYREL-LINEAR
+const overlays = {
   'Temperature Model': tempModelOverlay,
   'RH Model': rhModelOverlay
 }
@@ -86,13 +68,36 @@ const useStyles = makeStyles({
   }
 })
 
-export const LeafletMap: React.FunctionComponent = () => {
+const LeafletMap: React.FunctionComponent = () => {
   const classes = useStyles()
   const mapRef = useRef<L.Map | null>(null)
-  const btnRef = useRef<HTMLButtonElement>(null)
+  const lassoBtnRef = useRef<HTMLButtonElement>(null)
   const [stationMarkers, setStationMarkers] = useState<CircleMarker[]>([])
 
+  const stationMarker = { fillColor: 'gray', radius: 3 }
+  const stationOverlay = L.geoJSON(WeatherStationsGeoJson, {
+    pointToLayer: (feature, latlng) => {
+      return L.circleMarker(latlng, {
+        radius: stationMarker.radius,
+        fillColor: stationMarker.fillColor,
+        color: '#000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      })
+    }
+  })
+  // .bindTooltip(
+  //   layer => {
+  //     const station = (layer as CircleMarker)?.feature?.properties as Station
+  //     return `${station.STATION_NAME}`
+  //   },
+  //   { direction: 'top', offset: L.point(0, -5) }
+  // )
+  // .eachLayer()
+
   useEffect(() => {
+    /* Create a Leaflet map with a layers control */
     mapRef.current = L.map('map-id', {
       center: [48.4484, -123.6],
       zoom: 9,
@@ -100,17 +105,19 @@ export const LeafletMap: React.FunctionComponent = () => {
       zoomAnimation: true,
       layers: [topoLayer, stationOverlay]
     })
-    L.control.layers(baseMaps, overlayMaps).addTo(mapRef.current)
+    L.control
+      .layers(baseMaps, { Stations: stationOverlay, ...overlays })
+      .addTo(mapRef.current)
 
-    // Add the wx station button listener
+    /* Initialize a lasso tool and attach a click event listener */
     // L.control.lasso({ position: 'topleft', intersect: true }).addTo(mapRef.current)
     const lasso = L.lasso(mapRef.current)
-    if (btnRef.current) {
-      btnRef.current.addEventListener('click', () => {
-        lasso.enable()
-      })
+    const lassoBtnCallback = () => {
+      lasso.enable()
     }
-    // Add the lasso listener
+    if (lassoBtnRef.current) {
+      lassoBtnRef.current.addEventListener('click', lassoBtnCallback)
+    }
     mapRef.current.on('lasso.finished', event => {
       // Set all the stations markers to default styling
       stationOverlay.eachLayer(layer => {
@@ -120,19 +127,26 @@ export const LeafletMap: React.FunctionComponent = () => {
         })
         marker.setRadius(stationMarker.radius)
       })
-      const e = event as LassoHandlerFinishedEvent
-      const markers = e.layers
-        .filter(layer => (layer as CircleMarker).feature)
-        .map(layer => {
-          const marker = layer as CircleMarker
+      const sMarkers = (event as LassoHandlerFinishedEvent).layers
+        .filter(m => Boolean((m as CircleMarker).feature?.properties?.STATION_CODE))
+        .map(m => {
+          const marker = m as CircleMarker
           marker.setStyle({
             fillColor: 'red'
           })
           marker.setRadius(4)
+
           return marker
         })
-      setStationMarkers(markers)
+      // Update selected stations
+      setStationMarkers(sMarkers)
     })
+
+    /* Clean up attached listeners when the component unmounts */
+    return () => {
+      mapRef.current?.off('lasso.finished')
+      lassoBtnRef.current?.removeEventListener('click', lassoBtnCallback)
+    }
   }, []) // Run this code block only once
 
   const handleMarkerDelete = (markerToDelete: CircleMarker) => () => {
@@ -152,7 +166,7 @@ export const LeafletMap: React.FunctionComponent = () => {
     <>
       <Button
         className={classes.selectBtn}
-        ref={btnRef}
+        ref={lassoBtnRef}
         variant="contained"
         color="primary"
       >
@@ -178,3 +192,5 @@ export const LeafletMap: React.FunctionComponent = () => {
     </>
   )
 }
+
+export default React.memo(LeafletMap)
