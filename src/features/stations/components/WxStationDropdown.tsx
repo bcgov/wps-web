@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 interface Props {
   className?: string
   stations: Station[]
-  onStationsChange: (stations: Station[]) => void
+  onStationsChange: (stations: React.SetStateAction<Station[]>) => void
   maxNumOfSelect?: number
 }
 
