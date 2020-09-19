@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import 'leaflet/dist/leaflet.css'
 import L, { CircleMarker } from 'leaflet'
+import { FeatureCollection } from 'geojson'
 import 'leaflet-lasso'
 import { LassoHandlerFinishedEvent } from 'leaflet-lasso'
 import { makeStyles } from '@material-ui/core/styles'
@@ -13,6 +14,8 @@ import { Button } from 'components'
 interface Station {
   STATION_CODE: number
   STATION_NAME: string
+  ELEVATION: number
+  STATION_ACRONYM: string
 }
 
 // Base map layers for Leaflet
@@ -45,7 +48,41 @@ const getEnvCanadaModelLayer = (layers: string) =>
 const tempModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_TT') // 'HRDPS.CONTINENTAL_TT'
 const rhModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_HR') // 'HRDPS.CONTINENTAL_TT'
 // TODO: Render legend img: https://geo.weather.gc.ca/geomet?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=RDPS.ETA_HR&format=image/png&STYLE=HUMIDITYREL-LINEAR
+const stationMarker = { fillColor: 'gray', radius: 3 }
+const selectedStationMarker = { fillColor: 'red', radius: 4 }
+const stationOverlay = L.geoJSON(WeatherStationsGeoJson as FeatureCollection, {
+  pointToLayer: (feature, latlng) => {
+    return L.circleMarker(latlng, {
+      radius: stationMarker.radius,
+      fillColor: stationMarker.fillColor,
+      color: '#000',
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
+    })
+  }
+}).bindPopup(
+  layer => {
+    const station = (layer as CircleMarker)?.feature?.properties as Station
+    const text = `
+      <div>Name: ${station.STATION_NAME}</div>
+      <div>Code: ${station.STATION_CODE}</div>
+      <div>Elevation: ${station.ELEVATION}</div>
+    `
+    return text
+  },
+  { offset: L.point(0, -5) }
+)
+// .bindTooltip(
+//   layer => {
+//     const station = (layer as CircleMarker)?.feature?.properties as Station
+//     return `${station.STATION_NAME}`
+//   },
+//   { direction: 'top', offset: L.point(0, -5) }
+// )
+// .eachLayer()
 const overlays = {
+  Station: stationOverlay,
   'Temperature Model': tempModelOverlay,
   'RH Model': rhModelOverlay
 }
@@ -68,33 +105,11 @@ const useStyles = makeStyles({
   }
 })
 
-const LeafletMap: React.FunctionComponent = () => {
+const LeafletMapWithGeoJson: React.FunctionComponent = () => {
   const classes = useStyles()
   const mapRef = useRef<L.Map | null>(null)
   const lassoBtnRef = useRef<HTMLButtonElement>(null)
   const [stationMarkers, setStationMarkers] = useState<CircleMarker[]>([])
-
-  const stationMarker = { fillColor: 'gray', radius: 3 }
-  const stationOverlay = L.geoJSON(WeatherStationsGeoJson, {
-    pointToLayer: (feature, latlng) => {
-      return L.circleMarker(latlng, {
-        radius: stationMarker.radius,
-        fillColor: stationMarker.fillColor,
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-      })
-    }
-  })
-  // .bindTooltip(
-  //   layer => {
-  //     const station = (layer as CircleMarker)?.feature?.properties as Station
-  //     return `${station.STATION_NAME}`
-  //   },
-  //   { direction: 'top', offset: L.point(0, -5) }
-  // )
-  // .eachLayer()
 
   useEffect(() => {
     /* Create a Leaflet map with a layers control */
@@ -105,9 +120,7 @@ const LeafletMap: React.FunctionComponent = () => {
       zoomAnimation: true,
       layers: [topoLayer, stationOverlay]
     })
-    L.control
-      .layers(baseMaps, { Stations: stationOverlay, ...overlays })
-      .addTo(mapRef.current)
+    L.control.layers(baseMaps, overlays).addTo(mapRef.current)
 
     /* Initialize a lasso tool and attach a click event listener */
     // L.control.lasso({ position: 'topleft', intersect: true }).addTo(mapRef.current)
@@ -132,9 +145,9 @@ const LeafletMap: React.FunctionComponent = () => {
         .map(m => {
           const marker = m as CircleMarker
           marker.setStyle({
-            fillColor: 'red'
+            fillColor: selectedStationMarker.fillColor
           })
-          marker.setRadius(4)
+          marker.setRadius(selectedStationMarker.radius)
 
           return marker
         })
@@ -172,6 +185,7 @@ const LeafletMap: React.FunctionComponent = () => {
       >
         Select stations
       </Button>
+
       {stationMarkers.length > 0 && (
         <div className={classes.chips}>
           <Typography variant="body2">Selected stations:</Typography>
@@ -188,9 +202,10 @@ const LeafletMap: React.FunctionComponent = () => {
           })}
         </div>
       )}
+
       <div id="map-id" className={classes.map} />
     </>
   )
 }
 
-export default React.memo(LeafletMap)
+export default React.memo(LeafletMapWithGeoJson)

@@ -1,8 +1,8 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 
-import LeafletMap from 'features/map/LeafletMap'
+import LeafletMapWithGeoJson from 'features/map/LeafletMapWithGeoJson'
 
-storiesOf('LeafletMap', module).add('default', () => {
-  return <LeafletMap />
+storiesOf('LeafletMap', module).add('Map with GeoJson', () => {
+  return <LeafletMapWithGeoJson />
 })
