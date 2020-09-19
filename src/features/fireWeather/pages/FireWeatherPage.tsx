@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-
 import { Station } from 'api/stationAPI'
 import { selectAuthentication } from 'app/rootReducer'
 import { PageHeader, PageTitle, Container } from 'components'
-import WxStationDropdown from 'features/stations/components/WxStationDropdown'
 import WxDataDisplays from 'features/fireWeather/components/WxDataDisplays'
 import {
   authenticate,
@@ -18,9 +16,11 @@ import GetWxDataButton from 'features/fireWeather/components/GetWxDataButton'
 import { fetchForecasts } from 'features/fireWeather/slices/forecastsSlice'
 import { fetchModelSummaries } from 'features/fireWeather/slices/modelSummariesSlice'
 import { fetchForecastSummaries } from 'features/fireWeather/slices/forecastSummariesSlice'
+import WxStationDropdown from 'features/stations/components/WxStationDropdown'
+// import WxStationSelectMap from 'features/map/WxStationSelectMap'
 
 const useStyles = makeStyles({
-  stationDropdown: {
+  stationSelect: {
     marginBottom: 10
   }
 })
@@ -51,9 +51,6 @@ const FireWeatherPage = () => {
     return <div>You are not authenticated!</div>
   }
 
-  const onStationsChange = (s: Station[]) => {
-    setStations(s)
-  }
   const onSubmitClick = () => {
     setRequestedStations(selectedStations)
     const stationCodes = selectedStations.map(s => s.code)
@@ -70,10 +67,15 @@ const FireWeatherPage = () => {
       <PageTitle title="MoreCast - Weather Forecast Validation Tool" />
       <Container>
         <WxStationDropdown
-          className={classes.stationDropdown}
+          className={classes.stationSelect}
           stations={selectedStations}
-          onStationsChange={onStationsChange}
+          onStationsChange={setStations}
         />
+        {/* <WxStationSelectMap
+          className={classes.stationSelect}
+          onStationsChange={setStations}
+        /> */}
+
         <GetWxDataButton onBtnClick={onSubmitClick} selectedStations={selectedStations} />
         <WxDataDisplays requestedStations={requestedStations} />
       </Container>
