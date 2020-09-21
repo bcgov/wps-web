@@ -10,66 +10,7 @@ import Typography from '@material-ui/core/Typography'
 
 import { Station } from 'api/stationAPI'
 import lassoToolImg from 'features/map/lasso-control.png'
-
-// Base map layers from ArcGIS & OpenStreetMap
-const getArcGISMapUrl = (service: string): string =>
-  `https://server.arcgisonline.com/ArcGIS/rest/services/${service}/MapServer/tile/{z}/{y}/{x}`
-const arcGISMapAttr = {
-  attribution:
-    'Sources: <a href="https://server.arcgisonline.com/arcgis/rest/services/">ArcGIS Map Servers</a>'
-}
-const topoLayer = L.tileLayer(getArcGISMapUrl('World_Topo_Map'), arcGISMapAttr)
-const terrainLayer = L.tileLayer(getArcGISMapUrl('World_Terrain_Base'), arcGISMapAttr)
-const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-})
-const satelliteLayer = L.tileLayer(getArcGISMapUrl('World_Imagery'), arcGISMapAttr)
-const baseMaps = {
-  Topographic: topoLayer,
-  Terrain: terrainLayer,
-  Streets: streetLayer,
-  Satellite: satelliteLayer
-}
-
-// Overlays sourced from Env canada & DataBC
-const getEnvCanadaModelLayer = (layers: string) =>
-  L.tileLayer.wms('https://geo.weather.gc.ca/geomet?', {
-    layers,
-    version: '1.3.0',
-    opacity: 0.5
-  })
-const tempModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_TT') // 'HRDPS.CONTINENTAL_TT'
-const rhModelOverlay = getEnvCanadaModelLayer('RDPS.ETA_HR') // 'HRDPS.CONTINENTAL_TT'
-// TODO: Render legend img: https://geo.weather.gc.ca/geomet?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=RDPS.ETA_HR&format=image/png&STYLE=HUMIDITYREL-LINEAR
-const stationMarker = { fillColor: '#bfbfbf', radius: 4 }
-const selectedStationMarker = { fillColor: 'red', radius: 4.5 }
-const stationOverlay = L.geoJSON(undefined, {
-  pointToLayer: (feature, latlng) => {
-    return L.circleMarker(latlng, {
-      radius: stationMarker.radius,
-      fillColor: stationMarker.fillColor,
-      color: '#000',
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    })
-  }
-}).bindTooltip(
-  layer => {
-    const station = (layer as CircleMarker<Station>)?.feature?.properties
-    let text = 'N/A'
-    if (station) {
-      text = `${station.name} (${station.code})`
-    }
-    return text
-  },
-  { direction: 'top', offset: L.point(0, -5) }
-)
-const overlays = {
-  Station: stationOverlay,
-  'Temperature Model': tempModelOverlay,
-  'RH Model': rhModelOverlay
-}
+import { baseMaps, overlays, topoLayer, stationOverlay } from 'features/map/mapLayers'
 
 const useStyles = makeStyles({
   map: {
@@ -125,13 +66,32 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
       layers: [topoLayer, stationOverlay]
     })
     L.control.layers(baseMaps, overlays).addTo(mapRef.current)
+
+    // Destroy the map and clear all related event listeners when the component unmounts
+    return () => {
+      mapRef.current?.remove()
+    }
   }, []) // Initialize the map only once
 
   /* Update the station overlay once the station data is fetched */
   useEffect(() => {
     if (stationsGeoJSON) {
       stationOverlay.clearLayers()
-      stationOverlay.addData(stationsGeoJSON)
+      stationOverlay.addData(stationsGeoJSON).bindTooltip(
+        layer => {
+          const station = (layer as CircleMarker<Station>)?.feature?.properties
+          let text = 'N/A'
+          if (station) {
+            text = `${station.name} (${station.code})`
+          }
+          return text
+        },
+        { direction: 'top', offset: L.point(0, -5) }
+      )
+    }
+
+    return () => {
+      stationOverlay.unbindTooltip()
     }
   }, [stationsGeoJSON])
 
@@ -141,13 +101,8 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
       L.control.lasso({ position: 'topleft', intersect: true }).addTo(mapRef.current)
       mapRef.current.on('lasso.finished', event => {
         // Set all the stations markers to default styling
-        stationOverlay.eachLayer(layer => {
-          const marker = layer as CircleMarker
-          marker.setStyle({
-            fillColor: stationMarker.fillColor
-          })
-          marker.setRadius(stationMarker.radius)
-        })
+        stationOverlay.resetStyle()
+
         const sMarkers: CircleMarker[] = []
         const stations: Station[] = []
         const markers = (event as LassoHandlerFinishedEvent).layers
@@ -156,9 +111,8 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
           .forEach(m => {
             const marker = m as CircleMarker<Station>
             marker.setStyle({
-              fillColor: selectedStationMarker.fillColor
+              fillColor: 'red'
             })
-            marker.setRadius(selectedStationMarker.radius)
             sMarkers.push(marker)
 
             const station = marker.feature?.properties
@@ -171,17 +125,11 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
         setStationMarkers(sMarkers)
       })
     }
-
-    /* Clean up attached listeners when the component unmounts */
-    return () => {
-      mapRef.current?.off('lasso.finished')
-    }
   }, [onStationsChange])
 
   const handleMarkerDelete = (markerToDelete: CircleMarker<Station>) => () => {
     // Set this particular marker to default styling
-    markerToDelete.setStyle({ fillColor: stationMarker.fillColor })
-    markerToDelete.setRadius(stationMarker.radius)
+    stationOverlay.resetStyle(markerToDelete)
 
     // And remove it from the selected marker list & selected station list
     setStationMarkers(markers => {
