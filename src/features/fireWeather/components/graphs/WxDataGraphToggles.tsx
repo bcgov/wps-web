@@ -21,9 +21,9 @@ interface Props {
   noModels: boolean
   showModels: boolean
   setShowModels: (checked: boolean) => void
-  noModelSummaries: boolean
-  showModelSummaries: boolean
-  setShowModelSummaries: (checked: boolean) => void
+  noHistoricModels: boolean
+  showHistoricModels: boolean
+  setShowHistoricModels: (checked: boolean) => void
   noForecasts: boolean
   showForecasts: boolean
   setShowForecasts: (checked: boolean) => void
@@ -39,9 +39,9 @@ const WxDataToggles = ({
   noModels,
   showModels,
   setShowModels,
-  noModelSummaries,
-  showModelSummaries,
-  setShowModelSummaries,
+  noHistoricModels,
+  showHistoricModels,
+  setShowHistoricModels,
   noForecasts,
   showForecasts,
   setShowForecasts,
@@ -69,7 +69,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Reading from Station
+            Actual Readings
           </Typography>
         }
       />
@@ -77,19 +77,19 @@ const WxDataToggles = ({
         className={classes.formControlLabel}
         control={
           <Switch
-            name="showModelSummaries"
+            name="showHistoricModels"
             data-testid="wx-graph-model-summary-toggle"
-            checked={showModelSummaries}
-            disabled={noModelSummaries}
+            checked={showHistoricModels}
+            disabled={noHistoricModels}
             size="small"
             onChange={(_, checked) => {
-              setShowModelSummaries(checked)
+              setShowHistoricModels(checked)
             }}
           />
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Historic Model
+            Historic Models
           </Typography>
         }
       />
@@ -109,7 +109,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Historic Noon Forecast
+            Historic Noon Forecasts
           </Typography>
         }
       />
@@ -129,7 +129,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Global Model
+            Models
           </Typography>
         }
       />
@@ -149,7 +149,7 @@ const WxDataToggles = ({
         }
         label={
           <Typography className={classes.label} variant="body2">
-            Noon Forecast
+            Noon Forecasts
           </Typography>
         }
       />

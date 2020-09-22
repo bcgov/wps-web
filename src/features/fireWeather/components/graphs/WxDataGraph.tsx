@@ -13,6 +13,7 @@ interface Props {
   forecastValues: NoonForecastValue[] | undefined
   pastForecastValues: NoonForecastValue[] | undefined
   forecastSummaries: ForecastSummary[] | undefined
+  recentHistoricModelValues: ModelValue[] | undefined
 }
 
 const WxDataGraph = ({
@@ -21,22 +22,33 @@ const WxDataGraph = ({
   modelSummaries = [],
   forecastValues = [],
   pastForecastValues = [],
-  forecastSummaries = []
+  forecastSummaries = [],
+  recentHistoricModelValues = []
 }: Props) => {
   const noReadings = readingValues.length === 0
   const noForecasts = forecastValues.length === 0
   const noModels = modelValues.length === 0
   const noModelSummaries = modelSummaries.length === 0
+  const noRecentHistoricModels = recentHistoricModelValues.length === 0
   const noPastForecasts =
     pastForecastValues.length === 0 && forecastSummaries.length === 0
   // Show hourly readings and models initially, and let users manipulate the view
   const [showReadings, setShowReadings] = useState<boolean>(!noReadings)
   const [showPastForecasts, setShowPastForecasts] = useState<boolean>(!noPastForecasts)
-  const [showModelSummaries, setShowModelSummaries] = useState<boolean>(!noModelSummaries)
+  const [showHistoricModels, setShowHistoricModels] = useState<boolean>(
+    !noModelSummaries || !noRecentHistoricModels
+  )
   const [showModels, setShowModels] = useState<boolean>(false)
   const [showForecasts, setShowForecasts] = useState<boolean>(false)
 
-  if (noReadings && noModels && noModelSummaries && noForecasts && noPastForecasts) {
+  if (
+    noReadings &&
+    noForecasts &&
+    noPastForecasts &&
+    noModels &&
+    noModelSummaries &&
+    noRecentHistoricModels
+  ) {
     return null
   }
 
@@ -49,9 +61,9 @@ const WxDataGraph = ({
         noModels={noModels}
         showModels={showModels}
         setShowModels={setShowModels}
-        noModelSummaries={noModelSummaries}
-        showModelSummaries={showModelSummaries}
-        setShowModelSummaries={setShowModelSummaries}
+        noHistoricModels={noModelSummaries && noRecentHistoricModels}
+        showHistoricModels={showHistoricModels}
+        setShowHistoricModels={setShowHistoricModels}
         noForecasts={noForecasts}
         showForecasts={showForecasts}
         setShowForecasts={setShowForecasts}
@@ -63,10 +75,11 @@ const WxDataGraph = ({
       <TempRHGraph
         readingValues={showReadings ? readingValues : []}
         modelValues={showModels ? modelValues : []}
-        modelSummaries={showModelSummaries ? modelSummaries : []}
+        modelSummaries={showHistoricModels ? modelSummaries : []}
         forecastValues={showForecasts ? forecastValues : []}
         pastForecastValues={showPastForecasts ? pastForecastValues : []}
         forecastSummaries={showPastForecasts ? forecastSummaries : []}
+        recentHistoricModelValues={showHistoricModels ? recentHistoricModelValues : []}
       />
     </>
   )

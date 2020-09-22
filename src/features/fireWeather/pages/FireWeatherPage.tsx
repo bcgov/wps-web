@@ -17,6 +17,7 @@ import { fetchForecasts } from 'features/fireWeather/slices/forecastsSlice'
 import { fetchModelSummaries } from 'features/fireWeather/slices/modelSummariesSlice'
 import { fetchForecastSummaries } from 'features/fireWeather/slices/forecastSummariesSlice'
 import WxStationSelectMap from 'features/map/WxStationSelectMap'
+import { fetchMostRecentHistoricModels } from 'features/fireWeather/slices/mostRecentHistoricModelsSlice'
 
 const useStyles = makeStyles({
   stationSelect: {
@@ -58,6 +59,7 @@ const FireWeatherPage = () => {
     dispatch(fetchForecasts(stationCodes))
     dispatch(fetchModelSummaries(stationCodes))
     dispatch(fetchForecastSummaries(stationCodes))
+    dispatch(fetchMostRecentHistoricModels(stationCodes))
   }
 
   return (
