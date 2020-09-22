@@ -21,7 +21,7 @@ import { fetchMostRecentHistoricModels } from 'features/fireWeather/slices/mostR
 
 const useStyles = makeStyles({
   stationSelect: {
-    marginBottom: 10
+    marginBottom: 6
   }
 })
 

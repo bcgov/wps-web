@@ -5,7 +5,7 @@ import { FeatureCollection } from 'geojson'
 
 import MapWithCustomOverlay from 'features/map/MapWithCustomOverlay'
 import MapWithSelectableStations from 'features/map/MapWithSelectableStations'
-import WxStationsMap from 'features/map/WxStationsMap'
+import MapWithWxStations from 'features/map/MapWithWxStations'
 
 storiesOf('Map', module)
   .add('With custom overlay', () => {
@@ -55,7 +55,8 @@ storiesOf('Map', module)
       ]
     }
     return (
-      <WxStationsMap
+      <MapWithWxStations
+        fetchStationsError={null}
         onStationsChange={action('onStationsChange triggered')}
         stationsGeoJSON={stationsGeoJSON}
       />

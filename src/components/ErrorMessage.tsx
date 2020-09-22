@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles(theme => ({
   root: {
     color: theme.palette.error.main,
-    marginTop: (props: any) => props.marginTop // eslint-disable-line @typescript-eslint/no-explicit-any
+    marginTop: (props: any) => props.marginTop,
+    marginBottom: (props: any) => props.marginBottom
   }
 }))
 
@@ -12,6 +13,7 @@ interface Props {
   error: string
   context?: string
   marginTop?: number
+  marginBottom?: number
 }
 
 export const ErrorMessage: React.FunctionComponent<Props> = (props: Props) => {

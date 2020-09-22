@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { Station } from 'api/stationAPI'
 import { selectStations } from 'app/rootReducer'
-import { ErrorMessage } from 'components/ErrorMessage'
-import WxStationsMap from './WxStationsMap'
+import MapWithWxStations from 'features/map/MapWithWxStations'
 
 interface Props {
   className?: string
@@ -16,9 +15,8 @@ const WxStationSelectMap: React.FunctionComponent<Props> = (props: Props) => {
 
   return (
     <div className={props.className}>
-      {error && <ErrorMessage error={error} context="while fetching weather stations" />}
-
-      <WxStationsMap
+      <MapWithWxStations
+        fetchStationsError={error}
         stationsGeoJSON={stationsGeoJSON}
         onStationsChange={props.onStationsChange}
       />

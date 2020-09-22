@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import { Station } from 'api/stationAPI'
 import lassoToolImg from 'features/map/lasso-control.png'
 import { baseMaps, overlays, topoLayer, stationOverlay } from 'features/map/mapLayers'
+import { ErrorMessage } from 'components/ErrorMessage'
 
 const useStyles = makeStyles({
   map: {
@@ -42,11 +43,13 @@ const useStyles = makeStyles({
 })
 
 interface Props {
+  fetchStationsError: string | null
   onStationsChange: (stations: React.SetStateAction<Station[]>) => void
   stationsGeoJSON: FeatureCollection | null
 }
 
-const WxStationsMap: React.FunctionComponent<Props> = ({
+const MapWithWxStations: React.FunctionComponent<Props> = ({
+  fetchStationsError,
   stationsGeoJSON,
   onStationsChange
 }: Props) => {
@@ -156,6 +159,14 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
         )
       </Typography>
 
+      {fetchStationsError && (
+        <ErrorMessage
+          error={fetchStationsError}
+          context="while fetching weather stations"
+          marginBottom={6}
+        />
+      )}
+
       {stationMarkers.length > 0 && (
         <div className={classes.chips}>
           {stationMarkers.map(marker => {
@@ -177,4 +188,4 @@ const WxStationsMap: React.FunctionComponent<Props> = ({
   )
 }
 
-export default React.memo(WxStationsMap)
+export default React.memo(MapWithWxStations)
