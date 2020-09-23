@@ -49,7 +49,6 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
     mapRef.current = L.map('map-with-custom-lasso-button', {
       center: [48.4484, -123.6],
       zoom: 9,
-      maxZoom: 19,
       zoomAnimation: true,
       scrollWheelZoom: false,
       layers: [topoLayer, stationOverlay]

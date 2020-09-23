@@ -12,13 +12,13 @@ storiesOf('Map', module)
   .add('with animating wms layers', () => {
     return <MapWithAnimatingWMSLayers />
   })
-  .add('With custom overlay', () => {
+  .add('with custom overlay', () => {
     return <MapWithCustomOverlay />
   })
-  .add('With with custom lasso button', () => {
+  .add('with custom lasso button', () => {
     return <MapWithCustomLassoButton />
   })
-  .add('With remote wx stations', () => {
+  .add('with remote wx stations', () => {
     const stationsGeoJSON: FeatureCollection = {
       type: 'FeatureCollection',
       features: [

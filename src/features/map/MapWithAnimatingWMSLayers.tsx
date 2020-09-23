@@ -32,14 +32,14 @@ async function getRadarStartEndTime(): Promise<[Date, Date]> {
 
 let animationId: number | null = null
 const radarLayer = L.tileLayer.wms('https://geo.weather.gc.ca/geomet?TILED=true&', {
-  layers: 'RADAR_1KM_RRAI',
+  layers: 'RADAR_1KM_RRAI', // RADAR - Radar precipitation rate (Rain) (1 km) [mm/hr]
   version: '1.3.0',
   opacity: 0.5,
   transparent: true,
   format: 'image/png'
 })
 const radarCoverageLayer = L.tileLayer.wms('https://geo.weather.gc.ca/geomet?', {
-  layers: 'RADAR_COVERAGE_RRAI.INV',
+  layers: 'RADAR_COVERAGE_RRAI.INV', // Dynamic radar coverage - inverted (Rain) (1km)
   version: '1.3.0',
   opacity: 0.5,
   transparent: true,

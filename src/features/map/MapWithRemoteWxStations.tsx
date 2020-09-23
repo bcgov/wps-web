@@ -61,9 +61,7 @@ const MapWithRemoteWxStations: React.FunctionComponent<Props> = ({
   useEffect(() => {
     mapRef.current = L.map('map-with-selectable-wx-stations', {
       center: [49.1, -123.6],
-      minZoom: 5,
       zoom: 8,
-      maxZoom: 11,
       scrollWheelZoom: false,
       zoomAnimation: true,
       layers: [topoLayer, stationOverlay]
