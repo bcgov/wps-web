@@ -4,17 +4,21 @@ import { action } from '@storybook/addon-actions'
 import { FeatureCollection } from 'geojson'
 
 import MapWithCustomOverlay from 'features/map/MapWithCustomOverlay'
-import MapWithSelectableStations from 'features/map/MapWithSelectableStations'
-import MapWithWxStations from 'features/map/MapWithWxStations'
+import MapWithCustomLassoButton from 'features/map/MapWithCustomLassoButton'
+import MapWithRemoteWxStations from 'features/map/MapWithRemoteWxStations'
+import MapWithAnimatingWMSLayers from 'features/map/MapWithAnimatingWMSLayers'
 
 storiesOf('Map', module)
+  .add('with animating wms layers', () => {
+    return <MapWithAnimatingWMSLayers />
+  })
   .add('With custom overlay', () => {
     return <MapWithCustomOverlay />
   })
-  .add('With selectable stations', () => {
-    return <MapWithSelectableStations />
+  .add('With with custom lasso button', () => {
+    return <MapWithCustomLassoButton />
   })
-  .add('With fetched stations', () => {
+  .add('With remote wx stations', () => {
     const stationsGeoJSON: FeatureCollection = {
       type: 'FeatureCollection',
       features: [
@@ -55,7 +59,7 @@ storiesOf('Map', module)
       ]
     }
     return (
-      <MapWithWxStations
+      <MapWithRemoteWxStations
         fetchStationsError={null}
         onStationsChange={action('onStationsChange triggered')}
         stationsGeoJSON={stationsGeoJSON}
