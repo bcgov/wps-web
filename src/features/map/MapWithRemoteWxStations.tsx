@@ -48,7 +48,7 @@ interface Props {
   stationsGeoJSON: FeatureCollection | null
 }
 
-const MapWithWxStations: React.FunctionComponent<Props> = ({
+const MapWithRemoteWxStations: React.FunctionComponent<Props> = ({
   fetchStationsError,
   stationsGeoJSON,
   onStationsChange
@@ -59,7 +59,7 @@ const MapWithWxStations: React.FunctionComponent<Props> = ({
 
   /* Create a Leaflet map with a layers control */
   useEffect(() => {
-    mapRef.current = L.map('map-id', {
+    mapRef.current = L.map('map-with-selectable-wx-stations', {
       center: [49.1, -123.6],
       minZoom: 5,
       zoom: 8,
@@ -183,9 +183,9 @@ const MapWithWxStations: React.FunctionComponent<Props> = ({
         </div>
       )}
 
-      <div id="map-id" className={classes.map} />
+      <div id="map-with-selectable-wx-stations" className={classes.map} />
     </>
   )
 }
 
-export default React.memo(MapWithWxStations)
+export default React.memo(MapWithRemoteWxStations)

@@ -46,7 +46,7 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
 
   useEffect(() => {
     /* Create a Leaflet map with a layers control */
-    mapRef.current = L.map('map-id', {
+    mapRef.current = L.map('map-with-custom-lasso-button', {
       center: [48.4484, -123.6],
       zoom: 9,
       maxZoom: 19,
@@ -150,7 +150,7 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
         </div>
       )}
 
-      <div id="map-id" className={classes.map} />
+      <div id="map-with-custom-lasso-button" className={classes.map} />
     </>
   )
 }

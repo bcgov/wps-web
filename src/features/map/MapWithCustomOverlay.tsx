@@ -45,7 +45,7 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
 
   useEffect(() => {
     /* Create a Leaflet map with a layers control */
-    mapRef.current = L.map('map-id', {
+    mapRef.current = L.map('map-with-custom-overlay', {
       center: [48.4484, -123.6],
       zoom: 9,
       maxZoom: 19,
@@ -95,7 +95,7 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
   return (
     <>
       <div className={classes.mapWrapper}>
-        <div id="map-id" className={classes.map} />
+        <div id="map-with-custom-overlay" className={classes.map} />
         {clickedStation && (
           <Paper className={classes.customOverlay}>
             This is React Component!

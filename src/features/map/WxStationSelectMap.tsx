@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { Station } from 'api/stationAPI'
 import { selectStations } from 'app/rootReducer'
-import MapWithWxStations from 'features/map/MapWithWxStations'
+import MapWithRemoteWxStations from 'features/map/MapWithRemoteWxStations'
 
 interface Props {
   className?: string
@@ -15,7 +15,7 @@ const WxStationSelectMap: React.FunctionComponent<Props> = (props: Props) => {
 
   return (
     <div className={props.className}>
-      <MapWithWxStations
+      <MapWithRemoteWxStations
         fetchStationsError={error}
         stationsGeoJSON={stationsGeoJSON}
         onStationsChange={props.onStationsChange}
