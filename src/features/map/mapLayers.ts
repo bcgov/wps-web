@@ -45,7 +45,7 @@ export const stationOverlay = L.geoJSON(undefined, {
 })
 
 export const overlays = {
-  Station: stationOverlay,
-  'Temperature Model': tempModelOverlay,
-  'RH Model': rhModelOverlay
+  'Weather Stations': stationOverlay,
+  'Air Temperature': tempModelOverlay,
+  'Relative Humidity': rhModelOverlay
 }
