@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
+
 import { Station } from 'api/stationAPI'
 import { selectAuthentication } from 'app/rootReducer'
 import { PageHeader, PageTitle, Container } from 'components'
+import WxStationDropdown from 'features/stations/components/WxStationDropdown'
 import WxDataDisplays from 'features/fireWeather/components/WxDataDisplays'
 import {
   authenticate,
@@ -16,12 +18,11 @@ import GetWxDataButton from 'features/fireWeather/components/GetWxDataButton'
 import { fetchForecasts } from 'features/fireWeather/slices/forecastsSlice'
 import { fetchModelSummaries } from 'features/fireWeather/slices/modelSummariesSlice'
 import { fetchForecastSummaries } from 'features/fireWeather/slices/forecastSummariesSlice'
-import WxStationSelectMap from 'features/map/WxStationSelectMap'
 import { fetchMostRecentHistoricModels } from 'features/fireWeather/slices/mostRecentHistoricModelsSlice'
 
 const useStyles = makeStyles({
-  stationSelect: {
-    marginBottom: 6
+  stationDropdown: {
+    marginBottom: 10
   }
 })
 
@@ -67,11 +68,11 @@ const FireWeatherPage = () => {
       <PageHeader title="Predictive Services Unit" />
       <PageTitle title="MoreCast - Weather Forecast Validation Tool" />
       <Container>
-        <WxStationSelectMap
-          className={classes.stationSelect}
+        <WxStationDropdown
+          className={classes.stationDropdown}
+          stations={selectedStations}
           onStationsChange={setStations}
         />
-
         <GetWxDataButton onBtnClick={onSubmitClick} selectedStations={selectedStations} />
         <WxDataDisplays requestedStations={requestedStations} />
       </Container>

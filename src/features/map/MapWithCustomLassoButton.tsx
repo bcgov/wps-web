@@ -56,7 +56,7 @@ const MapWithCustomOverlay: React.FunctionComponent = () => {
     L.control.layers(baseMaps, overlays).addTo(mapRef.current)
 
     /* Initialize a lasso tool and attach a click event listener */
-    const lasso = L.lasso(mapRef.current)
+    const lasso = L.lasso(mapRef.current, { intersect: true })
     const lassoBtnCallback = () => {
       lasso.enable()
     }
