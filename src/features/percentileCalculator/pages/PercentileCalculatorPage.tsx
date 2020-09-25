@@ -27,14 +27,6 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
     dispatch(fetchWxStations())
   }, [dispatch])
 
-  const onStationsChange = (s: Station[]) => {
-    setStations(s)
-  }
-
-  const onYearRangeChange = (timeRange: number) => {
-    setTimeRange(timeRange)
-  }
-
   const onCalculateClick = () => {
     const stationCodes = selectedStations.map(s => s.code)
     const currYear = new Date().getFullYear()
@@ -57,12 +49,9 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
       <PageHeader title="Predictive Services Unit" />
       <PageTitle title="Percentile Calculator" />
       <Container>
-        <WxStationDropdown
-          stations={selectedStations}
-          onStationsChange={onStationsChange}
-        />
+        <WxStationDropdown stations={selectedStations} onStationsChange={setStations} />
 
-        <TimeRangeSlider timeRange={timeRange} onYearRangeChange={onYearRangeChange} />
+        <TimeRangeSlider timeRange={timeRange} onYearRangeChange={setTimeRange} />
 
         <PercentileTextfield />
 

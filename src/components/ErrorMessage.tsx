@@ -1,18 +1,20 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    color: theme.palette.error.main,
-    marginTop: (props: any) => props.marginTop // eslint-disable-line @typescript-eslint/no-explicit-any
-  }
-}))
-
 interface Props {
   error: string
   context?: string
   marginTop?: number
+  marginBottom?: number
 }
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    color: theme.palette.error.main,
+    marginTop: (props: Props) => props.marginTop,
+    marginBottom: (props: Props) => props.marginBottom
+  }
+}))
 
 export const ErrorMessage: React.FunctionComponent<Props> = (props: Props) => {
   const classes = useStyles(props)

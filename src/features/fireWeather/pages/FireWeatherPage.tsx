@@ -52,9 +52,6 @@ const FireWeatherPage = () => {
     return <div>You are not authenticated!</div>
   }
 
-  const onStationsChange = (s: Station[]) => {
-    setStations(s)
-  }
   const onSubmitClick = () => {
     setRequestedStations(selectedStations)
     const stationCodes = selectedStations.map(s => s.code)
@@ -74,7 +71,7 @@ const FireWeatherPage = () => {
         <WxStationDropdown
           className={classes.stationDropdown}
           stations={selectedStations}
-          onStationsChange={onStationsChange}
+          onStationsChange={setStations}
         />
         <GetWxDataButton onBtnClick={onSubmitClick} selectedStations={selectedStations} />
         <WxDataDisplays requestedStations={requestedStations} />
