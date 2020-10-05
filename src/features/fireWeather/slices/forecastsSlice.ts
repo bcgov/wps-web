@@ -26,6 +26,7 @@ const forecastsSlice = createSlice({
   reducers: {
     getForecastsStart(state: State) {
       state.loading = true
+      state.error = null
     },
     getForecastsFailed(state: State, action: PayloadAction<string>) {
       state.loading = false

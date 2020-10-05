@@ -1,0 +1,60 @@
+{
+  "weather_stations": [
+    {
+      "code": 322,
+      "name": "AFTON",
+      "lat": 50.6733333,
+      "long": -120.4816667,
+      "ecodivision_name": "SEMI-ARID STEPPE HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 1, "end_month": 9, "end_day": 15 }
+    },
+    {
+      "code": 838,
+      "name": "AKOKLI CREEK",
+      "lat": 49.4358,
+      "long": -116.7464,
+      "ecodivision_name": "HUMID CONTINENTAL HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 15, "end_month": 8, "end_day": 31 }
+    },
+    {
+      "code": 209,
+      "name": "ALEXIS CREEK",
+      "lat": 52.08377,
+      "long": -123.2732667,
+      "ecodivision_name": "HUMID CONTINENTAL HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 15, "end_month": 8, "end_day": 31 }
+    },
+    {
+      "code": 317,
+      "name": "ALLISON PASS",
+      "lat": 49.0623139,
+      "long": -120.7674194,
+      "ecodivision_name": "SEMI-ARID STEPPE HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 1, "end_month": 9, "end_day": 15 }
+    },
+    {
+      "code": 213,
+      "name": "ANAHIM LAKE HUB",
+      "lat": 52.4566667,
+      "long": -125.3033333,
+      "ecodivision_name": "HUMID CONTINENTAL HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 15, "end_month": 8, "end_day": 31 }
+    },
+    {
+      "code": 977,
+      "name": "ANDERSON CREEK",
+      "lat": 49.6551,
+      "long": -121.3580667,
+      "ecodivision_name": "COOL HYPERMARITIME AND HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 15, "end_month": 8, "end_day": 31 }
+    },
+    {
+      "code": 1275,
+      "name": "APE LAKE",
+      "lat": 52.1345694,
+      "long": -126.2626806,
+      "ecodivision_name": "COOL HYPERMARITIME AND HIGHLANDS",
+      "core_season": { "start_month": 5, "start_day": 15, "end_month": 8, "end_day": 31 }
+    }
+  ]
+}

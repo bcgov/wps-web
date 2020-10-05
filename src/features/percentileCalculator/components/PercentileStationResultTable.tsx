@@ -28,7 +28,7 @@ export const PercentileStationResultTable: React.FunctionComponent<Props> = ({
   const yearRange = years.join(', ')
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} data-testid="percentile-station-result-table">
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -41,17 +41,21 @@ export const PercentileStationResultTable: React.FunctionComponent<Props> = ({
         <TableBody>
           <TableRow>
             <TableCell>FFMC</TableCell>
-            <TableCell>
+            <TableCell data-testid="percentile-station-result-FFMC">
               {ffmc ? ffmc.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>BUI</TableCell>
-            <TableCell>{bui ? bui.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}</TableCell>
+            <TableCell data-testid="percentile-station-result-BUI">
+              {bui ? bui.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>ISI</TableCell>
-            <TableCell>{isi ? isi.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}</TableCell>
+            <TableCell data-testid="percentile-station-result-ISI">
+              {isi ? isi.toFixed(FWI_VALUES_DECIMAL) : NOT_AVAILABLE}
+            </TableCell>
           </TableRow>
 
           <TableRow>

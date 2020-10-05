@@ -10,6 +10,7 @@ import {
   selectForecasts,
   selectWxDataLoading,
   selectForecastSummaries,
+  selectMostRecentHistoricModels,
   selectBiasAdjustedModels
 } from 'app/rootReducer'
 
@@ -24,16 +25,19 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
   const { error: errFetchingModelSummaries } = useSelector(selectModelSummaries)
   const { error: errFetchingForecasts } = useSelector(selectForecasts)
   const { error: errFetchingForecastSummaries } = useSelector(selectForecastSummaries)
+  const { error: errFetchingMostRecentHistoricModels } = useSelector(
+    selectMostRecentHistoricModels
+  )
   const { error: errFetcingBiasAdjustedModels } = useSelector(selectBiasAdjustedModels)
   const wxDataLoading = useSelector(selectWxDataLoading)
-  const isBtnDisabled = selectedStations.length === 0
+  const shouldBtnDisabled = selectedStations.length === 0
 
   return (
     <>
       <Button
         data-testid="get-wx-data-button"
         onClick={onBtnClick}
-        disabled={isBtnDisabled}
+        disabled={shouldBtnDisabled}
         loading={wxDataLoading}
         variant="contained"
         color="primary"
@@ -81,10 +85,18 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         />
       )}
 
+      {errFetchingMostRecentHistoricModels && (
+        <ErrorMessage
+          error={errFetchingMostRecentHistoricModels}
+          context="while fetching most recent historic models"
+          marginTop={5}
+        />
+      )}
+
       {errFetcingBiasAdjustedModels && (
         <ErrorMessage
           error={errFetcingBiasAdjustedModels}
-          context="while fetching bias adjusted models"
+          context="while fetching bias-adjusted models"
           marginTop={5}
         />
       )}

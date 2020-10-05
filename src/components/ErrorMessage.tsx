@@ -20,5 +20,9 @@ export const ErrorMessage: React.FunctionComponent<Props> = (props: Props) => {
   const classes = useStyles(props)
   const message = props.context ? `Error occurred (${props.context}).` : 'Error occurred.'
 
-  return <div className={classes.root}>{message}</div>
+  return (
+    <div className={classes.root} data-testid="error-message">
+      {message}
+    </div>
+  )
 }

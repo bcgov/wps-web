@@ -198,7 +198,9 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
   width,
   height,
   data,
-  getInnerText
+  getInnerText,
+  textTestId,
+  bgdTestId
 }: {
   svg: d3.Selection<SVGGElement, unknown, null, undefined>
   xScale: d3.ScaleTime<number, number>
@@ -206,6 +208,8 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
   height: number
   data: T[]
   getInnerText: (pair: [string, Date], index: number) => string
+  textTestId?: string
+  bgdTestId?: string
 }): void => {
   const createTooltipCallout = (position?: 'right' | 'left') => (
     // High order function
@@ -236,6 +240,9 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
           .attr('y', (d, i) => `${i * 1.5}em`)
           .text(d => d)
       )
+    if (textTestId) {
+      text.attr('data-testid', textTestId)
+    }
 
     // Don't show the tooltip if for some reason getBBox method doesn't exist
     if (!(text.node() as SVGSVGElement).getBBox) {
@@ -259,11 +266,11 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
     path.attr(
       'd',
       `M ${MPointX}, ${MPointY}
-           H${HMove}
-           v${h + 2 * padding}
-           h-${w + 2 * padding}
-           z
-          `
+       H${HMove}
+       v${h + 2 * padding}
+       h-${w + 2 * padding}
+       z
+      `
     )
   }
   // Draw a rectangular that covers the whole svg space so that
@@ -273,7 +280,9 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('fill', 'transparent')
-    .attr('data-testid', 'temp-rh-graph-background')
+  if (bgdTestId) {
+    svg.attr('data-testid', bgdTestId)
+  }
   const tooltipCursor = svg
     .append('line')
     .attr('x1', 0)

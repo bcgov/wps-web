@@ -64,10 +64,9 @@ const WxStationDropdown = (props: Props) => {
           options={stations}
           getOptionLabel={option => `${option.name} (${option.code})`}
           onChange={(_, stations) => {
-            if (stations.length > maxNumOfSelect) {
-              return
+            if (stations.length <= maxNumOfSelect) {
+              props.onStationsChange(stations)
             }
-            props.onStationsChange(stations)
           }}
           value={props.stations}
           renderInput={params => (

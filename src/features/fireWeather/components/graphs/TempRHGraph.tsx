@@ -279,8 +279,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         className: 'historicModelRHDot',
         data: recentHistoricModelValues,
         cx: d => xScale(d.date),
-        cy: d => yRHScale(d.historicModelRH),
-        testId: 'historic-model-rh-dot'
+        cy: d => yRHScale(d.historicModelRH)
       })
 
       /* Render bias adjusted model temp and rh values */
@@ -568,7 +567,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
             return `Bias adjusted Model RH: ${value} (%)`
           }
           return ''
-        }
+        },
+        textTestId: 'temp-rh-tooltip-text',
+        bgdTestId: 'temp-rh-graph-background'
       })
     }
   }, [

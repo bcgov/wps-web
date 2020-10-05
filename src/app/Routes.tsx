@@ -5,7 +5,7 @@ import FireWeatherPage from 'features/fireWeather/pages/FireWeatherPage'
 import { PercentileCalculatorPageWithDisclaimer } from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
 import { HIDE_DISCLAIMER } from 'utils/constants'
 
-const shouldShowDisclaimer = HIDE_DISCLAIMER === undefined
+const shouldShowDisclaimer = HIDE_DISCLAIMER === 'false' || HIDE_DISCLAIMER === undefined
 
 const NoMatch = () => <div>Page not found.</div>
 
