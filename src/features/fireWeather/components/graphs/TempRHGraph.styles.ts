@@ -4,6 +4,8 @@ const currLineColor = 'green'
 export const readingTempDotColor = '#ff6984'
 export const readingRHDotColor = '#6198ff'
 export const modelTempDotColor = '#ff0d39'
+export const biasModelTempDotColor = '#aa0000'
+export const biasModelRHDotColor = '#0000aa'
 export const modelRHDotColor = '#1467ff'
 export const modelSummaryTempAreaColor = '#ff96aa'
 export const modelSummaryRHAreaColor = '#94b9ff'
@@ -71,6 +73,16 @@ export const useStyles = makeStyles({
     },
     '& .modelTempDot, & .historicModelTempDot': {
       stroke: modelTempDotColor,
+      fill: 'none',
+      cursor: 'pointer'
+    },
+    '& .biasAdjustedModelTempDot': {
+      stroke: biasModelTempDotColor,
+      fill: 'none',
+      cursor: 'pointer'
+    },
+    '& .biasAdjustedModelRHDot': {
+      stroke: biasModelRHDotColor,
       fill: 'none',
       cursor: 'pointer'
     },

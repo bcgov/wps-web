@@ -9,7 +9,8 @@ import {
   selectModelSummaries,
   selectForecasts,
   selectWxDataLoading,
-  selectForecastSummaries
+  selectForecastSummaries,
+  selectBiasAdjustedModels
 } from 'app/rootReducer'
 
 interface Props {
@@ -23,6 +24,7 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
   const { error: errFetchingModelSummaries } = useSelector(selectModelSummaries)
   const { error: errFetchingForecasts } = useSelector(selectForecasts)
   const { error: errFetchingForecastSummaries } = useSelector(selectForecastSummaries)
+  const { error: errFetcingBiasAdjustedModels } = useSelector(selectBiasAdjustedModels)
   const wxDataLoading = useSelector(selectWxDataLoading)
   const isBtnDisabled = selectedStations.length === 0
 
@@ -75,6 +77,14 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         <ErrorMessage
           error={errFetchingForecastSummaries}
           context="while fetching noon forecast summaries"
+          marginTop={5}
+        />
+      )}
+
+      {errFetcingBiasAdjustedModels && (
+        <ErrorMessage
+          error={errFetcingBiasAdjustedModels}
+          context="while fetching bias adjusted models"
           marginTop={5}
         />
       )}

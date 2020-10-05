@@ -6,6 +6,7 @@ import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
 import {
   readingValues,
   modelValues,
+  adjustedModelValues,
   modelSummaries,
   forecastValues,
   forecastSummaries,
@@ -24,6 +25,7 @@ storiesOf('WxDataGraph', module).add('default', () => {
         pastForecastValues={pastForecastValues}
         forecastSummaries={forecastSummaries}
         recentHistoricModelValues={recentHistoricModelValues}
+        biasAdjustedModelValues={adjustedModelValues}
       />
     </>
   )

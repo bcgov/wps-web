@@ -4,7 +4,9 @@ import { Station } from 'api/stationAPI'
 export interface ModelValue {
   datetime: string
   temperature: number
+  bias_adjusted_temperature: number
   relative_humidity: number
+  bias_adjusted_relative_humidity: number
   wind_direction: number
   wind_speed: number
   total_precipitation: number
@@ -35,6 +37,10 @@ export interface ModelsResponse {
   predictions: Model[]
 }
 
+/**
+ * Get future global model predictions
+ * @param stationCodes A list of requested station codes
+ */
 export async function getModels(stationCodes: number[]): Promise<Model[]> {
   const url = '/models/GDPS/predictions/'
 
@@ -67,20 +73,15 @@ export interface ModelSummariesForStation {
   values: ModelSummary[]
 }
 
-export interface HistoricModelsForStation {
-  station: Station
-  model: ModelInfo | null
-  values: ModelValue[]
-}
-
 export interface ModelSummariesResponse {
   summaries: ModelSummariesForStation[]
 }
 
-export interface HistoricModelsResponse {
-  predictions: HistoricModelsForStation[]
-}
-
+/**
+ * Get the past model prediction percentiles (5th & 90th)
+ * @param stationCodes A list of requested station codes
+ * @param model Type of Env canada weather model
+ */
 export async function getModelSummaries(
   stationCodes: number[],
   model: 'GDPS'
@@ -93,6 +94,21 @@ export async function getModelSummaries(
   return data.summaries
 }
 
+export interface HistoricModelsForStation {
+  station: Station
+  model: ModelInfo | null
+  values: ModelValue[]
+}
+
+export interface HistoricModelsResponse {
+  predictions: HistoricModelsForStation[]
+}
+
+/**
+ * Get the most recent past model prediction (right before observed)
+ * @param stationCodes A list of requested station codes
+ * @param model Type of Env canada weather model
+ */
 export async function getMostRecentHistoricModelPredictions(
   stationCodes: number[],
   model: 'GDPS'
@@ -103,4 +119,41 @@ export async function getMostRecentHistoricModelPredictions(
   })
 
   return data.predictions
+}
+
+interface ModelRunInfo {
+  datetime: string
+  name: string
+  abbreviation: string
+}
+
+export interface ModelRun {
+  model_run: ModelRunInfo
+  values: ModelValue[]
+}
+
+export interface ModelsForStation {
+  station: Station
+  model_runs: ModelRun[]
+}
+
+export interface BiasAdjustedModelResponse {
+  stations: ModelsForStation[]
+}
+
+/**
+ * Get the past and future model predictions that are adjusted based on learned biases
+ * @param stationCodes A list of requested station codes
+ * @param model Type of Env canada weather model
+ */
+export async function getBiasAdjustedModelPredictions(
+  stationCodes: number[],
+  model: 'GDPS'
+): Promise<ModelsForStation[]> {
+  const url = `/models/${model}/predictions/most_recent/`
+  const { data } = await axios.post<BiasAdjustedModelResponse>(url, {
+    stations: stationCodes
+  })
+
+  return data.stations
 }

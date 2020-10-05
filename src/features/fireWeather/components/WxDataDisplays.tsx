@@ -14,7 +14,8 @@ import {
   selectForecasts,
   selectWxDataLoading,
   selectForecastSummaries,
-  selectMostRecentHistoricModels
+  selectMostRecentHistoricModels,
+  selectBiasAdjustedModels
 } from 'app/rootReducer'
 
 const useStyles = makeStyles({
@@ -55,6 +56,7 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
   const { mostRecentHistoricModelsByStation } = useSelector(
     selectMostRecentHistoricModels
   )
+  const { biasAdjustedModelsByStation } = useSelector(selectBiasAdjustedModels)
   const wxDataLoading = useSelector(selectWxDataLoading)
 
   return (
@@ -70,13 +72,15 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
           const forecastValues = noonForecastsByStation[s.code]
           const pastForecastValues = pastNoonForecastsByStation[s.code]
           const forecastSummaries = forecastSummariesByStation[s.code]
+          const biasAdjustedModelValues = biasAdjustedModelsByStation[s.code]
           const nothingToDisplay =
             !readingValues &&
             !modelValues &&
             !modelSummaries &&
             !allForecasts &&
             !forecastSummaries &&
-            !recentHistoricModels
+            !recentHistoricModels &&
+            !biasAdjustedModelValues
 
           return (
             <Paper key={s.code} className={classes.paper} elevation={3}>
@@ -110,6 +114,7 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
                 pastForecastValues={pastForecastValues}
                 forecastSummaries={forecastSummaries}
                 recentHistoricModelValues={recentHistoricModels}
+                biasAdjustedModelValues={biasAdjustedModelValues}
               />
             </Paper>
           )

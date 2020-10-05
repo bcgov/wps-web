@@ -14,12 +14,14 @@ import {
   mockModelSummariesResponse,
   mockForecastSummariesResponse,
   mockRecentHistoricModelsResponse,
+  mockRecentModelsResponse,
   emptyModelsResponse,
   emptyReadingsResponse,
   emptyForecastsResponse,
   emptyModelSummariesResponse,
   emptyForecastSummariesResponse,
-  emptyRecentHistoricModelsResponse
+  emptyRecentHistoricModelsResponse,
+  emptyRecentModelsResponse
 } from 'features/fireWeather/pages/FireWeatherPage.mock'
 
 const mockAxios = new MockAdapter(axios)
@@ -74,6 +76,9 @@ it('renders no data available message if there is no weather data returned', asy
   mockAxios
     .onPost('/models/GDPS/predictions/historic/most_recent/')
     .replyOnce(200, emptyRecentHistoricModelsResponse)
+  mockAxios
+    .onPost('/model/GDPS/predictions/most_recent/')
+    .replyOnce(200, emptyRecentModelsResponse)
 
   const { getByText, getByTestId, queryByText, queryByTestId } = renderWithRedux(
     <FireWeatherPage />
@@ -114,6 +119,7 @@ it('renders error messages in response to network errors', async () => {
   mockAxios.onPost('/models/GDPS/predictions/summaries/').replyOnce(400)
   mockAxios.onPost('/noon_forecasts/summaries/').replyOnce(400)
   mockAxios.onPost('/models/GDPS/predictions/historic/most_recent/').replyOnce(400)
+  mockAxios.onPost('/model/GDPS/predictions/most_recent/').replyOnce(400)
 
   const { getByText, getByTestId, queryByText } = renderWithRedux(<FireWeatherPage />)
 
@@ -137,6 +143,7 @@ it('renders error messages in response to network errors', async () => {
     queryByText(/while fetching global model summaries/i),
     queryByText(/while fetching noon forecasts/i),
     queryByText(/while fetching noon forecast summaries/i),
+    queryByText(/while fetching bias adjusted models/i),
     queryByText(/Data is not available./i)
   ])
 })
@@ -155,6 +162,9 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   mockAxios
     .onPost('/models/GDPS/predictions/historic/most_recent/')
     .replyOnce(200, mockRecentHistoricModelsResponse)
+  mockAxios
+    .onPost('/models/GDPS/predictions/most_recent/')
+    .replyOnce(200, mockRecentModelsResponse)
 
   const { getByText, getByTestId, getAllByTestId } = renderWithRedux(<FireWeatherPage />)
 
@@ -180,7 +190,8 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
     getByTestId('wx-graph-reading-toggle'),
     getByTestId('wx-graph-model-toggle'),
     getByTestId('wx-graph-model-summary-toggle'),
-    getByTestId('wx-graph-forecast-summary-toggle')
+    getByTestId('wx-graph-forecast-summary-toggle'),
+    getByTestId('wx-graph-bias-toggle')
   ])
 
   // Check to see if some of SVG are rendered in the graph (dots, area, and tooltip)
@@ -192,9 +203,10 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   fireEvent.mouseMove(graphBg)
   fireEvent.mouseLeave(graphBg)
 
-  // There should have been 6 post requests
-  // (models, hourly readings, most recent historic models, noon forecasts, and two summaries).
-  expect(mockAxios.history.post.length).toBe(6)
+  // There should have been 7 post requests
+  // (models, hourly readings, most recent historic models, most recent models, noon forecasts,
+  // and two summaries).
+  expect(mockAxios.history.post.length).toBe(7)
   // all post requests should include station codes in the body
   mockAxios.history.post.forEach(post => {
     expect(post.data).toBe(

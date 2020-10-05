@@ -19,6 +19,7 @@ import { fetchForecasts } from 'features/fireWeather/slices/forecastsSlice'
 import { fetchModelSummaries } from 'features/fireWeather/slices/modelSummariesSlice'
 import { fetchForecastSummaries } from 'features/fireWeather/slices/forecastSummariesSlice'
 import { fetchMostRecentHistoricModels } from 'features/fireWeather/slices/mostRecentHistoricModelsSlice'
+import { fetchBiasAdjustedModels } from '../slices/biasAdjustedModelsSlice'
 
 const useStyles = makeStyles({
   stationDropdown: {
@@ -61,6 +62,7 @@ const FireWeatherPage = () => {
     dispatch(fetchModelSummaries(stationCodes))
     dispatch(fetchForecastSummaries(stationCodes))
     dispatch(fetchMostRecentHistoricModels(stationCodes))
+    dispatch(fetchBiasAdjustedModels(stationCodes))
   }
 
   return (

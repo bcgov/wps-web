@@ -2,6 +2,8 @@ import moment from 'moment'
 
 const getModelValues = () => {
   const _modelValues = []
+  const _adjustedModelValues = []
+
   const days = 2
   const first = moment()
     .utc()
@@ -11,24 +13,40 @@ const getModelValues = () => {
 
   while (last.diff(first, 'days') >= 0) {
     for (let length = 0; length < 24 / hourInterval; length++) {
+      const temperature = Math.random() * 25
+      const dew_point = Math.random() * 10
+      const relative_humidity = Math.random() * 101
+      const wind_speed = Math.random() * 10
+      const wind_direction = Math.random() * 100
+      const total_precipitation = Math.random()
+      const datetime = moment(first)
+        .add(hourInterval * length, 'hours')
+        .utc()
+        .format()
       _modelValues.push({
-        datetime: moment(first)
-          .add(hourInterval * length, 'hours')
-          .utc()
-          .format(),
-        temperature: Math.random() * 25,
-        dew_point: Math.random() * 10,
-        relative_humidity: Math.random() * 101,
-        wind_speed: Math.random() * 10,
-        wind_direction: Math.random() * 100,
-        total_precipitation: Math.random()
+        datetime,
+        temperature,
+        dew_point,
+        relative_humidity,
+        wind_speed,
+        wind_direction,
+        total_precipitation
+      })
+
+      _adjustedModelValues.push({
+        datetime,
+        bias_adjusted_temperature: temperature - 2,
+        bias_adjusted_relative_humidity: relative_humidity - 5
       })
     }
 
     first.add(1, 'days')
   }
 
-  return _modelValues
+  return {
+    modelValues: _modelValues,
+    adjustedModelValues: _adjustedModelValues
+  }
 }
 
 const getPastValues = () => {
@@ -145,7 +163,7 @@ const getForecastValues = () => {
   return _forecastValues
 }
 
-export const modelValues = getModelValues()
+export const { modelValues, adjustedModelValues } = getModelValues()
 
 export const {
   readingValues,

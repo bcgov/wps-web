@@ -14,6 +14,7 @@ interface Props {
   pastForecastValues: NoonForecastValue[] | undefined
   forecastSummaries: ForecastSummary[] | undefined
   recentHistoricModelValues: ModelValue[] | undefined
+  biasAdjustedModelValues: ModelValue[] | undefined
 }
 
 const WxDataGraph = ({
@@ -23,7 +24,8 @@ const WxDataGraph = ({
   forecastValues = [],
   pastForecastValues = [],
   forecastSummaries = [],
-  recentHistoricModelValues = []
+  recentHistoricModelValues = [],
+  biasAdjustedModelValues = []
 }: Props) => {
   const noReadings = readingValues.length === 0
   const noForecasts = forecastValues.length === 0
@@ -32,6 +34,7 @@ const WxDataGraph = ({
   const noRecentHistoricModels = recentHistoricModelValues.length === 0
   const noPastForecasts =
     pastForecastValues.length === 0 && forecastSummaries.length === 0
+  const noBiasAdjustedPredictions = biasAdjustedModelValues.length === 0
   // Show hourly readings and models initially, and let users manipulate the view
   const [showReadings, setShowReadings] = useState<boolean>(!noReadings)
   const [showPastForecasts, setShowPastForecasts] = useState<boolean>(!noPastForecasts)
@@ -40,6 +43,9 @@ const WxDataGraph = ({
   )
   const [showModels, setShowModels] = useState<boolean>(false)
   const [showForecasts, setShowForecasts] = useState<boolean>(false)
+  const [showBiasAdjustedPredictions, setShowBiasAdjustedPredictions] = useState<boolean>(
+    false
+  )
 
   if (
     noReadings &&
@@ -47,7 +53,8 @@ const WxDataGraph = ({
     noPastForecasts &&
     noModels &&
     noModelSummaries &&
-    noRecentHistoricModels
+    noRecentHistoricModels &&
+    noBiasAdjustedPredictions
   ) {
     return null
   }
@@ -70,6 +77,9 @@ const WxDataGraph = ({
         noPastForecasts={noPastForecasts}
         showPastForecasts={showPastForecasts}
         setShowPastForecasts={setShowPastForecasts}
+        noBiasAdjustedPredictions={noBiasAdjustedPredictions}
+        showBiasAdjustedPredictions={showBiasAdjustedPredictions}
+        setShowBiasAdjustedPredictions={setShowBiasAdjustedPredictions}
       />
 
       <TempRHGraph
@@ -80,6 +90,9 @@ const WxDataGraph = ({
         pastForecastValues={showPastForecasts ? pastForecastValues : []}
         forecastSummaries={showPastForecasts ? forecastSummaries : []}
         recentHistoricModelValues={showHistoricModels ? recentHistoricModelValues : []}
+        biasAdjustedModelValues={
+          showBiasAdjustedPredictions ? biasAdjustedModelValues : []
+        }
       />
     </>
   )

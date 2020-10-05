@@ -30,6 +30,9 @@ interface Props {
   noPastForecasts: boolean
   showPastForecasts: boolean
   setShowPastForecasts: (checked: boolean) => void
+  noBiasAdjustedPredictions: boolean
+  showBiasAdjustedPredictions: boolean
+  setShowBiasAdjustedPredictions: (checked: boolean) => void
 }
 
 const WxDataToggles = ({
@@ -47,7 +50,10 @@ const WxDataToggles = ({
   setShowForecasts,
   noPastForecasts,
   showPastForecasts,
-  setShowPastForecasts
+  setShowPastForecasts,
+  noBiasAdjustedPredictions,
+  showBiasAdjustedPredictions,
+  setShowBiasAdjustedPredictions
 }: Props) => {
   const classes = useStyles()
 
@@ -150,6 +156,26 @@ const WxDataToggles = ({
         label={
           <Typography className={classes.label} variant="body2">
             Noon Forecasts
+          </Typography>
+        }
+      />
+      <FormControlLabel
+        className={classes.formControlLabel}
+        control={
+          <Switch
+            name="showBiasAdjustedPredictions"
+            data-testid="wx-graph-bias-toggle"
+            checked={showBiasAdjustedPredictions}
+            disabled={noBiasAdjustedPredictions}
+            size="small"
+            onChange={(_, checked) => {
+              setShowBiasAdjustedPredictions(checked)
+            }}
+          />
+        }
+        label={
+          <Typography className={classes.label} variant="body2">
+            Bias Adjusted Models
           </Typography>
         }
       />

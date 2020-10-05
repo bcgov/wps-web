@@ -217,6 +217,35 @@ export const mockRecentHistoricModelsResponse = {
   ]
 }
 
+export const mockRecentModelsResponse = {
+  stations: [
+    {
+      station: mockStations[0],
+      model_runs: [
+        {
+          model_run: modelRun,
+          values: [
+            {
+              datetime: mockPast.format(),
+              bias_adjusted_temperature: 30,
+              bias_adjusted_relative_humidity: 55
+            },
+            {
+              datetime: mockPast.add(3, 'hours').format(),
+              bias_adjusted_temperature: 28,
+              bias_adjusted_relative_humidity: 80
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
 export const emptyRecentHistoricModelsResponse = {
   predictions: []
+}
+
+export const emptyRecentModelsResponse = {
+  stations: []
 }
