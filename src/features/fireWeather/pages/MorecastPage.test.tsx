@@ -5,7 +5,7 @@ import { waitForElement, cleanup, fireEvent } from '@testing-library/react'
 import { selectStations } from 'app/rootReducer'
 import axios from 'api/axios'
 import { renderWithRedux } from 'utils/testUtils'
-import FireWeatherPage from 'features/fireWeather/pages/FireWeatherPage'
+import MorecastPage from 'features/fireWeather/pages/MorecastPage'
 import {
   mockStations,
   mockModelsResponse,
@@ -22,7 +22,7 @@ import {
   emptyForecastSummariesResponse,
   emptyRecentHistoricModelsResponse,
   emptyRecentModelsResponse
-} from 'features/fireWeather/pages/FireWeatherPage.mock'
+} from 'features/fireWeather/pages/MorecastPage.mock'
 
 const mockAxios = new MockAdapter(axios)
 
@@ -32,7 +32,7 @@ afterEach(() => {
 })
 
 it('renders fire weather page', async () => {
-  const { getByText, getByTestId } = renderWithRedux(<FireWeatherPage />)
+  const { getByText, getByTestId } = renderWithRedux(<MorecastPage />)
   // before authenticated
   expect(getByText(/Signing in/i)).toBeInTheDocument()
 
@@ -45,7 +45,7 @@ it('renders fire weather page', async () => {
 it('renders weather stations dropdown with data', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
 
-  const { getByText, getByTestId, store } = renderWithRedux(<FireWeatherPage />)
+  const { getByText, getByTestId, store } = renderWithRedux(<MorecastPage />)
   expect(selectStations(store.getState()).stations).toEqual([])
 
   // wait for authentication
@@ -81,7 +81,7 @@ it('renders no data available message if there is no weather data returned', asy
     .replyOnce(200, emptyRecentModelsResponse)
 
   const { getByText, getByTestId, queryByText, queryByTestId } = renderWithRedux(
-    <FireWeatherPage />
+    <MorecastPage />
   )
 
   // wait for authentication
@@ -121,7 +121,7 @@ it('renders error messages in response to network errors', async () => {
   mockAxios.onPost('/models/GDPS/predictions/historic/most_recent/').replyOnce(400)
   mockAxios.onPost('/model/GDPS/predictions/most_recent/').replyOnce(400)
 
-  const { getByText, getByTestId, queryByText } = renderWithRedux(<FireWeatherPage />)
+  const { getByText, getByTestId, queryByText } = renderWithRedux(<MorecastPage />)
 
   // wait for authentication
   await waitForElement(() => getByText(/Predictive Services Unit/i))
@@ -166,7 +166,7 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
     .onPost('/models/GDPS/predictions/most_recent/')
     .replyOnce(200, mockRecentModelsResponse)
 
-  const { getByText, getByTestId, getAllByTestId } = renderWithRedux(<FireWeatherPage />)
+  const { getByText, getByTestId, getAllByTestId } = renderWithRedux(<MorecastPage />)
 
   // wait for authentication
   await waitForElement(() => getByText(/Predictive Services Unit/i))

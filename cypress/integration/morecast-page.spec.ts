@@ -1,10 +1,10 @@
-const stationCode = 317
+const stationCode = 209
 
 describe('MoreCast Page', () => {
   beforeEach(() => {
     cy.server()
     cy.route('GET', 'api/stations/', 'fixture:weather-stations.json').as('getStations')
-    cy.visitProtectedPage('/fire-weather')
+    cy.visitProtectedPage('/morecast')
   })
 
   it('if network errors occurred', () => {
@@ -25,9 +25,11 @@ describe('MoreCast Page', () => {
     cy.route('POST', 'api/hourlies/', 'fixture:weather-data/observed-actuals')
     cy.route('POST', 'api/models/GDPS/predictions/', 'fixture:weather-data/future-models')
     cy.route('POST', 'api/models/GDPS/predictions/historic/most_recent/', 'fixture:weather-data/past-most-recent-models') // prettier-ignore
+    cy.route('POST', 'api/models/GDPS/predictions/most_recent', 'fixture:weather-data/past-most-recent-models-with-biased-adjusted') // prettier-ignore
     cy.route('POST', 'api/models/GDPS/predictions/summaries/', 'fixture:weather-data/past-model-summaries')
-    cy.route('POST', 'api/noon_forecasts/', 'fixture:weather-data/past-future-forecasts')
+    cy.route('POST', 'api/noon_forecasts/', 'fixture:weather-data/forecasts')
     cy.route('POST', 'api/noon_forecasts/summaries/', 'fixture:weather-data/past-forecast-variations')
+
     cy.wait('@getStations')
 
     // Request the weather data
@@ -41,15 +43,23 @@ describe('MoreCast Page', () => {
     cy.getByTestId('forecast-temp-dot')
     cy.getByTestId('forecast-summary-temp-line')
 
-    // Test the attached tooltip
-    cy.getByTestId('temp-rh-graph-background').trigger('mousemove')
-    cy.getByTestId('temp-rh-tooltip-text')
-      .should('contain', '10:00 pm, Thu, Oct 1st (PDT, UTC-7)')
-      .and('contain', 'Temp: 9 (°C)')
-      .and('contain', 'RH: 97 (%)')
-
-    // Test one of toggle buttons
+    // Test the toggle buttons
     cy.getByTestId('wx-graph-model-toggle').click()
     cy.getByTestId('model-temp-dot')
+    cy.getByTestId('wx-graph-model-toggle').click()
+    cy.getByTestId('model-temp-dot').should('not.exist')
+    cy.getByTestId('wx-graph-bias-toggle').click()
+    cy.getByTestId('bias-adjusted-model-temp-dot')
+    cy.getByTestId('wx-graph-bias-toggle').click()
+    cy.getByTestId('bias-adjusted-model-temp-dot').should('not.exist')
+
+    // Hover over the first dot and check if the tooltip shows up with the correct text
+    cy.getByTestId('hourly-reading-temp-dot')
+      .first()
+      .trigger('mousemove', { force: true, x: 4, y: 1 })
+    cy.getByTestId('temp-rh-tooltip-text')
+      .should('contain', '3:00 pm, Thu, Oct 1st (PDT, UTC-7)')
+      .and('contain', 'Temp: - (°C)')
+      .and('contain', 'RH: 38 (%)')
   })
 })

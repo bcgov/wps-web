@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 })
 
 // TODO: Separate authentication part from this later
-const FireWeatherPage = () => {
+const MorecastPage = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const [selectedStations, setStations] = useState<Station[]>([])
@@ -66,9 +66,9 @@ const FireWeatherPage = () => {
   }
 
   return (
-    <div data-testid="fire-weather-page">
+    <main>
       <PageHeader title="Predictive Services Unit" />
-      <PageTitle title="MoreCast - Weather Forecast Validation Tool" />
+      <PageTitle title="Morecast - Weather Forecast Validation Tool" />
       <Container>
         <WxStationDropdown
           className={classes.stationDropdown}
@@ -78,8 +78,8 @@ const FireWeatherPage = () => {
         <GetWxDataButton onBtnClick={onSubmitClick} selectedStations={selectedStations} />
         <WxDataDisplays requestedStations={requestedStations} />
       </Container>
-    </div>
+    </main>
   )
 }
 
-export default React.memo(FireWeatherPage)
+export default React.memo(MorecastPage)

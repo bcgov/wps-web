@@ -1,11 +1,11 @@
 import * as d3 from 'd3'
 
-export const getNearestBasedOnDate = (
+export const getNearestByDate = <T extends { date: Date }>(
   invertedDate: Date,
-  arr: { date: Date }[]
-): { date: Date } | undefined => {
+  arr: T[]
+): T | undefined => {
   // What is bisect: https://observablehq.com/@d3/d3-bisect
-  const bisect = d3.bisector((d: { date: Date }) => d.date).left
+  const bisect = d3.bisector((d: T) => d.date).left
   const index = bisect(arr, invertedDate, 1)
   const a = arr[index - 1]
   const b = arr[index]
@@ -189,10 +189,11 @@ export const addLegend = ({
 }
 
 /**
- * Render tooltip and attach its listeners inspired by: https://observablehq.com/@d3/line-chart-with-tooltip
+ * Attach a listener to display a tooltip in the graph, inspired by: https://observablehq.com/@d3/line-chart-with-tooltip
  * Note: .tooltip, .tooltip--hidden, and .tooltipCursor classes need to be defined
+ * The T is a generic type that captures the type of the given data
  */
-export const addTooltipListener = <T extends { date: Date }, K extends keyof T>({
+export const addTooltipListener = <T extends { date: Date } & { [K in keyof T]: T[K] }>({
   svg,
   xScale,
   width,
@@ -207,7 +208,7 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
   width: number
   height: number
   data: T[]
-  getInnerText: (pair: [string, Date], index: number) => string
+  getInnerText: (pair: [string, ValueOf<T>], index: number) => string
   textTestId?: string
   bgdTestId?: string
 }): void => {
@@ -305,7 +306,7 @@ export const addTooltipListener = <T extends { date: Date }, K extends keyof T>(
     }
 
     const invertedDate = xScale.invert(mx)
-    const nearest = getNearestBasedOnDate(invertedDate, data)
+    const nearest = getNearestByDate(invertedDate, data)
     if (!nearest) return // couldn't find the nearest, so don't render the tooltip
 
     const nearestX = xScale(nearest.date)

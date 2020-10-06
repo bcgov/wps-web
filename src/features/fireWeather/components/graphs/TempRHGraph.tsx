@@ -57,34 +57,38 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       const daysLookup: { [k: string]: Date } = {} // will help to create the date label on x axis
       const allDates: Date[] = [] // will be used to determine x axis range
       const weatherValueByDatetime: { [k: string]: WeatherValue } = {}
-      const readingValues = _readingValues.map(d => {
-        const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-        const reading = {
-          date,
-          temp: Number(d.temperature.toFixed(2)),
-          rh: Math.round(d.relative_humidity)
-        }
-        weatherValueByDatetime[d.datetime] = reading
-        allDates.push(date)
+      const readingValues = _readingValues
+        .filter(d => d.temperature || d.relative_humidity)
+        .map(d => {
+          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
+          const reading = {
+            date,
+            temp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
+            rh: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
+          }
+          weatherValueByDatetime[d.datetime] = reading
+          allDates.push(date)
 
-        return reading
-      })
-      const modelValues = _modelValues.map(d => {
-        const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-        const model = {
-          date,
-          modelTemp: Number(d.temperature.toFixed(2)),
-          modelRH: Math.round(d.relative_humidity)
-        }
-        // combine with the existing reading value
-        weatherValueByDatetime[d.datetime] = {
-          ...weatherValueByDatetime[d.datetime],
-          ...model
-        }
-        allDates.push(date)
+          return reading
+        })
+      const modelValues = _modelValues
+        .filter(d => d.temperature || d.relative_humidity)
+        .map(d => {
+          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
+          const model = {
+            date,
+            modelTemp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
+            modelRH: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
+          }
+          // combine with the existing reading value
+          weatherValueByDatetime[d.datetime] = {
+            ...weatherValueByDatetime[d.datetime],
+            ...model
+          }
+          allDates.push(date)
 
-        return model
-      })
+          return model
+        })
       const modelSummaries: ModelSummary[] = _modelSummaries.map(d => {
         const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
         allDates.push(date)
@@ -92,15 +96,13 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         return { ...d, date }
       })
       const recentHistoricModelValues = _recentHistoricModelValues
-        .filter(d => {
-          return d.temperature != null
-        })
+        .filter(d => d.temperature || d.relative_humidity)
         .map(d => {
           const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
           const historicModel = {
             date,
-            historicModelTemp: Number(d.temperature.toFixed(2)),
-            historicModelRH: Math.round(d.relative_humidity)
+            historicModelTemp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
+            historicModelRH: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
           }
           // combine with existing weather values
           weatherValueByDatetime[d.datetime] = {
@@ -112,15 +114,17 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
           return historicModel
         })
       const biasAdjustedModelValues = _biasAdjustedModelValues
-        .filter(d => {
-          return d.bias_adjusted_temperature != null
-        })
+        .filter(d => d.bias_adjusted_temperature || d.bias_adjusted_relative_humidity)
         .map(d => {
           const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
           const biasAdjustedModel = {
             date,
-            biasAdjustedModelTemp: Number(d.bias_adjusted_temperature.toFixed(2)),
-            biasAdjustedModelRH: Math.round(d.bias_adjusted_relative_humidity)
+            biasAdjustedModelTemp: d.bias_adjusted_temperature
+              ? Number(d.bias_adjusted_temperature.toFixed(2))
+              : NaN,
+            biasAdjustedModelRH: d.bias_adjusted_relative_humidity
+              ? Math.round(d.bias_adjusted_relative_humidity)
+              : NaN
           }
           // combines with existing weather values
           weatherValueByDatetime[d.datetime] = {
@@ -528,7 +532,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         text: 'Bias Adjusted Model RH',
         color: styles.biasModelRHDotColor,
         fill: 'none',
-        shapeX: legendX += 125,
+        shapeX: legendX += 130,
         shapeY: legendY,
         textX: legendX + 7,
         textY: legendY + 3,
@@ -542,34 +546,41 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         width,
         height,
         data: weatherValues,
+        textTestId: 'temp-rh-tooltip-text',
+        bgdTestId: 'temp-rh-graph-background',
         getInnerText: ([key, value]) => {
-          if (key === 'date') {
+          if (key === 'date' && typeof value === 'object') {
             return `${formatDateInPDT(value, 'h:mm a, ddd, MMM Do')} (PDT, UTC-7)`
-          } else if (key === 'temp') {
-            return `Temp: ${value} (°C)`
-          } else if (key === 'modelTemp') {
-            return `Model Temp: ${value} (°C)`
-          } else if (key === 'forecastTemp') {
-            return `Forecast Temp: ${value} (°C)`
-          } else if (key === 'rh') {
-            return `RH: ${value} (%)`
-          } else if (key === 'modelRH') {
-            return `Model RH: ${value} (%)`
-          } else if (key === 'forecastRH') {
-            return `Forecast RH: ${value} (%)`
-          } else if (key === 'historicModelTemp') {
-            return `Last issued Model Temp: ${value} (°C)`
-          } else if (key === 'historicModelRH') {
-            return `Last issued Model RH: ${value} (%)`
-          } else if (key === 'biasAdjustedModelTemp') {
-            return `Bias adjusted Temp: ${value} (°C)`
-          } else if (key === 'biasAdjustedModelRH') {
-            return `Bias adjusted Model RH: ${value} (%)`
+          } else if (typeof value === 'number') {
+            let weatherValue: number | string = value
+            if (isNaN(weatherValue)) {
+              weatherValue = '-'
+            }
+
+            if (key === 'temp') {
+              return `Temp: ${weatherValue} (°C)`
+            } else if (key === 'modelTemp') {
+              return `Model Temp: ${weatherValue} (°C)`
+            } else if (key === 'forecastTemp') {
+              return `Forecast Temp: ${weatherValue} (°C)`
+            } else if (key === 'rh') {
+              return `RH: ${weatherValue} (%)`
+            } else if (key === 'modelRH') {
+              return `Model RH: ${weatherValue} (%)`
+            } else if (key === 'forecastRH') {
+              return `Forecast RH: ${weatherValue} (%)`
+            } else if (key === 'historicModelTemp') {
+              return `Last issued Model Temp: ${weatherValue} (°C)`
+            } else if (key === 'historicModelRH') {
+              return `Last issued Model RH: ${weatherValue} (%)`
+            } else if (key === 'biasAdjustedModelTemp') {
+              return `Bias adjusted Temp: ${weatherValue} (°C)`
+            } else if (key === 'biasAdjustedModelRH') {
+              return `Bias adjusted Model RH: ${weatherValue} (%)`
+            }
           }
           return ''
-        },
-        textTestId: 'temp-rh-tooltip-text',
-        bgdTestId: 'temp-rh-graph-background'
+        }
       })
     }
   }, [

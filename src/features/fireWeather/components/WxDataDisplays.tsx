@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux'
 import { Paper, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-import HourlyReadingsDisplay from 'features/fireWeather/components/HourlyReadingsDisplay'
-import NoonForecastDisplay from 'features/fireWeather/components/NoonForecastDisplay'
+import HourlyReadingsTable from 'features/fireWeather/components/HourlyReadingsTable'
+import NoonForecastTable from 'features/fireWeather/components/NoonForecastTable'
 import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
 import { Station } from 'api/stationAPI'
 import {
@@ -92,16 +92,16 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
                   Data is not available.
                 </Typography>
               )}
-              <HourlyReadingsDisplay
+              <HourlyReadingsTable
                 title="Past 5 days of hourly readings from station: "
                 values={readingValues}
               />
-              <NoonForecastDisplay
+              <NoonForecastTable
                 testId={`noon-models-table-${s.code}`}
                 title="Interpolated global model noon values (20:00 UTC): "
                 values={noonModelValues}
               />
-              <NoonForecastDisplay
+              <NoonForecastTable
                 testId={`noon-forecasts-table-${s.code}`}
                 title="Weather forecast noon values (20:00 UTC): "
                 values={allForecasts}

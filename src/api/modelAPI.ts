@@ -3,14 +3,14 @@ import { Station } from 'api/stationAPI'
 
 export interface ModelValue {
   datetime: string
-  temperature: number
-  bias_adjusted_temperature: number
-  relative_humidity: number
-  bias_adjusted_relative_humidity: number
-  wind_direction: number
-  wind_speed: number
-  total_precipitation: number
-  dew_point: number
+  temperature: number | null
+  bias_adjusted_temperature: number | null
+  relative_humidity: number | null
+  bias_adjusted_relative_humidity: number | null
+  wind_direction: number | null
+  wind_speed: number | null
+  total_precipitation: number | null
+  dew_point: number | null
   accumulated_rain: number
   accumulated_snow: number
   accumulated_freezing_rain: number

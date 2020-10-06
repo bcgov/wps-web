@@ -3,12 +3,12 @@ import axios from 'api/axios'
 
 export interface ReadingValue {
   datetime: string
-  temperature: number
-  relative_humidity: number
-  wind_speed: number
-  wind_direction: number
-  barometric_pressure: number
-  precipitation: number
+  temperature: number | null
+  relative_humidity: number | null
+  wind_speed: number | null
+  wind_direction: number | null
+  barometric_pressure: number | null
+  precipitation: number | null
   ffmc: number | null
   isi: number | null
   fwi: number | null

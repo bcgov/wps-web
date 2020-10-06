@@ -45,7 +45,7 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
   }
 
   return (
-    <div data-testid="percentile-calculator-page">
+    <main data-testid="percentile-calculator-page">
       <PageHeader title="Predictive Services Unit" />
       <PageTitle title="Percentile Calculator" />
       <Container>
@@ -63,6 +63,6 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
 
         <PercentileResults />
       </Container>
-    </div>
+    </main>
   )
 }

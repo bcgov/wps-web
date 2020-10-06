@@ -5,3 +5,5 @@ declare module '*.pdf'
 declare type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>
 }
+
+declare type ValueOf<T> = T[keyof T]
