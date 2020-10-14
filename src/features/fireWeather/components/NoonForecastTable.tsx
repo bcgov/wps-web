@@ -19,7 +19,8 @@ import { NoonForecastValue } from 'api/forecastAPI'
 
 const useStyles = makeStyles({
   display: {
-    paddingBottom: 16
+    paddingTop: 8,
+    paddingBottom: 8
   },
   table: {
     minWidth: 650

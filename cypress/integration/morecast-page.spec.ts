@@ -11,7 +11,7 @@ describe('MoreCast Page', () => {
     cy.wait('@getStations')
 
     cy.selectStationByCode(stationCode)
-    cy.getByTestId('get-wx-data-button').click()
+    cy.getByTestId('get-wx-data-button').click({ force: true })
 
     cy.checkErrorMessage('Error occurred (while fetching global models).')
     cy.checkErrorMessage('Error occurred (while fetching hourly readings).')
@@ -19,6 +19,8 @@ describe('MoreCast Page', () => {
     cy.checkErrorMessage('Error occurred (while fetching noon forecasts).')
     cy.checkErrorMessage('Error occurred (while fetching noon forecast summaries).')
     cy.checkErrorMessage('Error occurred (while fetching bias-adjusted models).')
+
+    cy.contains('Data is not available.')
   })
 
   it('if all the weather data were successfully fetched', () => {
@@ -34,7 +36,7 @@ describe('MoreCast Page', () => {
 
     // Request the weather data
     cy.selectStationByCode(stationCode)
-    cy.getByTestId('get-wx-data-button').click()
+    cy.getByTestId('get-wx-data-button').click({ force: true })
 
     // Check if svg elements are displayed in the graph
     cy.getByTestId('model-summary-temp-area')
@@ -56,7 +58,7 @@ describe('MoreCast Page', () => {
     // Hover over the first dot and check if the tooltip shows up with the correct text
     cy.getByTestId('hourly-reading-temp-dot')
       .first()
-      .trigger('mousemove', { force: true, x: 4, y: 1 })
+      .trigger('mousemove', { force: true, x: 2, y: 1 })
     cy.getByTestId('temp-rh-tooltip-text')
       .should('contain', '3:00 pm, Thu, Oct 1st (PDT, UTC-7)')
       .and('contain', 'Temp: - (°C)')

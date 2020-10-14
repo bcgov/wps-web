@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 
 import { ModelSummary, ModelValue } from 'api/modelAPI'
 import { ReadingValue } from 'api/readingAPI'
 import { NoonForecastValue, ForecastSummary } from 'api/forecastAPI'
 import TempRHGraph from 'features/fireWeather/components/graphs/TempRHGraph'
 import WxDataGraphToggles from 'features/fireWeather/components/graphs/WxDataGraphToggles'
+
+const useStyles = makeStyles({
+  display: {
+    paddingTop: 8
+  }
+})
 
 interface Props {
   readingValues: ReadingValue[] | undefined
@@ -27,6 +34,7 @@ const WxDataGraph = ({
   recentHistoricModelValues = [],
   biasAdjustedModelValues = []
 }: Props) => {
+  const classes = useStyles()
   const noReadings = readingValues.length === 0
   const noForecasts = forecastValues.length === 0
   const noModels = modelValues.length === 0
@@ -60,7 +68,7 @@ const WxDataGraph = ({
   }
 
   return (
-    <>
+    <div className={classes.display}>
       <WxDataGraphToggles
         noReadings={noReadings}
         showReadings={showReadings}
@@ -94,7 +102,7 @@ const WxDataGraph = ({
           showBiasAdjustedPredictions ? biasAdjustedModelValues : []
         }
       />
-    </>
+    </div>
   )
 }
 

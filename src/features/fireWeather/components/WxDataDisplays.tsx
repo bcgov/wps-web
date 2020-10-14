@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import HourlyReadingsTable from 'features/fireWeather/components/HourlyReadingsTable'
 import NoonForecastTable from 'features/fireWeather/components/NoonForecastTable'
 import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
+import { ErrorBoundary } from 'components'
 import { Station } from 'api/stationAPI'
 import {
   selectReadings,
@@ -92,30 +93,38 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
                   Data is not available.
                 </Typography>
               )}
-              <HourlyReadingsTable
-                title="Past 5 days of hourly readings from station: "
-                values={readingValues}
-              />
-              <NoonForecastTable
-                testId={`noon-models-table-${s.code}`}
-                title="Interpolated global model noon values (20:00 UTC): "
-                values={noonModelValues}
-              />
-              <NoonForecastTable
-                testId={`noon-forecasts-table-${s.code}`}
-                title="Weather forecast noon values (20:00 UTC): "
-                values={allForecasts}
-              />
-              <WxDataGraph
-                modelValues={modelValues}
-                readingValues={readingValues}
-                modelSummaries={modelSummaries}
-                forecastValues={forecastValues}
-                pastForecastValues={pastForecastValues}
-                forecastSummaries={forecastSummaries}
-                recentHistoricModelValues={recentHistoricModels}
-                biasAdjustedModelValues={biasAdjustedModelValues}
-              />
+              <ErrorBoundary>
+                <HourlyReadingsTable
+                  title="Past 5 days of hourly readings from station: "
+                  values={readingValues}
+                />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <NoonForecastTable
+                  testId={`noon-models-table-${s.code}`}
+                  title="Interpolated global model noon values (20:00 UTC): "
+                  values={noonModelValues}
+                />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <NoonForecastTable
+                  testId={`noon-forecasts-table-${s.code}`}
+                  title="Weather forecast noon values (20:00 UTC): "
+                  values={allForecasts}
+                />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <WxDataGraph
+                  modelValues={modelValues}
+                  readingValues={readingValues}
+                  modelSummaries={modelSummaries}
+                  forecastValues={forecastValues}
+                  pastForecastValues={pastForecastValues}
+                  forecastSummaries={forecastSummaries}
+                  recentHistoricModelValues={recentHistoricModels}
+                  biasAdjustedModelValues={biasAdjustedModelValues}
+                />
+              </ErrorBoundary>
             </Paper>
           )
         })}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 
-import MorecastPage from 'features/fireWeather/pages/MorecastPage'
+import MoreCastPage from 'features/fireWeather/pages/MoreCastPage'
 import { PercentileCalculatorPageWithDisclaimer } from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
 import { HIDE_DISCLAIMER } from 'utils/constants'
 
@@ -21,7 +21,7 @@ export const Routes: React.FunctionComponent = () => {
 
         <Redirect from="/fire-weather/" to="/morecast/" />
         <Route path="/morecast/">
-          <MorecastPage />
+          <MoreCastPage />
         </Route>
 
         <Route>

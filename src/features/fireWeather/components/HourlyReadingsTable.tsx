@@ -15,7 +15,7 @@ import { formatDateInPDT } from 'utils/date'
 
 const useStyles = makeStyles({
   display: {
-    paddingBottom: 16
+    paddingBottom: 8
   },
   table: {
     minWidth: 650

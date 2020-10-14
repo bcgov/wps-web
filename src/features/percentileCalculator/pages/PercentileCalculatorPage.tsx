@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { Station } from 'api/stationAPI'
-import { PageHeader, PageTitle, Container } from 'components'
+import { PageHeader, PageTitle, Container, ErrorBoundary } from 'components'
 import { fetchWxStations } from 'features/stations/slices/stationsSlice'
 import WxStationDropdown from 'features/stations/components/WxStationDropdown'
 import { PercentileTextfield } from 'features/percentileCalculator/components/PercentileTextfield'
@@ -61,7 +61,9 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
           onResetClick={onResetClick}
         />
 
-        <PercentileResults />
+        <ErrorBoundary>
+          <PercentileResults />
+        </ErrorBoundary>
       </Container>
     </main>
   )
