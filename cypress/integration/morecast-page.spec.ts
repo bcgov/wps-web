@@ -4,7 +4,7 @@ describe('MoreCast Page', () => {
   beforeEach(() => {
     cy.server()
     cy.route('GET', 'api/stations/', 'fixture:weather-stations.json').as('getStations')
-    cy.visitProtectedPage('/morecast')
+    cy.visitProtectedPage('/morecast/')
   })
 
   it('if network errors occurred', () => {
@@ -56,7 +56,7 @@ describe('MoreCast Page', () => {
     cy.getByTestId('bias-adjusted-model-temp-dot').should('not.exist')
 
     // Hover over the first dot and check if the tooltip shows up with the correct text
-    cy.getByTestId('hourly-reading-temp-dot')
+    cy.getByTestId('hourly-reading-rh-dot')
       .first()
       .trigger('mousemove', { force: true, x: 2, y: 1 })
     cy.getByTestId('temp-rh-tooltip-text')

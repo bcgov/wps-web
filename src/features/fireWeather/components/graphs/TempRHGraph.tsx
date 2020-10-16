@@ -57,84 +57,122 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       const daysLookup: { [k: string]: Date } = {} // will help to create the date label on x axis
       const allDates: Date[] = [] // will be used to determine x axis range
       const weatherValueByDatetime: { [k: string]: WeatherValue } = {}
-      const readingValues = _readingValues
-        .filter(d => d.temperature || d.relative_humidity)
-        .map(d => {
-          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-          const reading = {
-            date,
-            temp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
-            rh: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
-          }
-          weatherValueByDatetime[d.datetime] = reading
-          allDates.push(date)
 
-          return reading
-        })
-      const modelValues = _modelValues
-        .filter(d => d.temperature || d.relative_humidity)
-        .map(d => {
-          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-          const model = {
-            date,
-            modelTemp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
-            modelRH: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
-          }
-          // combine with the existing reading value
-          weatherValueByDatetime[d.datetime] = {
-            ...weatherValueByDatetime[d.datetime],
-            ...model
-          }
-          allDates.push(date)
+      const readingTempValues: { date: Date; temp: number }[] = []
+      const readingRHValues: { date: Date; rh: number }[] = []
+      _readingValues.forEach(v => {
+        if (v.temperature == null && v.relative_humidity == null) {
+          return
+        }
 
-          return model
-        })
+        const date = d3Utils.storeDaysLookup(daysLookup, v.datetime)
+        allDates.push(date)
+
+        const reading = { date, temp: NaN, rh: NaN }
+        if (v.temperature != null) {
+          reading.temp = Number(v.temperature.toFixed(2))
+          readingTempValues.push(reading)
+        }
+        if (v.relative_humidity != null) {
+          reading.rh = Math.round(v.relative_humidity)
+          readingRHValues.push(reading)
+        }
+        weatherValueByDatetime[v.datetime] = reading
+      })
+
+      const modelTempValues: { date: Date; modelTemp: number }[] = []
+      const modelRHValues: { date: Date; modelRH: number }[] = []
+      _modelValues.forEach(v => {
+        if (v.temperature == null && v.relative_humidity == null) {
+          return
+        }
+
+        const date = d3Utils.storeDaysLookup(daysLookup, v.datetime)
+        allDates.push(date)
+
+        const model = { date, modelTemp: NaN, modelRH: NaN }
+        if (v.temperature != null) {
+          model.modelTemp = Number(v.temperature.toFixed(2))
+          modelTempValues.push(model)
+        }
+        if (v.relative_humidity != null) {
+          model.modelRH = Math.round(v.relative_humidity)
+          modelRHValues.push(model)
+        }
+        // combine with the existing reading value
+        weatherValueByDatetime[v.datetime] = {
+          ...weatherValueByDatetime[v.datetime],
+          ...model
+        }
+      })
+
       const modelSummaries: ModelSummary[] = _modelSummaries.map(d => {
         const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
         allDates.push(date)
 
         return { ...d, date }
       })
-      const recentHistoricModelValues = _recentHistoricModelValues
-        .filter(d => d.temperature || d.relative_humidity)
-        .map(d => {
-          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-          const historicModel = {
-            date,
-            historicModelTemp: d.temperature ? Number(d.temperature.toFixed(2)) : NaN,
-            historicModelRH: d.relative_humidity ? Math.round(d.relative_humidity) : NaN
-          }
-          // combine with existing weather values
-          weatherValueByDatetime[d.datetime] = {
-            ...weatherValueByDatetime[d.datetime],
-            ...historicModel
-          }
-          allDates.push(date)
 
-          return historicModel
-        })
-      const biasAdjustedModelValues = _biasAdjustedModelValues
-        .filter(d => d.bias_adjusted_temperature || d.bias_adjusted_relative_humidity)
-        .map(d => {
-          const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
-          const biasAdjustedModel = {
-            date,
-            biasAdjustedModelTemp: d.bias_adjusted_temperature
-              ? Number(d.bias_adjusted_temperature.toFixed(2))
-              : NaN,
-            biasAdjustedModelRH: d.bias_adjusted_relative_humidity
-              ? Math.round(d.bias_adjusted_relative_humidity)
-              : NaN
-          }
-          // combines with existing weather values
-          weatherValueByDatetime[d.datetime] = {
-            ...weatherValueByDatetime[d.datetime],
-            ...biasAdjustedModel
-          }
-          allDates.push(date)
+      const recentHisModelTempValues: { date: Date; historicModelTemp: number }[] = []
+      const recentHisModelRHValues: { date: Date; historicModelRH: number }[] = []
+      _recentHistoricModelValues.forEach(v => {
+        if (v.temperature == null && v.relative_humidity == null) {
+          return
+        }
 
-          return biasAdjustedModel
-        })
+        const date = d3Utils.storeDaysLookup(daysLookup, v.datetime)
+        allDates.push(date)
+
+        const historicModel = { date, historicModelTemp: NaN, historicModelRH: NaN }
+        if (v.temperature != null) {
+          historicModel.historicModelTemp = Number(v.temperature.toFixed(2))
+          recentHisModelTempValues.push(historicModel)
+        }
+        if (v.relative_humidity != null) {
+          historicModel.historicModelRH = Math.round(v.relative_humidity)
+          recentHisModelRHValues.push(historicModel)
+        }
+        // combine with existing weather values
+        weatherValueByDatetime[v.datetime] = {
+          ...weatherValueByDatetime[v.datetime],
+          ...historicModel
+        }
+      })
+
+      const biasAdjModelTempValues: { date: Date; biasAdjustedModelTemp: number }[] = []
+      const biasAdjModelRHValues: { date: Date; biasAdjustedModelRH: number }[] = []
+      _biasAdjustedModelValues.forEach(v => {
+        const {
+          bias_adjusted_temperature: biasAdjTemp,
+          bias_adjusted_relative_humidity: biasAdjRH
+        } = v
+        if (biasAdjTemp == null && biasAdjRH == null) {
+          return
+        }
+
+        const date = d3Utils.storeDaysLookup(daysLookup, v.datetime)
+        allDates.push(date)
+
+        const biasAdjustedModel = {
+          date,
+          biasAdjustedModelTemp: NaN,
+          biasAdjustedModelRH: NaN
+        }
+
+        if (biasAdjTemp != null) {
+          biasAdjustedModel.biasAdjustedModelTemp = Number(biasAdjTemp.toFixed(2))
+          biasAdjModelTempValues.push(biasAdjustedModel)
+        }
+        if (biasAdjRH != null) {
+          biasAdjustedModel.biasAdjustedModelRH = Math.round(biasAdjRH)
+          biasAdjModelRHValues.push(biasAdjustedModel)
+        }
+        weatherValueByDatetime[v.datetime] = {
+          ...weatherValueByDatetime[v.datetime],
+          ...biasAdjustedModel
+        }
+      })
+
       const forecastValues = _forecastValues.map(d => {
         const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
         const forecast = {
@@ -151,6 +189,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
 
         return forecast
       })
+
       const pastForecastValues = _pastForecastValues.map(d => {
         const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
         const pastForecast = {
@@ -167,12 +206,14 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
 
         return pastForecast
       })
+
       const forecastSummaries: ForecastSummary[] = _forecastSummaries.map(d => {
         const date = d3Utils.storeDaysLookup(daysLookup, d.datetime)
         allDates.push(date)
 
         return { ...d, date }
       })
+
       // weather values without percentile summaries
       const weatherValues = Object.values(weatherValueByDatetime).sort(
         (a, b) => a.date.valueOf() - b.date.valueOf()
@@ -239,7 +280,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'readingTempDot',
-        data: readingValues,
+        data: readingTempValues,
         cx: d => xScale(d.date),
         cy: d => yTempScale(d.temp),
         testId: 'hourly-reading-temp-dot'
@@ -247,16 +288,17 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'readingRHDot',
-        data: readingValues,
+        data: readingRHValues,
         cx: d => xScale(d.date),
-        cy: d => yRHScale(d.rh)
+        cy: d => yRHScale(d.rh),
+        testId: 'hourly-reading-rh-dot'
       })
 
       /* Render temp and rh models */
       d3Utils.drawDots({
         svg,
         className: 'modelTempDot',
-        data: modelValues,
+        data: modelTempValues,
         cx: d => xScale(d.date),
         cy: d => yTempScale(d.modelTemp),
         testId: 'model-temp-dot'
@@ -264,7 +306,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'modelRHDot',
-        data: modelValues,
+        data: modelRHValues,
         cx: d => xScale(d.date),
         cy: d => yRHScale(d.modelRH)
       })
@@ -273,7 +315,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'historicModelTempDot',
-        data: recentHistoricModelValues,
+        data: recentHisModelTempValues,
         cx: d => xScale(d.date),
         cy: d => yTempScale(d.historicModelTemp),
         testId: 'historic-model-temp-dot'
@@ -281,7 +323,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'historicModelRHDot',
-        data: recentHistoricModelValues,
+        data: recentHisModelRHValues,
         cx: d => xScale(d.date),
         cy: d => yRHScale(d.historicModelRH)
       })
@@ -290,7 +332,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'biasAdjustedModelTempDot',
-        data: biasAdjustedModelValues,
+        data: biasAdjModelTempValues,
         cx: d => xScale(d.date),
         cy: d => yTempScale(d.biasAdjustedModelTemp),
         radius: 0.5,
@@ -299,7 +341,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.drawDots({
         svg,
         className: 'biasAdjustedModelRHDot',
-        data: biasAdjustedModelValues,
+        data: biasAdjModelRHValues,
         cx: d => xScale(d.date),
         cy: d => yRHScale(d.biasAdjustedModelRH),
         radius: 0.5,

@@ -117,7 +117,7 @@ const getPastValues = () => {
           .add(length, 'hours')
           .utc()
           .format(),
-        temperature: temp,
+        temperature: Math.random() <= 0.8 ? temp : null,
         dew_point: Math.random() * 10,
         relative_humidity: rh,
         wind_speed: Math.random() * 10,
