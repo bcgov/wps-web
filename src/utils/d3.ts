@@ -56,6 +56,10 @@ export const drawDots = <T>({
   radius?: number
   testId?: string
 }): void => {
+  if (data.length === 0) {
+    return
+  }
+
   const dots = svg // Hourly reading temp dot
     .selectAll(`.${className}`)
     .data(data)
@@ -118,6 +122,10 @@ export const drawArea = <T>({
   curve?: d3.CurveFactory
   testId?: string
 }): void => {
+  if (datum.length === 0) {
+    return
+  }
+
   const area = svg
     .append('path')
     .datum(datum)

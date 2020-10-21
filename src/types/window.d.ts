@@ -6,4 +6,5 @@ interface Window {
     REACT_APP_KEYCLOAK_CLIENT: string
     REACT_APP_FIDER_LINK: string
   }
+  Cypress: {} | undefined
 }

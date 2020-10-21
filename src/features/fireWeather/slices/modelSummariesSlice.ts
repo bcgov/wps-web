@@ -52,7 +52,7 @@ export const {
 
 export default modelSummariesSlice.reducer
 
-export const fetchModelSummaries = (
+export const fetchGlobalModelSummaries = (
   stationCodes: number[]
 ): AppThunk => async dispatch => {
   try {

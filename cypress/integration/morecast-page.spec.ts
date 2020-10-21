@@ -1,10 +1,10 @@
-const stationCode = 209
+const stationCode = 328
 
 describe('MoreCast Page', () => {
   beforeEach(() => {
     cy.server()
     cy.route('GET', 'api/stations/', 'fixture:weather-stations.json').as('getStations')
-    cy.visitProtectedPage('/morecast/')
+    cy.visit('/morecast/')
   })
 
   it('if network errors occurred', () => {
@@ -13,25 +13,25 @@ describe('MoreCast Page', () => {
     cy.selectStationByCode(stationCode)
     cy.getByTestId('get-wx-data-button').click({ force: true })
 
-    cy.checkErrorMessage('Error occurred (while fetching global models).')
     cy.checkErrorMessage('Error occurred (while fetching hourly readings).')
-    cy.checkErrorMessage('Error occurred (while fetching global model summaries).')
+    cy.checkErrorMessage('Error occurred (while fetching GDPS).')
+    cy.checkErrorMessage('Error occurred (while fetching GDPS summaries).')
     cy.checkErrorMessage('Error occurred (while fetching noon forecasts).')
     cy.checkErrorMessage('Error occurred (while fetching noon forecast summaries).')
-    cy.checkErrorMessage('Error occurred (while fetching bias-adjusted models).')
+    cy.checkErrorMessage('Error occurred (while fetching HRDPS).')
+    cy.checkErrorMessage('Error occurred (while fetching HRDPS summaries).')
 
     cy.contains('Data is not available.')
   })
 
   it('if all the weather data were successfully fetched', () => {
-    cy.route('POST', 'api/hourlies/', 'fixture:weather-data/observed-actuals')
-    cy.route('POST', 'api/models/GDPS/predictions/', 'fixture:weather-data/future-models')
-    cy.route('POST', 'api/models/GDPS/predictions/historic/most_recent/', 'fixture:weather-data/past-most-recent-models') // prettier-ignore
-    cy.route('POST', 'api/models/GDPS/predictions/most_recent', 'fixture:weather-data/past-most-recent-models-with-biased-adjusted') // prettier-ignore
-    cy.route('POST', 'api/models/GDPS/predictions/summaries/', 'fixture:weather-data/past-model-summaries')
-    cy.route('POST', 'api/noon_forecasts/', 'fixture:weather-data/forecasts')
-    cy.route('POST', 'api/noon_forecasts/summaries/', 'fixture:weather-data/past-forecast-variations')
-
+    cy.route('POST', 'api/hourlies/', 'fixture:weather-data/actual-readings')
+    cy.route('POST', 'api/noon_forecasts/', 'fixture:weather-data/noon-forecasts')
+    cy.route('POST', 'api/noon_forecasts/summaries/', 'fixture:weather-data/noon-forecast-summaries')
+    cy.route('POST', 'api/models/GDPS/predictions/most_recent', 'fixture:weather-data/models-with-bias-adjusted') // prettier-ignore
+    cy.route('POST', 'api/models/GDPS/predictions/summaries/', 'fixture:weather-data/model-summaries')
+    cy.route('POST', 'api/models/HRDPS/predictions/most_recent', 'fixture:weather-data/hr-models-with-bias-adjusted') // prettier-ignore
+    cy.route('POST', 'api/models/HRDPS/predictions/summaries', 'fixture:weather-data/high-res-model-summaries') // prettier-ignore
     cy.wait('@getStations')
 
     // Request the weather data
@@ -39,29 +39,43 @@ describe('MoreCast Page', () => {
     cy.getByTestId('get-wx-data-button').click({ force: true })
 
     // Check if svg elements are displayed in the graph
-    cy.getByTestId('model-summary-temp-area')
     cy.getByTestId('hourly-reading-temp-dot')
-    cy.getByTestId('historic-model-temp-dot')
-    cy.getByTestId('forecast-temp-dot')
-    cy.getByTestId('forecast-summary-temp-line')
+    cy.getByTestId('hourly-reading-rh-dot')
 
     // Test the toggle buttons
     cy.getByTestId('wx-graph-model-toggle').click()
+    cy.getByTestId('model-summary-temp-area')
     cy.getByTestId('model-temp-dot')
     cy.getByTestId('wx-graph-model-toggle').click()
+    cy.getByTestId('model-summary-temp-area').should('not.exist')
     cy.getByTestId('model-temp-dot').should('not.exist')
+
+    cy.getByTestId('wx-graph-forecast-toggle').click()
+    cy.getByTestId('forecast-temp-dot')
+    cy.getByTestId('forecast-summary-temp-line')
+    cy.getByTestId('wx-graph-forecast-toggle').click()
+    cy.getByTestId('forecast-temp-dot').should('not.exist')
+    cy.getByTestId('forecast-summary-temp-line').should('not.exist')
+
     cy.getByTestId('wx-graph-bias-toggle').click()
     cy.getByTestId('bias-adjusted-model-temp-dot')
     cy.getByTestId('wx-graph-bias-toggle').click()
     cy.getByTestId('bias-adjusted-model-temp-dot').should('not.exist')
 
+    cy.getByTestId('wx-graph-high-res-model-toggle').click()
+    cy.getByTestId('high-res-model-summary-temp-area')
+    cy.getByTestId('high-res-model-temp-dot')
+    cy.getByTestId('wx-graph-high-res-model-toggle').click()
+    cy.getByTestId('high-res-model-summary-temp-area').should('not.exist')
+    cy.getByTestId('high-res-model-temp-dot').should('not.exist')
+
     // Hover over the first dot and check if the tooltip shows up with the correct text
     cy.getByTestId('hourly-reading-rh-dot')
       .first()
       .trigger('mousemove', { force: true, x: 2, y: 1 })
+    cy.getByTestId('temp-rh-tooltip-text').contains('tspan', /(PDT, UTC-7)/)
     cy.getByTestId('temp-rh-tooltip-text')
-      .should('contain', '3:00 pm, Thu, Oct 1st (PDT, UTC-7)')
-      .and('contain', 'Temp: - (°C)')
-      .and('contain', 'RH: 38 (%)')
+      .should('contain', 'Observed Temp: - (°C)')
+      .and('contain', 'Observed RH: 61 (%)')
   })
 })

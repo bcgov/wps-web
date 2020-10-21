@@ -84,7 +84,7 @@ export interface ModelSummariesResponse {
  */
 export async function getModelSummaries(
   stationCodes: number[],
-  model: 'GDPS'
+  model: 'GDPS' | 'HRDPS'
 ): Promise<ModelSummariesForStation[]> {
   const url = `/models/${model}/predictions/summaries/`
   const { data } = await axios.post<ModelSummariesResponse>(url, {
@@ -146,9 +146,9 @@ export interface BiasAdjustedModelResponse {
  * @param stationCodes A list of requested station codes
  * @param model Type of Env canada weather model
  */
-export async function getBiasAdjustedModelPredictions(
+export async function getModelsWithBiasAdjusted(
   stationCodes: number[],
-  model: 'GDPS'
+  model: 'GDPS' | 'HRDPS'
 ): Promise<ModelsForStation[]> {
   const url = `/models/${model}/predictions/most_recent/`
   const { data } = await axios.post<BiasAdjustedModelResponse>(url, {

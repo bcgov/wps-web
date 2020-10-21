@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import MoreCastPage from 'features/fireWeather/pages/MoreCastPage'
 import { PercentileCalculatorPageWithDisclaimer } from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
 import { HIDE_DISCLAIMER } from 'utils/constants'
+import AuthWrapper from 'features/auth/AuthWrapper'
 
 const shouldShowDisclaimer = HIDE_DISCLAIMER === 'false' || HIDE_DISCLAIMER === undefined
+const shouldAuthenticate =
+  process.env.NODE_ENV === 'production' || window.Cypress === undefined
 
 const NoMatch = () => <div>Page not found.</div>
 
-export const Routes: React.FunctionComponent = () => {
+const Routes: React.FunctionComponent = () => {
   return (
     <Router>
       <Switch>
@@ -21,7 +24,9 @@ export const Routes: React.FunctionComponent = () => {
 
         <Redirect from="/fire-weather/" to="/morecast/" />
         <Route path="/morecast/">
-          <MoreCastPage />
+          <AuthWrapper shouldAuthenticate={shouldAuthenticate}>
+            <MoreCastPage />
+          </AuthWrapper>
         </Route>
 
         <Route>
@@ -31,3 +36,5 @@ export const Routes: React.FunctionComponent = () => {
     </Router>
   )
 }
+
+export default React.memo(Routes)

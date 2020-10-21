@@ -15,8 +15,8 @@ import {
   selectForecasts,
   selectWxDataLoading,
   selectForecastSummaries,
-  selectMostRecentHistoricModels,
-  selectBiasAdjustedModels
+  selectHighResModels,
+  selectHighResModelSummaries
 } from 'app/rootReducer'
 
 const useStyles = makeStyles({
@@ -46,18 +46,25 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
   const classes = useStyles()
 
   const { readingsByStation } = useSelector(selectReadings)
-  const { noonModelsByStation, modelsByStation } = useSelector(selectModels)
+  const {
+    allModelsByStation,
+    pastModelsByStation,
+    modelsByStation,
+    noonModelsByStation
+  } = useSelector(selectModels)
   const { modelSummariesByStation } = useSelector(selectModelSummaries)
   const {
-    noonForecastsByStation,
+    allNoonForecastsByStation,
     pastNoonForecastsByStation,
-    allNoonForecastsByStation
+    noonForecastsByStation
   } = useSelector(selectForecasts)
   const { forecastSummariesByStation } = useSelector(selectForecastSummaries)
-  const { mostRecentHistoricModelsByStation } = useSelector(
-    selectMostRecentHistoricModels
-  )
-  const { biasAdjustedModelsByStation } = useSelector(selectBiasAdjustedModels)
+  const {
+    highResModelsByStation,
+    pastHighResModelsByStation,
+    allHighResModelsByStation
+  } = useSelector(selectHighResModels)
+  const { highResModelSummariesByStation } = useSelector(selectHighResModelSummaries)
   const wxDataLoading = useSelector(selectWxDataLoading)
 
   return (
@@ -65,23 +72,21 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
       {!wxDataLoading &&
         requestedStations.map(s => {
           const readingValues = readingsByStation[s.code]
+          const allModelValues = allModelsByStation[s.code]
+          const pastModelValues = pastModelsByStation[s.code]
           const modelValues = modelsByStation[s.code]
-          const noonModelValues = noonModelsByStation[s.code]
           const modelSummaries = modelSummariesByStation[s.code]
-          const recentHistoricModels = mostRecentHistoricModelsByStation[s.code]
+          const noonModelValues = noonModelsByStation[s.code]
           const allForecasts = allNoonForecastsByStation[s.code]
-          const forecastValues = noonForecastsByStation[s.code]
           const pastForecastValues = pastNoonForecastsByStation[s.code]
+          const forecastValues = noonForecastsByStation[s.code]
           const forecastSummaries = forecastSummariesByStation[s.code]
-          const biasAdjustedModelValues = biasAdjustedModelsByStation[s.code]
+          const highResModelValues = highResModelsByStation[s.code]
+          const pastHighResModelValues = pastHighResModelsByStation[s.code]
+          const allHighResModelValues = allHighResModelsByStation[s.code]
+          const highResModelSummaries = highResModelSummariesByStation[s.code]
           const nothingToDisplay =
-            !readingValues &&
-            !modelValues &&
-            !modelSummaries &&
-            !allForecasts &&
-            !forecastSummaries &&
-            !recentHistoricModels &&
-            !biasAdjustedModelValues
+            !readingValues && !allForecasts && !allModelValues && !allHighResModelValues
 
           return (
             <Paper key={s.code} className={classes.paper} elevation={3}>
@@ -115,14 +120,19 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
               </ErrorBoundary>
               <ErrorBoundary>
                 <WxDataGraph
-                  modelValues={modelValues}
                   readingValues={readingValues}
+                  allModelValues={allModelValues}
+                  pastModelValues={pastModelValues}
+                  modelValues={modelValues}
                   modelSummaries={modelSummaries}
-                  forecastValues={forecastValues}
+                  allForecasts={allForecasts}
                   pastForecastValues={pastForecastValues}
+                  forecastValues={forecastValues}
                   forecastSummaries={forecastSummaries}
-                  recentHistoricModelValues={recentHistoricModels}
-                  biasAdjustedModelValues={biasAdjustedModelValues}
+                  allHighResModelValues={allHighResModelValues}
+                  pastHighResModelValues={pastHighResModelValues}
+                  highResModelValues={highResModelValues}
+                  highResModelSummaries={highResModelSummaries}
                 />
               </ErrorBoundary>
             </Paper>

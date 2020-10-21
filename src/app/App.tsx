@@ -2,8 +2,8 @@ import React from 'react'
 import { CssBaseline } from '@material-ui/core'
 import { ThemeProvider } from '@material-ui/core/styles'
 
-import { Routes } from 'app/Routes'
 import { theme } from 'app/theme'
+import Routes from 'app/Routes'
 
 const App: React.FunctionComponent = () => {
   return (
@@ -16,4 +16,4 @@ const App: React.FunctionComponent = () => {
   )
 }
 
-export default App
+export default React.memo(App)

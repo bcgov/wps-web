@@ -10,8 +10,8 @@ import {
   selectForecasts,
   selectWxDataLoading,
   selectForecastSummaries,
-  selectMostRecentHistoricModels,
-  selectBiasAdjustedModels
+  selectHighResModels,
+  selectHighResModelSummaries
 } from 'app/rootReducer'
 
 interface Props {
@@ -25,10 +25,10 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
   const { error: errFetchingModelSummaries } = useSelector(selectModelSummaries)
   const { error: errFetchingForecasts } = useSelector(selectForecasts)
   const { error: errFetchingForecastSummaries } = useSelector(selectForecastSummaries)
-  const { error: errFetchingMostRecentHistoricModels } = useSelector(
-    selectMostRecentHistoricModels
+  const { error: errFetchingHighResModels } = useSelector(selectHighResModels)
+  const { error: errFetchingHighResModelSummaries } = useSelector(
+    selectHighResModelSummaries
   )
-  const { error: errFetcingBiasAdjustedModels } = useSelector(selectBiasAdjustedModels)
   const wxDataLoading = useSelector(selectWxDataLoading)
   const shouldBtnDisabled = selectedStations.length === 0
 
@@ -45,14 +45,6 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         Get Weather Data
       </Button>
 
-      {errFetchingModels && (
-        <ErrorMessage
-          error={errFetchingModels}
-          context="while fetching global models"
-          marginTop={5}
-        />
-      )}
-
       {errFetchingReadings && (
         <ErrorMessage
           error={errFetchingReadings}
@@ -61,10 +53,18 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         />
       )}
 
+      {errFetchingModels && (
+        <ErrorMessage
+          error={errFetchingModels}
+          context="while fetching GDPS"
+          marginTop={5}
+        />
+      )}
+
       {errFetchingModelSummaries && (
         <ErrorMessage
           error={errFetchingModelSummaries}
-          context="while fetching global model summaries"
+          context="while fetching GDPS summaries"
           marginTop={5}
         />
       )}
@@ -85,18 +85,18 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         />
       )}
 
-      {errFetchingMostRecentHistoricModels && (
+      {errFetchingHighResModels && (
         <ErrorMessage
-          error={errFetchingMostRecentHistoricModels}
-          context="while fetching most recent historic models"
+          error={errFetchingHighResModels}
+          context="while fetching HRDPS"
           marginTop={5}
         />
       )}
 
-      {errFetcingBiasAdjustedModels && (
+      {errFetchingHighResModelSummaries && (
         <ErrorMessage
-          error={errFetcingBiasAdjustedModels}
-          context="while fetching bias-adjusted models"
+          error={errFetchingHighResModelSummaries}
+          context="while fetching HRDPS summaries"
           marginTop={5}
         />
       )}

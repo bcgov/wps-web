@@ -4,178 +4,165 @@ import { makeStyles } from '@material-ui/core/styles'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
+
+import {
+  ToggleValues,
+  SetToggleValues,
+  TimeSelectOption
+} from 'features/fireWeather/components/graphs/useGraphToggles'
 
 const useStyles = makeStyles({
-  formControlLabel: {
+  switchControl: {
     marginLeft: -5
   },
-  label: {
+  switchLabel: {
     marginLeft: 2
+  },
+  selectControl: {
+    minWidth: 85,
+    marginRight: 15
   }
 })
 
 interface Props {
+  toggleValues: ToggleValues
+  setToggleValues: SetToggleValues
   noReadings: boolean
-  showReadings: boolean
-  setShowReadings: (checked: boolean) => void
   noModels: boolean
-  showModels: boolean
-  setShowModels: (checked: boolean) => void
-  noHistoricModels: boolean
-  showHistoricModels: boolean
-  setShowHistoricModels: (checked: boolean) => void
   noForecasts: boolean
-  showForecasts: boolean
-  setShowForecasts: (checked: boolean) => void
-  noPastForecasts: boolean
-  showPastForecasts: boolean
-  setShowPastForecasts: (checked: boolean) => void
-  noBiasAdjustedPredictions: boolean
-  showBiasAdjustedPredictions: boolean
-  setShowBiasAdjustedPredictions: (checked: boolean) => void
+  noBiasAdjustedModels: boolean
+  noHighResModels: boolean
 }
 
 const WxDataToggles = ({
+  toggleValues,
+  setToggleValues,
   noReadings,
-  showReadings,
-  setShowReadings,
   noModels,
-  showModels,
-  setShowModels,
-  noHistoricModels,
-  showHistoricModels,
-  setShowHistoricModels,
   noForecasts,
-  showForecasts,
-  setShowForecasts,
-  noPastForecasts,
-  showPastForecasts,
-  setShowPastForecasts,
-  noBiasAdjustedPredictions,
-  showBiasAdjustedPredictions,
-  setShowBiasAdjustedPredictions
+  noBiasAdjustedModels,
+  noHighResModels
 }: Props) => {
   const classes = useStyles()
+  const handleSwitch = (e: React.ChangeEvent<{ name: string }>, checked: boolean) => {
+    setToggleValues(e.target.name as keyof ToggleValues, checked)
+  }
+  const handleSelect = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const { name, value } = e.target
+    setToggleValues(name as 'timeOfInterest', value as TimeSelectOption)
+  }
 
   return (
     <FormGroup row>
+      <FormControl className={classes.selectControl}>
+        <Select
+          name="timeOfInterest"
+          value={toggleValues.timeOfInterest}
+          onChange={handleSelect}
+          native
+          inputProps={{ 'aria-label': 'Without label' }}
+        >
+          <option value="past">Past</option>
+          <option value="future">Future</option>
+          <option value="all">All</option>
+        </Select>
+      </FormControl>
+
       <FormControlLabel
-        className={classes.formControlLabel}
+        className={classes.switchControl}
         control={
           <Switch
             name="showReadings"
             data-testid="wx-graph-reading-toggle"
-            checked={showReadings}
+            checked={toggleValues.showReadings}
             disabled={noReadings}
             size="small"
-            onChange={(_, checked) => {
-              setShowReadings(checked)
-            }}
+            onChange={handleSwitch}
           />
         }
         label={
-          <Typography className={classes.label} variant="body2">
-            Actual Readings
+          <Typography className={classes.switchLabel} variant="body2">
+            Observations
           </Typography>
         }
       />
+
       <FormControlLabel
-        className={classes.formControlLabel}
-        control={
-          <Switch
-            name="showHistoricModels"
-            data-testid="wx-graph-model-summary-toggle"
-            checked={showHistoricModels}
-            disabled={noHistoricModels}
-            size="small"
-            onChange={(_, checked) => {
-              setShowHistoricModels(checked)
-            }}
-          />
-        }
-        label={
-          <Typography className={classes.label} variant="body2">
-            Historic Models
-          </Typography>
-        }
-      />
-      <FormControlLabel
-        className={classes.formControlLabel}
-        control={
-          <Switch
-            name="showPastForecasts"
-            data-testid="wx-graph-forecast-summary-toggle"
-            checked={showPastForecasts}
-            disabled={noPastForecasts}
-            size="small"
-            onChange={(_, checked) => {
-              setShowPastForecasts(checked)
-            }}
-          />
-        }
-        label={
-          <Typography className={classes.label} variant="body2">
-            Historic Noon Forecasts
-          </Typography>
-        }
-      />
-      <FormControlLabel
-        className={classes.formControlLabel}
-        control={
-          <Switch
-            name="showModels"
-            data-testid="wx-graph-model-toggle"
-            checked={showModels}
-            disabled={noModels}
-            size="small"
-            onChange={(_, checked) => {
-              setShowModels(checked)
-            }}
-          />
-        }
-        label={
-          <Typography className={classes.label} variant="body2">
-            Models
-          </Typography>
-        }
-      />
-      <FormControlLabel
-        className={classes.formControlLabel}
+        className={classes.switchControl}
         control={
           <Switch
             name="showForecasts"
             data-testid="wx-graph-forecast-toggle"
-            checked={showForecasts}
+            checked={toggleValues.showForecasts}
             disabled={noForecasts}
             size="small"
-            onChange={(_, checked) => {
-              setShowForecasts(checked)
-            }}
+            onChange={handleSwitch}
           />
         }
         label={
-          <Typography className={classes.label} variant="body2">
+          <Typography className={classes.switchLabel} variant="body2">
             Noon Forecasts
           </Typography>
         }
       />
+
       <FormControlLabel
-        className={classes.formControlLabel}
+        className={classes.switchControl}
         control={
           <Switch
-            name="showBiasAdjustedPredictions"
-            data-testid="wx-graph-bias-toggle"
-            checked={showBiasAdjustedPredictions}
-            disabled={noBiasAdjustedPredictions}
+            name="showHighResModels"
+            data-testid="wx-graph-high-res-model-toggle"
+            checked={toggleValues.showHighResModels}
+            disabled={noHighResModels}
             size="small"
-            onChange={(_, checked) => {
-              setShowBiasAdjustedPredictions(checked)
+            onChange={(e, checked) => {
+              setToggleValues(e.target.name as 'showHighResModels', checked)
             }}
           />
         }
         label={
-          <Typography className={classes.label} variant="body2">
-            Bias Adjusted Models
+          <Typography className={classes.switchLabel} variant="body2">
+            HRDPS
+          </Typography>
+        }
+      />
+
+      <FormControlLabel
+        className={classes.switchControl}
+        control={
+          <Switch
+            name="showModels"
+            data-testid="wx-graph-model-toggle"
+            checked={toggleValues.showModels}
+            disabled={noModels}
+            size="small"
+            onChange={handleSwitch}
+          />
+        }
+        label={
+          <Typography className={classes.switchLabel} variant="body2">
+            GDPS
+          </Typography>
+        }
+      />
+
+      <FormControlLabel
+        className={classes.switchControl}
+        control={
+          <Switch
+            name="showBiasAdjustedModels"
+            data-testid="wx-graph-bias-toggle"
+            checked={toggleValues.showBiasAdjustedModels}
+            disabled={noBiasAdjustedModels}
+            size="small"
+            onChange={handleSwitch}
+          />
+        }
+        label={
+          <Typography className={classes.switchLabel} variant="body2">
+            Bias Adjusted GDPS
           </Typography>
         }
       />
