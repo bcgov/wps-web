@@ -1,11 +1,12 @@
-// @ts-nocheck
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 
 import NoonForecastTable from 'features/fireWeather/components/NoonForecastTable'
 import { forecastValues, modelValues, readingValues } from 'utils/storybook'
 import HourlyReadingsTable from 'features/fireWeather/components/HourlyReadingsTable'
-import { ErrorBoundary } from 'components'
+import { isNoonInPST } from 'utils/date'
+import { ModelValue } from 'api/modelAPI'
+import { NoonForecastValue } from 'api/forecastAPI'
 
 storiesOf('Weather data tables', module)
   .add('NoonForecastTable', () => {
@@ -14,18 +15,19 @@ storiesOf('Weather data tables', module)
 
     return (
       <>
-        <NoonForecastTable values={modelValues} title={modelTableTitle} testId="" />
-        <NoonForecastTable values={forecastValues} title={forecastTableTitle} testId="" />
+        <NoonForecastTable
+          values={modelValues.filter(v => isNoonInPST(v.datetime)) as ModelValue[]}
+          title={modelTableTitle}
+          testId=""
+        />
+        <NoonForecastTable
+          values={forecastValues as NoonForecastValue[]}
+          title={forecastTableTitle}
+          testId=""
+        />
       </>
     )
   })
   .add('HourlyReadingsTable', () => {
-    return (
-      <>
-        <HourlyReadingsTable title="This is title!" values={readingValues} />
-        <ErrorBoundary>
-          <HourlyReadingsTable title="this is title" values={{}} />
-        </ErrorBoundary>
-      </>
-    )
+    return <HourlyReadingsTable title="This is title!" values={readingValues} />
   })

@@ -1,32 +1,40 @@
-// @ts-nocheck
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 
 import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
 import {
   readingValues,
+  pastModelValues,
   modelValues,
-  adjustedModelValues,
   modelSummaries,
+  pastForecastValues,
   forecastValues,
   forecastSummaries,
-  recentHistoricModelValues,
-  pastForecastValues
+  pastHighResModelValues,
+  highResModelValues,
+  highResModelSummaries
 } from 'utils/storybook'
+import { ModelValue } from 'api/modelAPI'
+import { NoonForecastValue } from 'api/forecastAPI'
 
 storiesOf('WxDataGraph', module).add('default', () => {
   return (
-    <>
-      <WxDataGraph
-        modelValues={modelValues}
-        readingValues={readingValues}
-        modelSummaries={modelSummaries}
-        forecastValues={forecastValues}
-        pastForecastValues={pastForecastValues}
-        forecastSummaries={forecastSummaries}
-        recentHistoricModelValues={recentHistoricModelValues}
-        biasAdjustedModelValues={adjustedModelValues}
-      />
-    </>
+    <WxDataGraph
+      readingValues={readingValues}
+      allModelValues={pastModelValues.concat(modelValues) as ModelValue[]}
+      pastModelValues={pastModelValues as ModelValue[]}
+      modelValues={modelValues as ModelValue[]}
+      modelSummaries={modelSummaries}
+      allForecasts={pastForecastValues.concat(forecastValues) as NoonForecastValue[]}
+      pastForecastValues={pastForecastValues as NoonForecastValue[]}
+      forecastValues={forecastValues as NoonForecastValue[]}
+      forecastSummaries={forecastSummaries}
+      allHighResModelValues={
+        pastHighResModelValues.concat(highResModelValues) as ModelValue[]
+      }
+      pastHighResModelValues={pastHighResModelValues as ModelValue[]}
+      highResModelValues={highResModelValues as ModelValue[]}
+      highResModelSummaries={highResModelSummaries}
+    />
   )
 })
