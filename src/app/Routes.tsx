@@ -1,10 +1,11 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 
-import MoreCastPage from 'features/fireWeather/pages/MoreCastPage'
-import { PercentileCalculatorPageWithDisclaimer } from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
 import { HIDE_DISCLAIMER } from 'utils/constants'
 import AuthWrapper from 'features/auth/AuthWrapper'
+import PercentileCalculatorPageWithDisclaimer from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
+import MoreCastPage from 'features/fireWeather/pages/MoreCastPage'
+import HfiCalculatorPage from 'features/hfiCalculator/pages/HfiCalculatorPage'
 
 const shouldShowDisclaimer = HIDE_DISCLAIMER === 'false' || HIDE_DISCLAIMER === undefined
 const shouldAuthenticate =
@@ -26,6 +27,12 @@ const Routes: React.FunctionComponent = () => {
         <Route path="/morecast/">
           <AuthWrapper shouldAuthenticate={shouldAuthenticate}>
             <MoreCastPage />
+          </AuthWrapper>
+        </Route>
+
+        <Route path="/hfi-calculator/">
+          <AuthWrapper shouldAuthenticate={shouldAuthenticate}>
+            <HfiCalculatorPage />
           </AuthWrapper>
         </Route>
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { cleanup, fireEvent } from '@testing-library/react'
 
 import { renderWithRedux } from 'utils/testUtils'
-import { PercentileCalculatorPageWithDisclaimer } from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
+import PercentileCalculatorPageWithDisclaimer from 'features/percentileCalculator/pages/PercentileCalculatorPageWithDisclaimer'
 
 afterEach(cleanup)
 

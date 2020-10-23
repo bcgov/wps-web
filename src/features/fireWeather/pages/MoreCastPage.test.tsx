@@ -193,7 +193,7 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
     getByTestId('hourly-readings-display'),
     getByTestId('temp-rh-graph'),
     getByTestId('wx-graph-reading-toggle'),
-    getByTestId('wx-graph-model-toggle'),
+    getByTestId('wx-graph-global-model-toggle'),
     getByTestId('wx-graph-bias-toggle')
   ])
 

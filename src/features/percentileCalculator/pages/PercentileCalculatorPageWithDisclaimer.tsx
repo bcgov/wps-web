@@ -39,7 +39,7 @@ interface Props {
   showDisclaimer: boolean
 }
 
-export const PercentileCalculatorPageWithDisclaimer: React.FunctionComponent<Props> = (
+const PercentileCalculatorPageWithDisclaimer: React.FunctionComponent<Props> = (
   props: Props
 ) => {
   const classes = useStyles()
@@ -109,3 +109,5 @@ export const PercentileCalculatorPageWithDisclaimer: React.FunctionComponent<Pro
     </Modal>
   )
 }
+
+export default React.memo(PercentileCalculatorPageWithDisclaimer)

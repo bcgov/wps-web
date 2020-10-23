@@ -1,6 +1,6 @@
-const stationCode = 328
-
 describe('MoreCast Page', () => {
+  const stationCode = 328
+
   beforeEach(() => {
     cy.server()
     cy.route('GET', 'api/stations/', 'fixture:weather-stations.json').as('getStations')
@@ -41,12 +41,15 @@ describe('MoreCast Page', () => {
     // Check if svg elements are displayed in the graph
     cy.getByTestId('hourly-reading-temp-dot')
     cy.getByTestId('hourly-reading-rh-dot')
+    cy.getByTestId('wx-graph-reading-toggle').click()
+    cy.getByTestId('hourly-reading-temp-dot').should('not.exist')
+    cy.getByTestId('hourly-reading-rh-dot').should('not.exist')
 
     // Test the toggle buttons
-    cy.getByTestId('wx-graph-model-toggle').click()
+    cy.getByTestId('wx-graph-global-model-toggle').click()
     cy.getByTestId('model-summary-temp-area')
     cy.getByTestId('model-temp-dot')
-    cy.getByTestId('wx-graph-model-toggle').click()
+    cy.getByTestId('wx-graph-global-model-toggle').click()
     cy.getByTestId('model-summary-temp-area').should('not.exist')
     cy.getByTestId('model-temp-dot').should('not.exist')
 
@@ -70,6 +73,7 @@ describe('MoreCast Page', () => {
     cy.getByTestId('high-res-model-temp-dot').should('not.exist')
 
     // Hover over the first dot and check if the tooltip shows up with the correct text
+    cy.getByTestId('wx-graph-reading-toggle').click()
     cy.getByTestId('hourly-reading-rh-dot')
       .first()
       .trigger('mousemove', { force: true, x: 2, y: 1 })

@@ -134,7 +134,7 @@ const WxDataToggles = ({
         control={
           <Switch
             name="showModels"
-            data-testid="wx-graph-model-toggle"
+            data-testid="wx-graph-global-model-toggle"
             checked={toggleValues.showModels}
             disabled={noModels}
             size="small"

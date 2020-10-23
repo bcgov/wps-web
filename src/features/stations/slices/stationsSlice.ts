@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
 import { Station, getStations } from 'api/stationAPI'
 import { AppThunk } from 'app/store'
 import { logError } from 'utils/error'
@@ -34,11 +35,7 @@ const stationsSlice = createSlice({
   }
 })
 
-export const {
-  getStationsStart,
-  getStationsFailed,
-  getStationsSuccess
-} = stationsSlice.actions
+const { getStationsStart, getStationsFailed, getStationsSuccess } = stationsSlice.actions
 
 export default stationsSlice.reducer
 

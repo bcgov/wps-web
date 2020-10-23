@@ -35,12 +35,25 @@ Cypress.Commands.add('checkErrorMessage', (msg: string) => {
   cy.getByTestId('error-message').should('contain', msg)
 })
 
-Cypress.Commands.add('visitProtectedPage', (visitUrl: string) => {
-  let url = visitUrl
-  if (url[0] === '/') {
-    // kcFakeLogin doesn't want '/' at the very front of the url
-    url = url.substr(1)
-  }
-  const userJsonFilename = 'fake-user' // fixtures/users/fake-user.json
-  cy.kcFakeLogin(userJsonFilename, url)
-})
+/* Increase this if needed to slow down the test speed */
+const COMMAND_DELAY = 0
+
+for (const command of [
+  'visit',
+  'click',
+  'trigger',
+  'type',
+  'clear',
+  'reload',
+  'contains'
+]) {
+  Cypress.Commands.overwrite(command, (originalFn, ...args) => {
+    const origVal = originalFn(...args)
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(origVal)
+      }, COMMAND_DELAY)
+    })
+  })
+}

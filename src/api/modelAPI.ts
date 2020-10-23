@@ -1,56 +1,6 @@
 import axios from 'api/axios'
 import { Station } from 'api/stationAPI'
 
-export interface ModelValue {
-  datetime: string
-  temperature: number | null
-  bias_adjusted_temperature: number | null
-  relative_humidity: number | null
-  bias_adjusted_relative_humidity: number | null
-  wind_direction: number | null
-  wind_speed: number | null
-  total_precipitation: number | null
-  dew_point: number | null
-  accumulated_rain: number
-  accumulated_snow: number
-  accumulated_freezing_rain: number
-  accumulated_ice_pellets: number
-  cloud_cover: number
-  sea_level_pressure: number
-  wind_speed_40m: number
-  wind_direction_40m: number
-  wind_direction_80m: number
-  wind_speed_120m: number
-  wind_direction_120m: number
-  wind_speed_925mb: number
-  wind_direction_925mb: number
-  wind_speed_850mb: number
-  wind_direction_850m: number
-}
-
-export interface Model {
-  station: Station
-  values: ModelValue[]
-}
-
-export interface ModelsResponse {
-  predictions: Model[]
-}
-
-/**
- * Get future global model predictions
- * @param stationCodes A list of requested station codes
- */
-export async function getModels(stationCodes: number[]): Promise<Model[]> {
-  const url = '/models/GDPS/predictions/'
-
-  const { data } = await axios.post<ModelsResponse>(url, {
-    stations: stationCodes
-  })
-
-  return data.predictions
-}
-
 export interface ModelSummary {
   datetime: string
   tmp_tgl_2_5th: number
@@ -94,37 +44,46 @@ export async function getModelSummaries(
   return data.summaries
 }
 
-export interface HistoricModelsForStation {
-  station: Station
-  model: ModelInfo | null
-  values: ModelValue[]
-}
-
-export interface HistoricModelsResponse {
-  predictions: HistoricModelsForStation[]
-}
-
-/**
- * Get the most recent past model prediction (right before observed)
- * @param stationCodes A list of requested station codes
- * @param model Type of Env canada weather model
- */
-export async function getMostRecentHistoricModelPredictions(
-  stationCodes: number[],
-  model: 'GDPS'
-): Promise<HistoricModelsForStation[]> {
-  const url = `/models/${model}/predictions/historic/most_recent/`
-  const { data } = await axios.post<HistoricModelsResponse>(url, {
-    stations: stationCodes
-  })
-
-  return data.predictions
-}
-
 interface ModelRunInfo {
   datetime: string
   name: string
   abbreviation: string
+}
+
+export interface ModelValue {
+  datetime: string
+  temperature: number | null
+  bias_adjusted_temperature: number | null
+  relative_humidity: number | null
+  bias_adjusted_relative_humidity: number | null
+  wind_direction: number | null
+  wind_speed: number | null
+  total_precipitation: number | null
+  dew_point: number | null
+  accumulated_rain: number
+  accumulated_snow: number
+  accumulated_freezing_rain: number
+  accumulated_ice_pellets: number
+  cloud_cover: number
+  sea_level_pressure: number
+  wind_speed_40m: number
+  wind_direction_40m: number
+  wind_direction_80m: number
+  wind_speed_120m: number
+  wind_direction_120m: number
+  wind_speed_925mb: number
+  wind_direction_925mb: number
+  wind_speed_850mb: number
+  wind_direction_850m: number
+}
+
+export interface Model {
+  station: Station
+  values: ModelValue[]
+}
+
+export interface ModelsResponse {
+  predictions: Model[]
 }
 
 export interface ModelRun {

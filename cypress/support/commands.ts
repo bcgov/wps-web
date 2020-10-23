@@ -26,9 +26,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-import 'cypress-keycloak-commands'
-
 // add new command to the existing Cypress interface
+
+export {} // indicate that the file is a module
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -49,35 +50,6 @@ declare global {
        * @example cy.checkErrorMessage('Error occurred (while getting the calculation result).')
        */
       checkErrorMessage(msg: string): void
-
-      /**
-       * Custom command to visit a protected page by bypassing Keycloak login
-       * @example cy.visitProtectedPage('/fire-weather')
-       */
-      visitProtectedPage(visitUrl: string): void
     }
   }
-}
-
-/* Increase this if needed to slow down the test speed */
-const COMMAND_DELAY = 0
-
-for (const command of [
-  'visit',
-  'click',
-  'trigger',
-  'type',
-  'clear',
-  'reload',
-  'contains'
-]) {
-  Cypress.Commands.overwrite(command, (originalFn, ...args) => {
-    const origVal = originalFn(...args)
-
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve(origVal)
-      }, COMMAND_DELAY)
-    })
-  })
 }

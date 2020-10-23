@@ -1,10 +1,5 @@
 {
   "baseUrl": "http://localhost:3030",
   "screenshotOnRunFailure": false,
-  "video": false,
-  "env": {
-    "auth_base_url": "https://sso-dev.pathfinder.gov.bc.ca/auth",
-    "auth_realm": "8wl6x4cp",
-    "auth_client_id": "wps-web"
-  }
+  "video": false
 }
