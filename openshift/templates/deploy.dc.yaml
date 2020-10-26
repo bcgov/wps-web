@@ -86,6 +86,16 @@ objects:
                     configMapKeyRef:
                       name: ${NAME}-global
                       key: env.keycloak-client
+                - name: REACT_APP_MATOMO_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: ${NAME}-global
+                      key: env.matomo-url
+                - name: REACT_APP_MATOMO_SITE_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: ${NAME}-global
+                      key: env.matomo-site-id
               ports:
                 - containerPort: 3000
                   protocol: TCP

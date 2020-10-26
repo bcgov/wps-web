@@ -6,6 +6,10 @@ parameters:
   - name: REACT_APP_KEYCLOAK_REALM
     description: Keycloak realm name used by the application
     required: true
+  - name: MATOMO_URL
+  description: URL for matomo (analytics) site.
+  - name: MATOMO_SITE_ID
+    description: ID of application for matomo (analytics) tracking.
 objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -19,3 +23,5 @@ objects:
       env.keycloak-auth-url: 'https://sso-dev.pathfinder.gov.bc.ca/auth'
       env.keycloak-client: wps-web
       env.keycloak-realm: ${REACT_APP_KEYCLOAK_REALM}
+      env.matomo-url: ${MATOMO_URL}
+      env.matomo-site-id: ${MATOMO_SITE_ID}
