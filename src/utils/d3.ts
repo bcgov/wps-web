@@ -59,8 +59,7 @@ export const drawDots = <T>({
   if (data.length === 0) {
     return
   }
-
-  const dots = svg // Hourly reading temp dot
+  const dots = svg
     .selectAll(`.${className}`)
     .data(data)
     .enter()
@@ -72,6 +71,43 @@ export const drawDots = <T>({
 
   if (testId) {
     dots.attr('data-testid', testId)
+  }
+}
+
+export const drawPath = <T>({
+  svg,
+  className,
+  data,
+  x,
+  y,
+  strokeWidth = 1,
+  testId
+}: {
+  svg: d3.Selection<SVGGElement, unknown, null, undefined>
+  className: string
+  data: T[]
+  x: (d: T) => number
+  y: (d: T) => number
+  strokeWidth?: number
+  testId?: string
+}): void => {
+  const path = svg
+    .append('path')
+    .datum(data)
+    .attr(
+      'd',
+      d3
+        .line<T>()
+        .x(x)
+        .y(y)
+    )
+    .attr('stroke-width', strokeWidth)
+    .attr('fill', 'none')
+    .attr('opacity', 0.8)
+    .attr('class', className)
+
+  if (testId) {
+    path.attr('data-testid', testId)
   }
 }
 

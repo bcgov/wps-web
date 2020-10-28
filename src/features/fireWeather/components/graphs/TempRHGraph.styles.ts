@@ -58,10 +58,16 @@ export const useStyles = makeStyles({
       fill: readingTempDotColor,
       cursor: 'pointer'
     },
+    '& .readingTempPath': {
+      stroke: readingTempDotColor
+    },
     '& .readingRHDot': {
       stroke: readingRHDotColor,
       fill: readingTempDotColor,
       cursor: 'pointer'
+    },
+    '& .readingRHPath': {
+      stroke: readingRHDotColor
     },
     '& .modelSummaryTempArea': {
       stroke: modelSummaryTempAreaColor,
@@ -80,30 +86,48 @@ export const useStyles = makeStyles({
       fill: 'none',
       cursor: 'pointer'
     },
+    '& .modelTempPath': {
+      stroke: modelTempDotColor
+    },
     '& .modelRHDot': {
       stroke: modelRHDotColor,
       fill: 'none',
       cursor: 'pointer'
+    },
+    '& .modelRHPath': {
+      stroke: modelRHDotColor
     },
     '& .biasAdjustedModelTempDot': {
       stroke: biasModelTempDotColor,
       fill: 'none',
       cursor: 'pointer'
     },
+    '& .biasAdjustedModelTempPath': {
+      stroke: biasModelTempDotColor
+    },
     '& .biasAdjustedModelRHDot': {
       stroke: biasModelRHDotColor,
       fill: 'none',
       cursor: 'pointer'
+    },
+    '& .biasAdjustedModelRHPath': {
+      stroke: biasModelRHDotColor
     },
     '& .highResModelTempDot': {
       stroke: highResModelTempDotColor,
       fill: 'none',
       cursor: 'pointer'
     },
+    '& .highResModelTempPath': {
+      stroke: highResModelTempDotColor
+    },
     '& .highResModelRHDot': {
       stroke: highResModelRHDotColor,
       fill: 'none',
       cursor: 'pointer'
+    },
+    '& .highResModelRHPath': {
+      stroke: highResModelRHDotColor
     },
     '& .highResModelSummaryTempArea': {
       stroke: highResModelSummaryTempAreaColor,
