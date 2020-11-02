@@ -33,6 +33,19 @@ describe('Percentile Calculator Page', () => {
     })
   })
 
+  describe('For analytics', () => {
+    it('Some DOM elements should exist with IDs', () => {
+      cy.visit('/percentile-calculator/')
+      cy.getByTestId('disclaimer-accept-button').click()
+
+      cy.get('#reset-percentiles-button')
+      cy.get('#weather-station-dropdown')
+      cy.get('#launch-map-link')
+      cy.get('#contact-link')
+      cy.get('#calculate-percentiles-button')
+    })
+  })
+
   describe('Other inputs', () => {
     beforeEach(() => {
       cy.route('GET', 'api/stations/', 'fixture:weather-stations.json')
@@ -76,7 +89,11 @@ describe('Percentile Calculator Page', () => {
   describe('Calculation result', () => {
     beforeEach(() => {
       cy.route('GET', 'api/stations/', 'fixture:weather-stations.json').as('getStations')
-      cy.visit('/percentile-calculator/')
+      cy.visit('/percentile-calculator/', {
+        onBeforeLoad: (win: any) => {
+          win._mtm = { push: () => {} } // mock Matomo object
+        }
+      })
       cy.getByTestId('disclaimer-accept-button').click()
     })
 

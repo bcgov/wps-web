@@ -64,6 +64,7 @@ export const PageHeader: React.FunctionComponent<Props> = ({ title }: Props) => 
           href={process.env.REACT_APP_FIDER_LINK}
           target="_blank"
           rel="noopener noreferrer"
+          id="contact-link"
         >
           Contact
         </a>

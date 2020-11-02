@@ -45,6 +45,7 @@ const WxStationDropdown = (props: Props) => {
         <Link
           className={classes.mapLink}
           data-testid="launch-map-link"
+          id="launch-map-link"
           href={WEATHER_STATION_MAP_LINK}
           target="_blank"
           rel="noopener noreferrer"
@@ -60,6 +61,7 @@ const WxStationDropdown = (props: Props) => {
         <Autocomplete
           className={classes.root}
           data-testid="weather-station-dropdown"
+          id="weather-station-dropdown"
           multiple
           options={stations}
           getOptionLabel={option => `${option.name} (${option.code})`}

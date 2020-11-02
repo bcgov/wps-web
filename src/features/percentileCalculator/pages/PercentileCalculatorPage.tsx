@@ -36,6 +36,23 @@ export const PercentileCalculatorPage: React.FunctionComponent = () => {
     }
 
     dispatch(fetchPercentiles(stationCodes, defaultPercentile, yearRange))
+
+    // Create a matomo event
+    // NOTE: This section is proof of concept - strongly consider re-factoring when adding other events.
+    // TODO: Re-evaluate this way of implementing Matomo once we know more about it.
+    if (window._mtm) {
+      // see: https://developer.matomo.org/guides/tagmanager/integration-plugin#supporting-the-data-layer
+      // NOTE: At this point in time, the data layer (that's the percentile request variable)
+      // doesn't seem to be working.
+      window._mtm.push({
+        event: 'calculatePercentiles',
+        percentileRequest: {
+          stationCodes: stationCodes,
+          percentile: defaultPercentile,
+          yearRange: yearRange
+        }
+      })
+    }
   }
 
   const onResetClick = () => {

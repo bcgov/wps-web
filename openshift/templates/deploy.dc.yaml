@@ -96,6 +96,11 @@ objects:
                     configMapKeyRef:
                       name: ${NAME}-global
                       key: env.matomo-site-id
+                - name: REACT_APP_MATOMO_CONTAINER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: ${NAME}-global
+                      key: env.matomo-container
               ports:
                 - containerPort: 3000
                   protocol: TCP

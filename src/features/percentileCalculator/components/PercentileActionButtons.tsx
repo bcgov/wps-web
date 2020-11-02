@@ -32,6 +32,7 @@ export const PercentileActionButtons: React.FunctionComponent<Props> = ({
         variant="contained"
         onClick={onResetClick}
         data-testid="reset-percentiles-button"
+        id="reset-percentiles-button"
       >
         Reset
       </Button>
@@ -39,6 +40,7 @@ export const PercentileActionButtons: React.FunctionComponent<Props> = ({
       <Button
         className={classes.calculateBtn}
         data-testid="calculate-percentiles-button"
+        id="calculate-percentiles-button"
         disabled={stations.length === 0}
         variant="contained"
         color="primary"
