@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 
-import { ReadingValue } from 'api/readingAPI'
+import { ObservedValue } from 'api/observationAPI'
 import { ModelSummary as _ModelSummary, ModelValue } from 'api/modelAPI'
 import { ForecastSummary as _ForecastSummary, NoonForecastValue } from 'api/forecastAPI'
 import { formatDateInPDT } from 'utils/date'
@@ -25,7 +25,7 @@ type ModelSummary = Omit<_ModelSummary, 'datetime'> & { date: Date }
 type ForecastSummary = Omit<_ForecastSummary, 'datetime'> & { date: Date }
 
 interface Props {
-  readingValues: ReadingValue[]
+  observedValues: ObservedValue[]
   modelValues: ModelValue[]
   modelSummaries: _ModelSummary[]
   forecastValues: NoonForecastValue[]
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const TempRHGraph: React.FunctionComponent<Props> = ({
-  readingValues: _readingValues,
+  observedValues: _observedValues,
   modelValues: _modelValues,
   modelSummaries: _modelSummaries,
   forecastValues: _forecastValues,
@@ -60,9 +60,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       const allDates: Date[] = [] // will be used to determine x axis range
       const weatherValueByDatetime: { [k: string]: WeatherValue } = {}
 
-      const readingTempValues: { date: Date; temp: number }[] = []
-      const readingRHValues: { date: Date; rh: number }[] = []
-      _readingValues.forEach(v => {
+      const observedTempValues: { date: Date; temp: number }[] = []
+      const observedRHValues: { date: Date; rh: number }[] = []
+      _observedValues.forEach(v => {
         if (v.temperature == null && v.relative_humidity == null) {
           return
         }
@@ -70,16 +70,16 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         const date = d3Utils.storeDaysLookup(daysLookup, v.datetime)
         allDates.push(date)
 
-        const reading = { date, temp: NaN, rh: NaN }
+        const observation = { date, temp: NaN, rh: NaN }
         if (v.temperature != null) {
-          reading.temp = Number(v.temperature.toFixed(2))
-          readingTempValues.push(reading)
+          observation.temp = Number(v.temperature.toFixed(2))
+          observedTempValues.push(observation)
         }
         if (v.relative_humidity != null) {
-          reading.rh = Math.round(v.relative_humidity)
-          readingRHValues.push(reading)
+          observation.rh = Math.round(v.relative_humidity)
+          observedRHValues.push(observation)
         }
-        weatherValueByDatetime[v.datetime] = reading
+        weatherValueByDatetime[v.datetime] = observation
       })
 
       const forecastValues = _forecastValues.map(d => {
@@ -89,7 +89,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
           forecastTemp: Number(d.temperature.toFixed(2)),
           forecastRH: Math.round(d.relative_humidity)
         }
-        // combine with existing readings and models values
+        // combine with existing observed and models values
         weatherValueByDatetime[d.datetime] = {
           ...weatherValueByDatetime[d.datetime],
           ...forecast
@@ -131,7 +131,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
           model.modelRH = Math.round(rh)
           modelRHValues.push(model)
         }
-        // combine with the existing reading value
+        // combine with the existing observed value
         weatherValueByDatetime[v.datetime] = {
           ...weatherValueByDatetime[v.datetime],
           ...model
@@ -226,9 +226,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         })
 
       /* Set the dimensions and margins of the graph */
-      const margin = { top: 10, right: 40, bottom: 90, left: 40 }
+      const margin = { top: 20, right: 40, bottom: 130, left: 40 }
       const widthValue = 600
-      const heightValue = 300
+      const heightValue = 500
       const width = widthValue - margin.left - margin.right
       const height = heightValue - margin.top - margin.bottom
       const svg = d3
@@ -245,7 +245,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         .range([0, width])
       const yTempScale = d3
         .scaleLinear()
-        .domain([-10, 45])
+        .domain([-10, 40])
         .range([height, 0])
       const yRHScale = d3
         .scaleLinear()
@@ -313,13 +313,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
 
       /* Render temp and rh models */
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'modelTempDot',
+        className: 'modelTempSymbol',
         data: modelTempValues,
-        cx: d => xScale(d.date),
-        cy: d => yTempScale(d.modelTemp),
-        testId: 'model-temp-dot'
+        x: d => xScale(d.date),
+        y: d => yTempScale(d.modelTemp),
+        size: 10,
+        symbol: d3.symbolTriangle,
+        testId: 'model-temp-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -329,12 +331,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         y: d => yTempScale(d.modelTemp),
         testId: 'model-temp-path'
       })
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'modelRHDot',
+        className: 'modelRHSymbol',
         data: modelRHValues,
-        cx: d => xScale(d.date),
-        cy: d => yRHScale(d.modelRH)
+        x: d => xScale(d.date),
+        y: d => yRHScale(d.modelRH),
+        size: 10,
+        symbol: d3.symbolTriangle,
+        testId: 'model-rh-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -346,14 +351,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
 
       /* Render bias adjusted model temp and rh values */
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'biasAdjustedModelTempDot',
+        className: 'biasAdjustedModelTempSymbol',
         data: biasAdjModelTempValues,
-        cx: d => xScale(d.date),
-        cy: d => yTempScale(d.biasAdjustedModelTemp),
-        radius: 0.5,
-        testId: 'bias-adjusted-model-temp-dot'
+        x: d => xScale(d.date),
+        y: d => yTempScale(d.biasAdjustedModelTemp),
+        size: 5,
+        symbol: d3.symbolDiamond,
+        testId: 'bias-adjusted-model-temp-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -363,14 +369,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         y: d => yTempScale(d.biasAdjustedModelTemp),
         testId: 'bias-adjusted-model-temp-path'
       })
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'biasAdjustedModelRHDot',
+        className: 'biasAdjustedModelRHSymbol',
         data: biasAdjModelRHValues,
-        cx: d => xScale(d.date),
-        cy: d => yRHScale(d.biasAdjustedModelRH),
-        radius: 0.5,
-        testId: 'bias-adjusted-model-rh-dot'
+        x: d => xScale(d.date),
+        y: d => yRHScale(d.biasAdjustedModelRH),
+        size: 10,
+        symbol: d3.symbolDiamond,
+        testId: 'bias-adjusted-model-rh-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -382,13 +389,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
 
       /* Render high resolution model temp and rh values */
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'highResModelTempDot',
+        className: 'highResModelTempSymbol',
         data: hrModelTempValues,
-        cx: d => xScale(d.date),
-        cy: d => yTempScale(d.hrModelTemp),
-        testId: 'high-res-model-temp-dot'
+        x: d => xScale(d.date),
+        y: d => yTempScale(d.hrModelTemp),
+        size: 7,
+        symbol: d3.symbolCircle,
+        testId: 'high-res-model-temp-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -398,12 +407,15 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         y: d => yTempScale(d.hrModelTemp),
         testId: 'high-res-model-temp-path'
       })
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'highResModelRHDot',
+        className: 'highResModelRHSymbol',
         data: hrModelRHValues,
-        cx: d => xScale(d.date),
-        cy: d => yRHScale(d.hrModelRH)
+        x: d => xScale(d.date),
+        y: d => yRHScale(d.hrModelRH),
+        size: 7,
+        symbol: d3.symbolCircle,
+        testId: 'high-res-model-rh-symbol'
       })
       d3Utils.drawPath({
         svg,
@@ -431,40 +443,44 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         cy: d => yRHScale(d.forecastRH)
       })
 
-      /* Render temp and rh hourly readings */
-      d3Utils.drawDots({
+      /* Render temp and rh hourly observations */
+      d3Utils.drawSymbols({
         svg,
-        className: 'readingTempDot',
-        data: readingTempValues,
-        cx: d => xScale(d.date),
-        cy: d => yTempScale(d.temp),
-        testId: 'hourly-reading-temp-dot'
+        className: 'observedTempSymbol',
+        data: observedTempValues,
+        x: d => xScale(d.date),
+        y: d => yTempScale(d.temp),
+        symbol: d3.symbolSquare,
+        size: 10,
+        testId: 'hourly-observed-temp-symbol'
       })
       d3Utils.drawPath({
         svg,
-        className: 'readingTempPath',
-        data: readingTempValues,
+        className: 'observedTempPath',
+        data: observedTempValues,
         x: d => xScale(d.date),
         y: d => yTempScale(d.temp),
         strokeWidth: 1.5,
-        testId: 'hourly-reading-temp-path'
+        testId: 'hourly-observed-temp-path'
       })
-      d3Utils.drawDots({
+      d3Utils.drawSymbols({
         svg,
-        className: 'readingRHDot',
-        data: readingRHValues,
-        cx: d => xScale(d.date),
-        cy: d => yRHScale(d.rh),
-        testId: 'hourly-reading-rh-dot'
+        className: 'observedRHSymbol',
+        data: observedRHValues,
+        x: d => xScale(d.date),
+        y: d => yRHScale(d.rh),
+        symbol: d3.symbolSquare,
+        size: 10,
+        testId: 'hourly-observed-rh-symbol'
       })
       d3Utils.drawPath({
         svg,
-        className: 'readingRHPath',
-        data: readingRHValues,
+        className: 'observedRHPath',
+        data: observedRHValues,
         x: d => xScale(d.date),
         y: d => yRHScale(d.rh),
         strokeWidth: 1.5,
-        testId: 'hourly-reading-rh-path'
+        testId: 'hourly-observed-rh-path'
       })
 
       /* Render the current time reference line */
@@ -512,7 +528,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         .attr('class', 'xAxisLabel')
 
       // Y axis
-      svg.append('g').call(d3.axisLeft(yTempScale).tickValues([-10, 5, 20, 35, 45]))
+      svg.append('g').call(d3.axisLeft(yTempScale).tickValues([-10, 5, 20, 35, 40]))
       svg
         .append('g')
         .attr('transform', `translate(${width}, 0)`)
@@ -537,25 +553,27 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
 
       /* Render legends */
       // TODO: We're going to have to look at using layouts moving forward to achieve the placement of objects. https://www.d3indepth.com/layouts/
-      let legendY = height + margin.bottom - 45
+      let legendY = height + margin.bottom - 60
       let legendX = 0
       d3Utils.addLegend({
         svg,
         text: 'Observed Temp',
-        color: styles.readingTempDotColor,
-        shapeX: legendX,
-        shapeY: legendY,
-        textX: legendX += 7,
-        textY: legendY + 3
+        color: styles.observedTempColor,
+        shape: 'rect',
+        shapeX: legendX - 2,
+        shapeY: legendY - 4,
+        textX: legendX += 10,
+        textY: legendY + 4
       })
       d3Utils.addLegend({
         svg,
         text: 'Observed RH',
-        color: styles.readingRHDotColor,
-        shapeX: legendX += 83,
-        shapeY: legendY,
-        textX: legendX += 7,
-        textY: legendY + 3
+        color: styles.observedRHColor,
+        shape: 'rect',
+        shapeX: legendX += 80,
+        shapeY: legendY - 4,
+        textX: legendX += 12,
+        textY: legendY + 4
       })
       d3Utils.addLegend({
         svg,
@@ -579,9 +597,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
       d3Utils.addLegend({
         svg,
-        text: 'Model Temp',
-        color: styles.modelTempDotColor,
-        fill: 'none',
+        text: 'GDPS Temp',
+        shape: 'triangle',
+        color: styles.modelTempColor,
+        fill: styles.modelTempColor,
         shapeX: legendX += 70,
         shapeY: legendY,
         textX: legendX += 7,
@@ -589,9 +608,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
       d3Utils.addLegend({
         svg,
-        text: 'Model RH',
-        color: styles.modelRHDotColor,
-        fill: 'none',
+        text: 'GDPS RH',
+        shape: 'triangle',
+        color: styles.modelRHColor,
+        fill: styles.modelRHColor,
         shapeX: legendX += 70,
         shapeY: legendY,
         textX: legendX + 7,
@@ -603,7 +623,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.addLegend({
         svg,
         shape: 'rect',
-        text: 'Model Temp 5th - 90th percentiles',
+        text: 'GDPS Temp 5th - 90th percentiles',
         color: styles.modelSummaryTempAreaColor,
         shapeX: legendX - 2,
         shapeY: legendY - 4,
@@ -613,7 +633,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       d3Utils.addLegend({
         svg,
         shape: 'rect',
-        text: 'Model RH 5th - 90th percentiles',
+        text: 'GDPS RH 5th - 90th percentiles',
         color: styles.modelSummaryRHAreaColor,
         shapeX: legendX += 165,
         shapeY: legendY - 4,
@@ -625,9 +645,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       legendY += 16
       d3Utils.addLegend({
         svg,
-        text: 'Bias Adjusted Model Temp',
-        color: styles.biasModelTempDotColor,
-        fill: 'none',
+        text: 'Bias Adjusted GDPS Temp',
+        shape: 'diamond',
+        color: styles.biasModelTempColor,
+        fill: styles.biasModelTempColor,
         shapeX: legendX,
         shapeY: legendY,
         textX: legendX += 7,
@@ -636,9 +657,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
       d3Utils.addLegend({
         svg,
-        text: 'Bias Adjusted Model RH',
-        color: styles.biasModelRHDotColor,
-        fill: 'none',
+        text: 'Bias Adjusted GDPS RH',
+        shape: 'diamond',
+        color: styles.biasModelRHColor,
+        fill: styles.biasModelRHColor,
         shapeX: legendX += 130,
         shapeY: legendY,
         textX: legendX + 7,
@@ -647,9 +669,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
       d3Utils.addLegend({
         svg,
-        text: 'High Res Model Temp',
-        color: styles.highResModelTempDotColor,
-        fill: 'none',
+        text: 'HRDPS Temp',
+        color: styles.highResModelTempColor,
+        fill: styles.highResModelTempColor,
         shapeX: legendX += 127,
         shapeY: legendY,
         textX: legendX += 7,
@@ -657,12 +679,37 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
       })
       d3Utils.addLegend({
         svg,
-        text: 'High Res Model RH',
-        color: styles.highResModelRHDotColor,
-        fill: 'none',
-        shapeX: legendX += 111,
+        text: 'HRDPS RH',
+        color: styles.highResModelRHColor,
+        fill: styles.highResModelRHColor,
+        shapeX: legendX += 81,
         shapeY: legendY,
         textX: legendX + 7,
+        textY: legendY + 3
+      })
+      // new line
+      legendX = 0
+      legendY += 16
+      d3Utils.addLegend({
+        svg,
+        text: 'HRDPS Temp 5th - 90th percentiles',
+        shape: 'rect',
+        color: styles.highResModelSummaryTempAreaColor,
+        fill: styles.highResModelSummaryTempAreaColor,
+        shapeX: legendX - 2,
+        shapeY: legendY - 4,
+        textX: legendX += 10,
+        textY: legendY + 4
+      })
+      d3Utils.addLegend({
+        svg,
+        text: 'HRDPS RH 5th - 90th percentiles',
+        shape: 'rect',
+        color: styles.highResModelSummaryRHAreaColor,
+        fill: styles.highResModelSummaryRHAreaColor,
+        shapeX: legendX += 165,
+        shapeY: legendY - 4,
+        textX: legendX + 13,
         textY: legendY + 3
       })
       /* Attach tooltip listener */
@@ -690,22 +737,22 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
               case 'forecastTemp':
                 return `Forecast Temp: ${weatherValue} (°C)`
               case 'modelTemp':
-                return `Model Temp: ${weatherValue} (°C)`
+                return `GDPS Temp: ${weatherValue} (°C)`
               case 'biasAdjustedModelTemp':
-                return `Bias adjusted Temp: ${weatherValue} (°C)`
+                return `Bias adjusted GDPS Temp: ${weatherValue} (°C)`
               case 'hrModelTemp':
-                return `High Res Model Temp ${weatherValue} (°C)`
+                return `HRDPS Temp ${weatherValue} (°C)`
 
               case 'rh':
                 return `Observed RH: ${weatherValue} (%)`
               case 'forecastRH':
                 return `Forecast RH: ${weatherValue} (%)`
               case 'modelRH':
-                return `Model RH: ${weatherValue} (%)`
+                return `GDPS RH: ${weatherValue} (%)`
               case 'biasAdjustedModelRH':
-                return `Bias adjusted Model RH: ${weatherValue} (%)`
+                return `Bias adjusted GDPS RH: ${weatherValue} (%)`
               case 'hrModelRH':
-                return `High Res Model RH ${weatherValue} (%)`
+                return `HRDPS RH ${weatherValue} (%)`
 
               default:
                 return ''
@@ -717,7 +764,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
     }
   }, [
     classes.root,
-    _readingValues,
+    _observedValues,
     _modelValues,
     _modelSummaries,
     _forecastValues,

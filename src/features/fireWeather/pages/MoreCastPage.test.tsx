@@ -9,14 +9,14 @@ import MoreCastPage from 'features/fireWeather/pages/MoreCastPage'
 import {
   mockStations,
   mockModelsResponse,
-  mockReadingsResponse,
+  mockObservationsResponse,
   mockForecastsResponse,
   mockModelSummariesResponse,
   mockForecastSummariesResponse,
   mockRecentHistoricModelsResponse,
   mockRecentModelsResponse,
   emptyModelsResponse,
-  emptyReadingsResponse,
+  emptyObservationsResponse,
   emptyForecastsResponse,
   emptyModelSummariesResponse,
   emptyForecastSummariesResponse,
@@ -70,7 +70,7 @@ it('renders weather stations dropdown with data', async () => {
 it('renders no data available message if there is no weather data returned', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
   mockAxios.onPost('/models/GDPS/predictions/').replyOnce(200, emptyModelsResponse)
-  mockAxios.onPost('/hourlies/').replyOnce(200, emptyReadingsResponse)
+  mockAxios.onPost('/hourlies/').replyOnce(200, emptyObservationsResponse)
   mockAxios.onPost('/noon_forecasts/').replyOnce(200, emptyForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/predictions/summaries/')
@@ -109,7 +109,7 @@ it('renders no data available message if there is no weather data returned', asy
   expect(
     queryByTestId(`daily-models-table-` + mockStations[0].code)
   ).not.toBeInTheDocument()
-  expect(queryByTestId('hourly-readings-display')).not.toBeInTheDocument()
+  expect(queryByTestId('hourly-observations-display')).not.toBeInTheDocument()
   expect(
     queryByTestId(`noon-forecasts-table-` + mockStations[0].code)
   ).not.toBeInTheDocument()
@@ -144,7 +144,7 @@ it('renders error messages in response to network errors', async () => {
   // Wait until all the error messages show up
   await waitForElement(() => [
     queryByText(/while fetching global models/i),
-    queryByText(/while fetching hourly readings/i),
+    queryByText(/while fetching hourly observations/i),
     queryByText(/while fetching global model summaries/i),
     queryByText(/while fetching noon forecasts/i),
     queryByText(/while fetching noon forecast summaries/i),
@@ -156,7 +156,7 @@ it('renders error messages in response to network errors', async () => {
 it('renders daily model, forecast, and hourly values in response to user inputs', async () => {
   mockAxios.onGet('/stations/').replyOnce(200, { weather_stations: mockStations })
   mockAxios.onPost('/models/GDPS/predictions/').replyOnce(200, mockModelsResponse)
-  mockAxios.onPost('/hourlies/').replyOnce(200, mockReadingsResponse)
+  mockAxios.onPost('/hourlies/').replyOnce(200, mockObservationsResponse)
   mockAxios.onPost('/noon_forecasts/').replyOnce(200, mockForecastsResponse)
   mockAxios
     .onPost('/models/GDPS/predictions/summaries/')
@@ -190,9 +190,9 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   await waitForElement(() => [
     getByTestId(`noon-models-table-` + mockStations[0].code),
     getByTestId(`noon-forecasts-table-` + mockStations[0].code),
-    getByTestId('hourly-readings-display'),
+    getByTestId('hourly-observations-display'),
     getByTestId('temp-rh-graph'),
-    getByTestId('wx-graph-reading-toggle'),
+    getByTestId('wx-graph-observation-toggle'),
     getByTestId('wx-graph-global-model-toggle'),
     getByTestId('wx-graph-bias-toggle')
   ])

@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 
 import { HOURLY_VALUES_DECIMAL } from 'utils/constants'
-import { ReadingValue } from 'api/readingAPI'
+import { ObservedValue } from 'api/observationAPI'
 import { formatDateInPDT } from 'utils/date'
 
 const useStyles = makeStyles({
@@ -27,10 +27,10 @@ const useStyles = makeStyles({
 
 interface Props {
   title: string
-  values: ReadingValue[] | undefined
+  values: ObservedValue[] | undefined
 }
 
-const HourlyReadingsTable = ({ title, values }: Props) => {
+const HourlyObservationsTable = ({ title, values }: Props) => {
   const classes = useStyles()
 
   if (!values) {
@@ -38,7 +38,7 @@ const HourlyReadingsTable = ({ title, values }: Props) => {
   }
 
   return (
-    <div className={classes.display} data-testid="hourly-readings-display">
+    <div className={classes.display} data-testid="hourly-observations-display">
       <Typography className={classes.title} component="div" variant="subtitle2">
         {title}
       </Typography>
@@ -125,4 +125,4 @@ const HourlyReadingsTable = ({ title, values }: Props) => {
   )
 }
 
-export default React.memo(HourlyReadingsTable)
+export default React.memo(HourlyObservationsTable)

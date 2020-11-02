@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { ErrorMessage, Button } from 'components'
 import { Station } from 'api/stationAPI'
 import {
-  selectReadings,
+  selectObservations,
   selectModels,
   selectModelSummaries,
   selectForecasts,
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
-  const { error: errFetchingReadings } = useSelector(selectReadings)
+  const { error: errFetchingObservations } = useSelector(selectObservations)
   const { error: errFetchingModels } = useSelector(selectModels)
   const { error: errFetchingModelSummaries } = useSelector(selectModelSummaries)
   const { error: errFetchingForecasts } = useSelector(selectForecasts)
@@ -45,10 +45,10 @@ const GetWxDataButton = ({ onBtnClick, selectedStations }: Props) => {
         Get Weather Data
       </Button>
 
-      {errFetchingReadings && (
+      {errFetchingObservations && (
         <ErrorMessage
-          error={errFetchingReadings}
-          context="while fetching hourly readings"
+          error={errFetchingObservations}
+          context="while fetching hourly observations"
           marginTop={5}
         />
       )}

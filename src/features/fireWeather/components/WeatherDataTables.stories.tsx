@@ -2,8 +2,8 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 
 import NoonForecastTable from 'features/fireWeather/components/NoonForecastTable'
-import { forecastValues, modelValues, readingValues } from 'utils/storybook'
-import HourlyReadingsTable from 'features/fireWeather/components/HourlyReadingsTable'
+import { forecastValues, modelValues, observedValues } from 'utils/storybook'
+import HourlyObservationsTable from 'features/fireWeather/components/HourlyObservationsTable'
 import { isNoonInPST } from 'utils/date'
 import { ModelValue } from 'api/modelAPI'
 import { NoonForecastValue } from 'api/forecastAPI'
@@ -28,6 +28,6 @@ storiesOf('Weather data tables', module)
       </>
     )
   })
-  .add('HourlyReadingsTable', () => {
-    return <HourlyReadingsTable title="This is title!" values={readingValues} />
+  .add('HourlyObservationsTable', () => {
+    return <HourlyObservationsTable title="This is title!" values={observedValues} />
   })

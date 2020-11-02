@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 export type TimeSelectOption = 'past' | 'future' | 'all'
 export interface ToggleValues {
-  showReadings: boolean
+  showObservations: boolean
   showModels: boolean
   showForecasts: boolean
   showBiasAdjustedModels: boolean

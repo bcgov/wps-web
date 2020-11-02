@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 
 import WxDataGraph from 'features/fireWeather/components/graphs/WxDataGraph'
 import {
-  readingValues,
+  observedValues,
   pastModelValues,
   modelValues,
   modelSummaries,
@@ -20,7 +20,7 @@ import { NoonForecastValue } from 'api/forecastAPI'
 storiesOf('WxDataGraph', module).add('default', () => {
   return (
     <WxDataGraph
-      readingValues={readingValues}
+      observedValues={observedValues}
       allModelValues={pastModelValues.concat(modelValues) as ModelValue[]}
       pastModelValues={pastModelValues as ModelValue[]}
       modelValues={modelValues as ModelValue[]}

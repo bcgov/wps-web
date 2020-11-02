@@ -2,13 +2,13 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 
-import HourlyReadingsTable from 'features/fireWeather/components/HourlyReadingsTable'
+import HourlyObservationsTable from 'features/fireWeather/components/HourlyObservationsTable'
 import { ErrorBoundary } from 'components'
 
 storiesOf('ErrorBoundary', module).add('default', () => {
   return (
     <ErrorBoundary>
-      <HourlyReadingsTable title="this is title" values={{}} />
+      <HourlyObservationsTable title="this is title" values={{}} />
     </ErrorBoundary>
   )
 })

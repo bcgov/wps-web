@@ -1,7 +1,7 @@
 import { Station } from 'api/stationAPI'
 import axios from 'api/axios'
 
-export interface ReadingValue {
+export interface ObservedValue {
   datetime: string
   temperature: number | null
   relative_humidity: number | null
@@ -14,18 +14,18 @@ export interface ReadingValue {
   fwi: number | null
 }
 
-export interface Reading {
+export interface Observation {
   station: Station
-  values: ReadingValue[]
+  values: ObservedValue[]
 }
 
-export interface ReadingsResponse {
-  hourlies: Reading[]
+export interface ObservationsResponse {
+  hourlies: Observation[]
 }
 
-export async function getReadings(stationCodes: number[]): Promise<Reading[]> {
+export async function getObservations(stationCodes: number[]): Promise<Observation[]> {
   const url = '/hourlies/'
-  const { data } = await axios.post<ReadingsResponse>(url, {
+  const { data } = await axios.post<ObservationsResponse>(url, {
     stations: stationCodes
   })
 

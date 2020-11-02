@@ -74,6 +74,50 @@ export const drawDots = <T>({
   }
 }
 
+export const drawSymbols = <T>({
+  svg,
+  className,
+  data,
+  x,
+  y,
+  size = 64,
+  symbol = d3.symbolCircle,
+  testId
+}: {
+  svg: d3.Selection<SVGGElement, unknown, null, undefined>
+  className: string
+  data: T[]
+  x: (d: T) => number
+  y: (d: T) => number
+  size?: number
+  symbol?: d3.SymbolType
+  testId?: string
+}): void => {
+  if (data.length === 0) {
+    return
+  }
+  const symbols = svg
+    .selectAll(`.${className}`)
+    .data(data)
+    .enter()
+    .append('path')
+    .attr(
+      'd',
+      d3
+        .symbol<T>()
+        .type(symbol)
+        .size(size)
+    )
+    .attr('transform', function(d) {
+      return `translate(${x(d)},${y(d)})`
+    })
+    .attr('class', className)
+
+  if (testId) {
+    symbols.attr('data-testid', testId)
+  }
+}
+
 export const drawPath = <T>({
   svg,
   className,
@@ -194,7 +238,7 @@ export const addLegend = ({
   length = 8 // rect length
 }: {
   svg: d3.Selection<SVGGElement, unknown, null, undefined>
-  shape?: 'circle' | 'rect'
+  shape?: 'circle' | 'rect' | 'diamond' | 'triangle'
   text: string
   color: string
   fill?: string | 'none'
@@ -220,6 +264,32 @@ export const addLegend = ({
       .attr('y', shapeY)
       .attr('width', length)
       .attr('height', length)
+      .style('stroke', color)
+      .attr('fill', fill || color)
+  } else if (shape === 'triangle') {
+    svg
+      .append('path')
+      .attr(
+        'd',
+        d3
+          .symbol()
+          .type(d3.symbolTriangle)
+          .size(10)
+      )
+      .attr('transform', `translate(${shapeX},${shapeY})`)
+      .style('stroke', color)
+      .attr('fill', fill || color)
+  } else if (shape === 'diamond') {
+    svg
+      .append('path')
+      .attr(
+        'd',
+        d3
+          .symbol()
+          .type(d3.symbolDiamond)
+          .size(10)
+      )
+      .attr('transform', `translate(${shapeX},${shapeY})`)
       .style('stroke', color)
       .attr('fill', fill || color)
   }

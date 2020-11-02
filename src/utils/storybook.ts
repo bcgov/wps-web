@@ -66,7 +66,7 @@ const getFutureValues = () => {
 }
 
 const getPastValues = () => {
-  const _readingValues = []
+  const _observedValues = []
   const _pastForecastValues = []
   const _forecastSummaries = []
   const _pastModelValues = []
@@ -91,7 +91,7 @@ const getPastValues = () => {
         .format()
 
       // every hour
-      _readingValues.push({
+      _observedValues.push({
         datetime,
         temperature: Math.random() <= 0.8 ? temp : null,
         relative_humidity: rh,
@@ -160,7 +160,7 @@ const getPastValues = () => {
   }
 
   return {
-    readingValues: _readingValues,
+    observedValues: _observedValues,
     pastForecastValues: _pastForecastValues,
     forecastSummaries: _forecastSummaries,
     pastModelValues: _pastModelValues,
@@ -173,7 +173,7 @@ const getPastValues = () => {
 export const { forecastValues, modelValues, highResModelValues } = getFutureValues()
 
 export const {
-  readingValues,
+  observedValues: observedValues,
   pastForecastValues,
   forecastSummaries,
   pastModelValues,

@@ -1,5 +1,5 @@
 import { ModelsResponse, ModelSummariesResponse } from 'api/modelAPI'
-import { ReadingsResponse } from 'api/readingAPI'
+import { ObservationsResponse } from 'api/observationAPI'
 import { ForecastResponse, ForecastSummariesResponse } from 'api/forecastAPI'
 import moment from 'moment'
 
@@ -44,11 +44,11 @@ export const mockModelsResponse: RecursivePartial<ModelsResponse> = {
   ]
 }
 
-export const emptyReadingsResponse = {
+export const emptyObservationsResponse = {
   hourlies: []
 }
 
-export const mockReadingsResponse: RecursivePartial<ReadingsResponse> = {
+export const mockObservationsResponse: RecursivePartial<ObservationsResponse> = {
   hourlies: [
     {
       station: mockStations[0],
