@@ -44,9 +44,9 @@ const observationsSlice = createSlice({
 })
 
 export const {
-  getObservationsStart: getObservationsStart,
-  getObservationsFailed: getObservationsFailed,
-  getObservationsSuccess: getObservationsSuccess
+  getObservationsStart,
+  getObservationsFailed,
+  getObservationsSuccess
 } = observationsSlice.actions
 
 export default observationsSlice.reducer

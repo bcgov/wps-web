@@ -97,6 +97,7 @@ const PercentileCalculatorPageWithDisclaimer: React.FunctionComponent<Props> = (
           <div className={classes.acceptBtnWrapper}>
             <Button
               data-testid="disclaimer-accept-button"
+              id="disclaimer-accept-button"
               color="primary"
               variant="contained"
               onClick={handleClose}

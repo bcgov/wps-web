@@ -74,7 +74,7 @@ const WxDataGraph = ({
   }
 
   const {
-    showObservations: showObservations,
+    showObservations,
     showModels,
     showForecasts,
     showBiasAdjustedModels,
