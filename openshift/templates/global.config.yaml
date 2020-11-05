@@ -22,7 +22,7 @@ objects:
     data:
       env.api-base-url: 'https://wps-api-prod.pathfinder.gov.bc.ca'
       env.fider-url: 'https://psufiderdev.pathfinder.gov.bc.ca/'
-      env.keycloak-auth-url: 'https://sso-dev.pathfinder.gov.bc.ca/auth'
+      env.keycloak-auth-url: 'https://dev.oidc.gov.bc.ca/auth'
       env.keycloak-client: wps-web
       env.keycloak-realm: ${REACT_APP_KEYCLOAK_REALM}
       env.matomo-url: ${REACT_APP_MATOMO_URL}
