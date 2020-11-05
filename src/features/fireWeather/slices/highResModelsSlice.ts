@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { ModelValue, getModelsWithBiasAdjusted, ModelsForStation } from 'api/modelAPI'
+import { ModelValue, getModelsWithBiasAdj, ModelsForStation } from 'api/modelAPI'
 import { AppThunk } from 'app/store'
 import { logError } from 'utils/error'
 
@@ -73,7 +73,7 @@ export default highResModelsSlice.reducer
 export const fetchHighResModels = (codes: number[]): AppThunk => async dispatch => {
   try {
     dispatch(getHighResModelsStart())
-    const modelsForStations = await getModelsWithBiasAdjusted(codes, 'HRDPS')
+    const modelsForStations = await getModelsWithBiasAdj(codes, 'HRDPS')
     dispatch(getHighResModelsSuccess(modelsForStations))
   } catch (err) {
     dispatch(getHighResModelsFailed(err.toString()))

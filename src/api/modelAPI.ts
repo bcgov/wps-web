@@ -96,7 +96,7 @@ export interface ModelsForStation {
   model_runs: ModelRun[]
 }
 
-export interface BiasAdjustedModelResponse {
+export interface BiasAdjModelResponse {
   stations: ModelsForStation[]
 }
 
@@ -105,12 +105,12 @@ export interface BiasAdjustedModelResponse {
  * @param stationCodes A list of requested station codes
  * @param model Type of Env canada weather model
  */
-export async function getModelsWithBiasAdjusted(
+export async function getModelsWithBiasAdj(
   stationCodes: number[],
   model: 'GDPS' | 'HRDPS'
 ): Promise<ModelsForStation[]> {
   const url = `/models/${model}/predictions/most_recent/`
-  const { data } = await axios.post<BiasAdjustedModelResponse>(url, {
+  const { data } = await axios.post<BiasAdjModelResponse>(url, {
     stations: stationCodes
   })
 

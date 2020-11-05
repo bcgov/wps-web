@@ -1,27 +1,23 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import moment from 'moment'
 import * as d3 from 'd3'
 
-export const getNearestByDate = <T extends { date: Date }>(
-  invertedDate: Date,
-  arr: T[]
-): T | undefined => {
-  // What is bisect: https://observablehq.com/@d3/d3-bisect
-  const bisect = d3.bisector((d: T) => d.date).left
-  const index = bisect(arr, invertedDate, 1)
-  const a = arr[index - 1]
-  const b = arr[index]
-  // Get the nearest value from the user's mouse position
-  const value =
-    b &&
-    invertedDate.valueOf() - a.date.valueOf() > b.date.valueOf() - invertedDate.valueOf()
-      ? b
-      : a
+export const transitionDuration = 50
 
-  return value
+/**
+ * High order function to generate formatting functions
+ * @param format format string recognized Moment
+ */
+const formatDate = (format: string) => (value: Date | { valueOf(): number }) => {
+  if (value instanceof Date) {
+    return moment(value).format(format)
+  }
+
+  return moment(value.valueOf()).format(format)
 }
 
-export const formatDateInMonthAndDay = d3.timeFormat('%b %d') as (
-  value: Date | { valueOf(): number }
-) => string
+export const formatDateInDay = formatDate('Do')
+export const formatDateInMonthAndDay = formatDate('MMM D')
 
 export const storeDaysLookup = (
   lookup: { [k: string]: Date },
@@ -55,10 +51,11 @@ export const drawDots = <T>({
   cy: (d: T) => number
   radius?: number
   testId?: string
-}): void => {
+}) => {
   if (data.length === 0) {
     return
   }
+
   const dots = svg
     .selectAll(`.${className}`)
     .data(data)
@@ -72,6 +69,15 @@ export const drawDots = <T>({
   if (testId) {
     dots.attr('data-testid', testId)
   }
+
+  const updateDots = (newCx: (d: T) => number, duration?: number) => {
+    dots
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('cx', newCx)
+  }
+
+  return updateDots
 }
 
 export const drawSymbols = <T>({
@@ -92,30 +98,36 @@ export const drawSymbols = <T>({
   size?: number
   symbol?: d3.SymbolType
   testId?: string
-}): void => {
+}) => {
   if (data.length === 0) {
     return
   }
-  const symbols = svg
+
+  const symbolFunc = d3
+    .symbol<T>()
+    .type(symbol)
+    .size(size)
+
+  const path = svg
     .selectAll(`.${className}`)
     .data(data)
     .enter()
     .append('path')
-    .attr(
-      'd',
-      d3
-        .symbol<T>()
-        .type(symbol)
-        .size(size)
-    )
-    .attr('transform', function(d) {
-      return `translate(${x(d)},${y(d)})`
-    })
+    .attr('d', symbolFunc)
+    .attr('transform', d => `translate(${x(d)}, ${y(d)})`)
     .attr('class', className)
-
   if (testId) {
-    symbols.attr('data-testid', testId)
+    path.attr('data-testid', testId)
   }
+
+  const update = (newX: (d: T) => number, duration?: number) => {
+    path
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('transform', d => `translate(${newX(d)}, ${y(d)})`)
+  }
+
+  return update
 }
 
 export const drawPath = <T>({
@@ -134,30 +146,38 @@ export const drawPath = <T>({
   y: (d: T) => number
   strokeWidth?: number
   testId?: string
-}): void => {
+}) => {
+  const lineFunc = d3
+    .line<T>()
+    .x(x)
+    .y(y)
+
   const path = svg
     .append('path')
     .datum(data)
-    .attr(
-      'd',
-      d3
-        .line<T>()
-        .x(x)
-        .y(y)
-    )
+    .attr('d', lineFunc)
     .attr('stroke-width', strokeWidth)
     .attr('fill', 'none')
     .attr('opacity', 0.8)
     .attr('class', className)
-
   if (testId) {
     path.attr('data-testid', testId)
   }
+
+  const updatePath = (newX: (d: T) => number, duration?: number) => {
+    path
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('d', lineFunc.x(newX))
+  }
+
+  return updatePath
 }
 
 export const drawVerticalLine = ({
   svg,
   className,
+  xScale,
   x,
   y1,
   y2,
@@ -165,11 +185,12 @@ export const drawVerticalLine = ({
 }: {
   svg: d3.Selection<SVGGElement, unknown, null, undefined>
   className: string
+  xScale: d3.ScaleTime<number, number>
   x: number
   y1: number
   y2: number
   testId?: string
-}): void => {
+}) => {
   const line = svg
     .append('line')
     .attr('x1', x)
@@ -177,10 +198,70 @@ export const drawVerticalLine = ({
     .attr('x2', x)
     .attr('y2', y2)
     .attr('class', className)
-
   if (testId) {
     line.attr('data-testid', testId)
   }
+
+  const update = (newXScale: d3.ScaleTime<number, number>, duration?: number) => {
+    // Get inverted x using the original scale
+    // then calculate the new x with the new scale
+    const newX = newXScale(xScale.invert(x))
+
+    line
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('x1', newX)
+      .attr('x2', newX)
+  }
+
+  return update
+}
+
+export const drawText = ({
+  svg,
+  className,
+  xScale,
+  x,
+  y,
+  dy,
+  dx,
+  text,
+  testId
+}: {
+  svg: d3.Selection<SVGGElement, unknown, null, undefined>
+  className: string
+  xScale: d3.ScaleTime<number, number>
+  x: number
+  y: number
+  dx: string
+  dy: string
+  text: string
+  testId?: string
+}) => {
+  const textSvg = svg
+    .append('text')
+    .attr('y', y)
+    .attr('x', x)
+    .attr('dy', dy)
+    .attr('dx', dx)
+    .attr('class', className)
+    .text(text)
+  if (testId) {
+    textSvg.attr('data-testid', testId)
+  }
+
+  const update = (newXScale: d3.ScaleTime<number, number>, duration?: number) => {
+    // Get inverted x using the original scale
+    // then calculate the new x with the new scale
+    const newX = newXScale(xScale.invert(x))
+
+    textSvg
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('x', newX)
+  }
+
+  return update
 }
 
 export const drawArea = <T>({
@@ -201,27 +282,35 @@ export const drawArea = <T>({
   y1: (d: T) => number // y1 accessor function
   curve?: d3.CurveFactory
   testId?: string
-}): void => {
+}) => {
   if (datum.length === 0) {
     return
   }
 
-  const area = svg
+  const areaFunc = d3
+    .area<T>()
+    .curve(curve)
+    .x(x)
+    .y0(y0)
+    .y1(y1)
+
+  const path = svg
     .append('path')
     .datum(datum)
     .attr('class', className)
-    .attr(
-      'd',
-      d3
-        .area<T>()
-        .curve(curve)
-        .x(x)
-        .y0(y0)
-        .y1(y1)
-    )
+    .attr('d', areaFunc)
   if (testId) {
-    area.attr('data-testid', testId)
+    path.attr('data-testid', testId)
   }
+
+  const updateArea = (newX: (d: T) => number, duration?: number) => {
+    path
+      .transition(d3.event.transform)
+      .duration(duration || transitionDuration)
+      .attr('d', areaFunc.x(newX))
+  }
+
+  return updateArea
 }
 
 export const addLegend = ({
@@ -300,6 +389,25 @@ export const addLegend = ({
     .text(text)
     .style('font-size', '9px')
     .style('fill', color)
+}
+
+const getNearestByDate = <T extends { date: Date }>(
+  invertedDate: Date,
+  arr: T[]
+): T | undefined => {
+  // What is bisect: https://observablehq.com/@d3/d3-bisect
+  const bisect = d3.bisector((d: T) => d.date).left
+  const index = bisect(arr, invertedDate, 1)
+  const a = arr[index - 1]
+  const b = arr[index]
+  // Get the nearest value from the user's mouse position
+  const value =
+    b &&
+    invertedDate.valueOf() - a.date.valueOf() > b.date.valueOf() - invertedDate.valueOf()
+      ? b
+      : a
+
+  return value
 }
 
 /**
@@ -392,8 +500,8 @@ export const addTooltipListener = <T extends { date: Date } & { [K in keyof T]: 
   // the listener can react to user's mouseover in anywhere within the graph
   svg
     .append('rect')
-    .attr('width', '100%')
-    .attr('height', '100%')
+    .attr('width', width)
+    .attr('height', height)
     .attr('fill', 'transparent')
   if (bgdTestId) {
     svg.attr('data-testid', bgdTestId)

@@ -22,18 +22,12 @@ storiesOf('WxDataGraph', module).add('default', () => {
     <WxDataGraph
       observedValues={observedValues}
       allModelValues={pastModelValues.concat(modelValues) as ModelValue[]}
-      pastModelValues={pastModelValues as ModelValue[]}
-      modelValues={modelValues as ModelValue[]}
       modelSummaries={modelSummaries}
       allForecasts={pastForecastValues.concat(forecastValues) as NoonForecastValue[]}
-      pastForecastValues={pastForecastValues as NoonForecastValue[]}
-      forecastValues={forecastValues as NoonForecastValue[]}
       forecastSummaries={forecastSummaries}
       allHighResModelValues={
         pastHighResModelValues.concat(highResModelValues) as ModelValue[]
       }
-      pastHighResModelValues={pastHighResModelValues as ModelValue[]}
-      highResModelValues={highResModelValues as ModelValue[]}
       highResModelSummaries={highResModelSummaries}
     />
   )

@@ -4,13 +4,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
 
 import {
   ToggleValues,
-  SetToggleValues,
-  TimeSelectOption
+  SetToggleValues
 } from 'features/fireWeather/components/graphs/useGraphToggles'
 
 const useStyles = makeStyles({
@@ -32,7 +29,7 @@ interface Props {
   noObservations: boolean
   noModels: boolean
   noForecasts: boolean
-  noBiasAdjustedModels: boolean
+  noBiasAdjModels: boolean
   noHighResModels: boolean
 }
 
@@ -42,7 +39,7 @@ const WxDataToggles = ({
   noObservations,
   noModels,
   noForecasts,
-  noBiasAdjustedModels,
+  noBiasAdjModels,
   noHighResModels
 }: Props) => {
   const classes = useStyles()
@@ -59,27 +56,9 @@ const WxDataToggles = ({
       })
     }
   }
-  const handleSelect = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const { name, value } = e.target
-    setToggleValues(name as 'timeOfInterest', value as TimeSelectOption)
-  }
 
   return (
     <FormGroup row>
-      <FormControl className={classes.selectControl}>
-        <Select
-          name="timeOfInterest"
-          value={toggleValues.timeOfInterest}
-          onChange={handleSelect}
-          native
-          inputProps={{ 'aria-label': 'Without label' }}
-        >
-          <option value="past">Past</option>
-          <option value="future">Future</option>
-          <option value="all">All</option>
-        </Select>
-      </FormControl>
-
       <FormControlLabel
         className={classes.switchControl}
         control={
@@ -160,10 +139,10 @@ const WxDataToggles = ({
         className={classes.switchControl}
         control={
           <Switch
-            name="showBiasAdjustedModels"
+            name="showBiasAdjModels"
             data-testid="wx-graph-bias-toggle"
-            checked={toggleValues.showBiasAdjustedModels}
-            disabled={noBiasAdjustedModels}
+            checked={toggleValues.showBiasAdjModels}
+            disabled={noBiasAdjModels}
             size="small"
             onChange={handleSwitch}
           />

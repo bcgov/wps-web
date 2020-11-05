@@ -11,8 +11,8 @@ export const modelSummaryTempAreaColor = '#ff96aa'
 export const modelSummaryRHAreaColor = '#94ffeb'
 export const highResModelTempColor = '#a017c2'
 export const highResModelRHColor = '#3ac417'
-export const highResModelSummaryTempAreaColor = '#ddbae9'
-export const highResModelSummaryRHAreaColor = '#6bbbf5'
+export const highResModelSummaryTempAreaColor = '#cba9d6'
+export const highResModelSummaryRHAreaColor = '#b5f0a5'
 export const forecastTempDotColor = '#fb0058'
 export const forecastRHDotColor = '#057070'
 const forecastSummaryTempLineColor = forecastTempDotColor
@@ -97,20 +97,20 @@ export const useStyles = makeStyles({
     '& .modelRHPath': {
       stroke: modelRHColor
     },
-    '& .biasAdjustedModelTempSymbol': {
+    '& .biasAdjModelTempSymbol': {
       stroke: biasModelTempColor,
       fill: biasModelTempColor,
       cursor: 'pointer'
     },
-    '& .biasAdjustedModelTempPath': {
+    '& .biasAdjModelTempPath': {
       stroke: biasModelTempColor
     },
-    '& .biasAdjustedModelRHSymbol': {
+    '& .biasAdjModelRHSymbol': {
       stroke: biasModelRHColor,
       fill: biasModelRHColor,
       cursor: 'pointer'
     },
-    '& .biasAdjustedModelRHPath': {
+    '& .biasAdjModelRHPath': {
       stroke: biasModelRHColor
     },
     '& .highResModelTempSymbol': {

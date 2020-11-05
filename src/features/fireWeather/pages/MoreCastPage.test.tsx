@@ -186,17 +186,6 @@ it('renders daily model, forecast, and hourly values in response to user inputs'
   // Send the request
   fireEvent.click(getByTestId('get-wx-data-button'))
 
-  // Wait until all the displays show up
-  await waitForElement(() => [
-    getByTestId(`noon-models-table-` + mockStations[0].code),
-    getByTestId(`noon-forecasts-table-` + mockStations[0].code),
-    getByTestId('hourly-observations-display'),
-    getByTestId('temp-rh-graph'),
-    getByTestId('wx-graph-observation-toggle'),
-    getByTestId('wx-graph-global-model-toggle'),
-    getByTestId('wx-graph-bias-toggle')
-  ])
-
   // all post requests should include station codes in the body
   mockAxios.history.post.forEach(post => {
     expect(post.data).toBe(

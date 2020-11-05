@@ -8,7 +8,7 @@ import WxStationDropdown from 'features/stations/components/WxStationDropdown'
 import WxDataDisplays from 'features/fireWeather/components/WxDataDisplays'
 import { setAxiosRequestInterceptors } from 'features/auth/slices/authenticationSlice'
 import { fetchWxStations } from 'features/stations/slices/stationsSlice'
-import { fetchGlobalModelsWithBiasAdjusted } from 'features/fireWeather/slices/modelsSlice'
+import { fetchGlobalModelsWithBiasAdj } from 'features/fireWeather/slices/modelsSlice'
 import { fetchObservations } from 'features/fireWeather/slices/observationsSlice'
 import GetWxDataButton from 'features/fireWeather/components/GetWxDataButton'
 import { fetchForecasts } from 'features/fireWeather/slices/forecastsSlice'
@@ -40,7 +40,7 @@ const MoreCastPage = () => {
     dispatch(fetchObservations(stationCodes))
     dispatch(fetchForecasts(stationCodes))
     dispatch(fetchForecastSummaries(stationCodes))
-    dispatch(fetchGlobalModelsWithBiasAdjusted(stationCodes))
+    dispatch(fetchGlobalModelsWithBiasAdj(stationCodes))
     dispatch(fetchGlobalModelSummaries(stationCodes))
     dispatch(fetchHighResModels(stationCodes))
     dispatch(fetchHighResModelSummaries(stationCodes))

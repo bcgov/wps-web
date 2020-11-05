@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { ModelValue, getModelsWithBiasAdjusted, ModelsForStation } from 'api/modelAPI'
+import { ModelValue, getModelsWithBiasAdj, ModelsForStation } from 'api/modelAPI'
 import { AppThunk } from 'app/store'
 import { isNoonInPST } from 'utils/date'
 import { logError } from 'utils/error'
@@ -75,12 +75,12 @@ export const { getModelsStart, getModelsFailed, getModelsSuccess } = modelsSlice
 
 export default modelsSlice.reducer
 
-export const fetchGlobalModelsWithBiasAdjusted = (
+export const fetchGlobalModelsWithBiasAdj = (
   codes: number[]
 ): AppThunk => async dispatch => {
   try {
     dispatch(getModelsStart())
-    const modelsForStations = await getModelsWithBiasAdjusted(codes, 'GDPS')
+    const modelsForStations = await getModelsWithBiasAdj(codes, 'GDPS')
     dispatch(getModelsSuccess(modelsForStations))
   } catch (err) {
     dispatch(getModelsFailed(err.toString()))

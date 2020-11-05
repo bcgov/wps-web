@@ -17,15 +17,9 @@ const useStyles = makeStyles({
 interface Props {
   observedValues: ObservedValue[] | undefined
   allModelValues: ModelValue[] | undefined
-  pastModelValues: ModelValue[] | undefined
-  modelValues: ModelValue[] | undefined
   modelSummaries: ModelSummary[] | undefined
-  pastForecastValues: NoonForecastValue[] | undefined
-  forecastValues: NoonForecastValue[] | undefined
   allForecasts: NoonForecastValue[] | undefined
   forecastSummaries: ForecastSummary[] | undefined
-  pastHighResModelValues: ModelValue[] | undefined
-  highResModelValues: ModelValue[] | undefined
   allHighResModelValues: ModelValue[] | undefined
   highResModelSummaries: ModelSummary[] | undefined
 }
@@ -33,16 +27,10 @@ interface Props {
 const WxDataGraph = ({
   observedValues = [],
   allModelValues = [],
-  pastModelValues = [],
-  modelValues = [],
   modelSummaries = [],
   allForecasts = [],
-  pastForecastValues = [],
-  forecastValues = [],
   forecastSummaries = [],
   allHighResModelValues = [],
-  pastHighResModelValues = [],
-  highResModelValues = [],
   highResModelSummaries = []
 }: Props) => {
   const classes = useStyles()
@@ -50,7 +38,7 @@ const WxDataGraph = ({
   const noObservations = observedValues.length === 0
   const noModels = allModelValues.length === 0 && modelSummaries.length === 0
   const noForecasts = allForecasts.length === 0 && forecastSummaries.length === 0
-  const noBiasAdjustedModels = allModelValues.length === 0
+  const noBiasAdjModels = allModelValues.length === 0
   const noHighResModels =
     allHighResModelValues.length === 0 && highResModelSummaries.length === 0
 
@@ -58,18 +46,11 @@ const WxDataGraph = ({
     showObservations: !noObservations,
     showModels: false,
     showForecasts: false,
-    showBiasAdjustedModels: false,
-    showHighResModels: false,
-    timeOfInterest: 'past'
+    showBiasAdjModels: false,
+    showHighResModels: false
   })
 
-  if (
-    noObservations &&
-    noForecasts &&
-    noModels &&
-    noBiasAdjustedModels &&
-    noHighResModels
-  ) {
+  if (noObservations && noForecasts && noModels && noBiasAdjModels && noHighResModels) {
     return null
   }
 
@@ -77,30 +58,9 @@ const WxDataGraph = ({
     showObservations,
     showModels,
     showForecasts,
-    showBiasAdjustedModels,
-    showHighResModels,
-    timeOfInterest
+    showBiasAdjModels,
+    showHighResModels
   } = toggleValues
-  let askedModelValues = []
-  let askedForecastValues = []
-  let askedHighResModelValues = []
-  let askedBiasAdjModelValues = []
-  if (timeOfInterest === 'past') {
-    askedModelValues = pastModelValues
-    askedForecastValues = pastForecastValues
-    askedHighResModelValues = pastHighResModelValues
-    askedBiasAdjModelValues = pastModelValues
-  } else if (timeOfInterest === 'future') {
-    askedModelValues = modelValues
-    askedForecastValues = forecastValues
-    askedHighResModelValues = highResModelValues
-    askedBiasAdjModelValues = modelValues
-  } else {
-    askedModelValues = allModelValues
-    askedForecastValues = allForecasts
-    askedHighResModelValues = allHighResModelValues
-    askedBiasAdjModelValues = allModelValues
-  }
 
   return (
     <div className={classes.display}>
@@ -110,25 +70,19 @@ const WxDataGraph = ({
         noObservations={noObservations}
         noForecasts={noForecasts}
         noModels={noModels}
-        noBiasAdjustedModels={noBiasAdjustedModels}
+        noBiasAdjModels={noBiasAdjModels}
         noHighResModels={noHighResModels}
       />
 
       <TempRHGraph
-        observedValues={
-          showObservations && timeOfInterest !== 'future' ? observedValues : []
-        }
-        modelValues={showModels ? askedModelValues : []}
-        modelSummaries={showModels && timeOfInterest !== 'future' ? modelSummaries : []}
-        forecastValues={showForecasts ? askedForecastValues : []}
-        forecastSummaries={
-          showForecasts && timeOfInterest !== 'future' ? forecastSummaries : []
-        }
-        biasAdjustedModelValues={showBiasAdjustedModels ? askedBiasAdjModelValues : []}
-        highResModelValues={showHighResModels ? askedHighResModelValues : []}
-        highResModelSummaries={
-          showHighResModels && timeOfInterest !== 'future' ? highResModelSummaries : []
-        }
+        observedValues={showObservations ? observedValues : []}
+        modelValues={showModels ? allModelValues : []}
+        modelSummaries={showModels ? modelSummaries : []}
+        forecastValues={showForecasts ? allForecasts : []}
+        forecastSummaries={showForecasts ? forecastSummaries : []}
+        biasAdjModelValues={showBiasAdjModels ? allModelValues : []}
+        highResModelValues={showHighResModels ? allHighResModelValues : []}
+        highResModelSummaries={showHighResModels ? highResModelSummaries : []}
       />
     </div>
   )

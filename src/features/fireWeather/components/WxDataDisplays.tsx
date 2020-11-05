@@ -46,24 +46,11 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
   const classes = useStyles()
 
   const { observationsByStation } = useSelector(selectObservations)
-  const {
-    allModelsByStation,
-    pastModelsByStation,
-    modelsByStation,
-    noonModelsByStation
-  } = useSelector(selectModels)
+  const { allModelsByStation, noonModelsByStation } = useSelector(selectModels)
   const { modelSummariesByStation } = useSelector(selectModelSummaries)
-  const {
-    allNoonForecastsByStation,
-    pastNoonForecastsByStation,
-    noonForecastsByStation
-  } = useSelector(selectForecasts)
+  const { allNoonForecastsByStation } = useSelector(selectForecasts)
   const { forecastSummariesByStation } = useSelector(selectForecastSummaries)
-  const {
-    highResModelsByStation,
-    pastHighResModelsByStation,
-    allHighResModelsByStation
-  } = useSelector(selectHighResModels)
+  const { allHighResModelsByStation } = useSelector(selectHighResModels)
   const { highResModelSummariesByStation } = useSelector(selectHighResModelSummaries)
   const wxDataLoading = useSelector(selectWxDataLoading)
 
@@ -73,16 +60,10 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
         requestedStations.map(s => {
           const observedValues = observationsByStation[s.code]
           const allModelValues = allModelsByStation[s.code]
-          const pastModelValues = pastModelsByStation[s.code]
-          const modelValues = modelsByStation[s.code]
           const modelSummaries = modelSummariesByStation[s.code]
           const noonModelValues = noonModelsByStation[s.code]
           const allForecasts = allNoonForecastsByStation[s.code]
-          const pastForecastValues = pastNoonForecastsByStation[s.code]
-          const forecastValues = noonForecastsByStation[s.code]
           const forecastSummaries = forecastSummariesByStation[s.code]
-          const highResModelValues = highResModelsByStation[s.code]
-          const pastHighResModelValues = pastHighResModelsByStation[s.code]
           const allHighResModelValues = allHighResModelsByStation[s.code]
           const highResModelSummaries = highResModelSummariesByStation[s.code]
           const nothingToDisplay =
@@ -122,16 +103,10 @@ const WxDataDisplays = ({ requestedStations }: Props) => {
                 <WxDataGraph
                   observedValues={observedValues}
                   allModelValues={allModelValues}
-                  pastModelValues={pastModelValues}
-                  modelValues={modelValues}
                   modelSummaries={modelSummaries}
                   allForecasts={allForecasts}
-                  pastForecastValues={pastForecastValues}
-                  forecastValues={forecastValues}
                   forecastSummaries={forecastSummaries}
                   allHighResModelValues={allHighResModelValues}
-                  pastHighResModelValues={pastHighResModelValues}
-                  highResModelValues={highResModelValues}
                   highResModelSummaries={highResModelSummaries}
                 />
               </ErrorBoundary>
