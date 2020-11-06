@@ -1,8 +1,45 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import moment from 'moment'
 import * as d3 from 'd3'
+import { PDT_UTC_OFFSET } from 'utils/constants'
 
 export const transitionDuration = 50
+
+/**
+ * Returns a list of dates in which the each date is 12am PDT within the domain
+ * @param domain a pair of dates, x domain
+ */
+export const getTickValues = (domain: [Date, Date] | [undefined, undefined]) => {
+  const [d1, d2] = domain
+
+  if (!d1) {
+    return []
+  } else if (d1 && !d2) {
+    return [d1]
+  } else {
+    const result = [d1]
+
+    let nextDate =
+      moment(d1)
+        .utcOffset(PDT_UTC_OFFSET)
+        .get('date') + 1
+    const lastDate = moment(d2)
+      .utcOffset(PDT_UTC_OFFSET)
+      .get('date')
+
+    while (lastDate >= nextDate) {
+      result.push(
+        moment(d1)
+          .utcOffset(PDT_UTC_OFFSET)
+          .set({ date: nextDate, hours: 0, minutes: 0 })
+          .toDate()
+      )
+      nextDate++
+    }
+
+    return result
+  }
+}
 
 /**
  * High order function to generate formatting functions
@@ -10,27 +47,18 @@ export const transitionDuration = 50
  */
 const formatDate = (format: string) => (value: Date | { valueOf(): number }) => {
   if (value instanceof Date) {
-    return moment(value).format(format)
+    return moment(value)
+      .utcOffset(PDT_UTC_OFFSET)
+      .format(format)
   }
 
-  return moment(value.valueOf()).format(format)
+  return moment(value.valueOf())
+    .utcOffset(PDT_UTC_OFFSET)
+    .format(format)
 }
 
 export const formatDateInDay = formatDate('Do')
 export const formatDateInMonthAndDay = formatDate('MMM D')
-
-export const storeDaysLookup = (
-  lookup: { [k: string]: Date },
-  datetime: string
-): Date => {
-  const date = d3.isoParse(datetime) as Date
-  const day = formatDateInMonthAndDay(date)
-  if (!lookup[day]) {
-    lookup[day] = new Date(date)
-  }
-
-  return date
-}
 
 /**
  * Note: className should be unique
