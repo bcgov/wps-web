@@ -922,6 +922,31 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         textX: legendX + 13,
         textY: legendY + 3
       })
+      // New line
+      legendX = 0
+      legendY += 16
+      d3Utils.addLegend({
+        svg: legend,
+        text: 'RDPS Temp',
+        color: styles.regionalModelTempColor,
+        fill: styles.regionalModelTempColor,
+        shape: 'cross',
+        shapeX: legendX - 2,
+        shapeY: legendY - 4,
+        textX: legendX += 10,
+        textY: legendY + 4
+      })
+      d3Utils.addLegend({
+        svg: legend,
+        text: 'RDPS RH',
+        color: styles.regionalModelRHColor,
+        fill: styles.regionalModelRHColor,
+        shape: 'cross',
+        shapeX: legendX += 81,
+        shapeY: legendY - 4,
+        textX: legendX += 10,
+        textY: legendY
+      })
       // TODO: add RDPS temp & RH elements to legend
       /* Attach tooltip listener */
       d3Utils.addTooltipListener({
