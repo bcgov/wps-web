@@ -7,6 +7,7 @@ import { ForecastSummary as _ForecastSummary, NoonForecastValue } from 'api/fore
 import { formatDateInPDT } from 'utils/date'
 import * as styles from 'features/fireWeather/components/graphs/TempRHGraph.styles'
 import * as d3Utils from 'utils/d3'
+import { PDT_UTC_OFFSET } from 'utils/constants'
 
 interface WeatherValue {
   date: Date
@@ -219,7 +220,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         (a, b) => a.date.valueOf() - b.date.valueOf()
       )
       const xDomain = d3.extent(datesFromAllSources)
-      const xTickValues = d3Utils.getTickValues(xDomain)
+      const xTickValues = d3Utils.getTickValues(xDomain, PDT_UTC_OFFSET)
 
       /* Set dimensions and svg groups */
       const margin = { top: 10, right: 40, bottom: 150, left: 40 }
@@ -522,7 +523,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         xScale: xScale.copy(),
         x: scaledCurrDate,
         y1: 0,
-        y2: chartHeight
+        y2: yRHScale(0)
       })
       const updateCurrLineText = d3Utils.drawText({
         svg: chart,
@@ -808,6 +809,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         textX: legendX + 13,
         textY: legendY + 3
       })
+
       /* Attach tooltip listener */
       d3Utils.addTooltipListener({
         svg: chart,
