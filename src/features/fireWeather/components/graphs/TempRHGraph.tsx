@@ -947,7 +947,28 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         textX: legendX += 10,
         textY: legendY
       })
-      // TODO: add RDPS temp & RH elements to legend
+      d3Utils.addLegend({
+        svg: legend,
+        text: 'RDPS Temp 5th - 90th percentiles',
+        shape: 'rect',
+        color: styles.regionalModelSummaryTempAreaColor,
+        fill: styles.regionalModelSummaryTempAreaColor,
+        shapeX: legendX += 150,
+        shapeY: legendY - 4,
+        textX: legendX += 13,
+        textY: legendY + 3
+      })
+      d3Utils.addLegend({
+        svg: legend,
+        text: 'RDPS RH 5th - 90th percentiles',
+        shape: 'rect',
+        color: styles.regionalModelSummaryRHAreaColor,
+        fill: styles.regionalModelSummaryRHAreaColor,
+        shapeX: legendX += 150,
+        shapeY: legendY - 4,
+        textX: legendX += 13,
+        textY: legendY + 3
+      })
       /* Attach tooltip listener */
       d3Utils.addTooltipListener({
         svg: chart,
