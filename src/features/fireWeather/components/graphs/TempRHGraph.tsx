@@ -273,7 +273,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         })
 
       /* Set dimensions and svg groups */
-      const margin = { top: 10, right: 40, bottom: 150, left: 40 }
+      const margin = { top: 10, right: 40, bottom: 200, left: 40 }
       const svgWidth = 600
       const svgHeight = 400
       const chartWidth = svgWidth - margin.left - margin.right
@@ -931,9 +931,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         color: styles.regionalModelTempColor,
         fill: styles.regionalModelTempColor,
         shape: 'cross',
-        shapeX: legendX - 2,
-        shapeY: legendY - 4,
-        textX: legendX += 10,
+        shapeX: legendX,
+        shapeY: legendY,
+        textX: legendX += 6,
         textY: legendY + 4
       })
       d3Utils.addLegend({
@@ -943,9 +943,9 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         fill: styles.regionalModelRHColor,
         shape: 'cross',
         shapeX: legendX += 81,
-        shapeY: legendY - 4,
-        textX: legendX += 10,
-        textY: legendY
+        shapeY: legendY,
+        textX: legendX += 6,
+        textY: legendY + 4
       })
       d3Utils.addLegend({
         svg: legend,
@@ -953,10 +953,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         shape: 'rect',
         color: styles.regionalModelSummaryTempAreaColor,
         fill: styles.regionalModelSummaryTempAreaColor,
-        shapeX: legendX += 150,
+        shapeX: legendX += 82,
         shapeY: legendY - 4,
         textX: legendX += 13,
-        textY: legendY + 3
+        textY: legendY + 4
       })
       d3Utils.addLegend({
         svg: legend,
@@ -964,10 +964,10 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         shape: 'rect',
         color: styles.regionalModelSummaryRHAreaColor,
         fill: styles.regionalModelSummaryRHAreaColor,
-        shapeX: legendX += 150,
+        shapeX: legendX += 160,
         shapeY: legendY - 4,
         textX: legendX += 13,
-        textY: legendY + 3
+        textY: legendY + 4
       })
       /* Attach tooltip listener */
       d3Utils.addTooltipListener({

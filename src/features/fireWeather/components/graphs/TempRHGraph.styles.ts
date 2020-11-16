@@ -166,13 +166,13 @@ export const useStyles = makeStyles({
       stroke: regionalModelSummaryTempAreaColor,
       strokeWidth: 1,
       fill: regionalModelSummaryTempAreaColor,
-      opacity: 0.5
+      opacity: 0.2
     },
     '& .regionalModelSummaryRHArea': {
       stroke: regionalModelSummaryRHAreaColor,
       strokeWidth: 1,
       fill: regionalModelSummaryRHAreaColor,
-      opacity: 0.5
+      opacity: 0.2
     },
     '& .forecastTempDot': {
       stroke: forecastTempDotColor,
