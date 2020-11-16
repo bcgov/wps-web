@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useMemo } from 'react'
 import * as d3 from 'd3'
 import { makeStyles } from '@material-ui/core/styles'
 import moment from 'moment'
-import clsx from 'clsx'
 
 import { ObservedValue } from 'api/observationAPI'
 import * as d3Utils from 'utils/d3'
@@ -191,7 +190,8 @@ const PrecipGraph: React.FunctionComponent<Props> = ({
           xScale: xScaleCopy,
           x: xScale(precip.date) - 2,
           y1: yScale(precip.value),
-          y2: yScale(0)
+          y2: yScale(0),
+          testId: 'observed-precip-line'
         })
       )
 
@@ -202,7 +202,8 @@ const PrecipGraph: React.FunctionComponent<Props> = ({
           xScale: xScaleCopy,
           x: xScale(precip.date) + 2,
           y1: yScale(precip.value),
-          y2: yScale(0)
+          y2: yScale(0),
+          testId: 'forecast-precip-line'
         })
       )
 
@@ -217,7 +218,10 @@ const PrecipGraph: React.FunctionComponent<Props> = ({
             .tickFormat(d3Utils.formatDateInMonthAndDay)
             .tickValues(xTickValues)
         )
-      context.append('g').call(d3.axisLeft(yScale).ticks(5))
+      context
+        .append('g')
+        .attr('class', 'yAxis')
+        .call(d3.axisLeft(yScale).ticks(5))
       context // Temperature label
         .append('text')
         .attr('y', 0 - margin.left)
@@ -310,21 +314,13 @@ const PrecipGraph: React.FunctionComponent<Props> = ({
       const svg = d3.select(svgRef.current)
       svg
         .selectAll('.precipLine__observed')
-        .attr(
-          'class',
-          clsx('precipLine__observed', !showObservations && 'precipLine--hidden')
-        )
+        .classed('precipLine--hidden', !showObservations)
     }
   }, [showObservations])
   useEffect(() => {
     if (svgRef.current) {
       const svg = d3.select(svgRef.current)
-      svg
-        .selectAll('.precipLine__forecast')
-        .attr(
-          'class',
-          clsx('precipLine__forecast', !showForecasts && 'precipLine--hidden')
-        )
+      svg.selectAll('.precipLine__forecast').classed('precipLine--hidden', !showForecasts)
     }
   }, [showForecasts])
 
