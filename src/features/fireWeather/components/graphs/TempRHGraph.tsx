@@ -966,7 +966,7 @@ const TempRHGraph: React.FunctionComponent<Props> = ({
         fill: styles.regionalModelSummaryRHAreaColor,
         shapeX: legendX += 160,
         shapeY: legendY - 4,
-        textX: legendX += 13,
+        textX: legendX + 13,
         textY: legendY + 4
       })
       /* Attach tooltip listener */
