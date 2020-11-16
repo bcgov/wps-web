@@ -31,8 +31,7 @@ jobs:
           echo "GITHUB_BASE_REF: ${GITHUB_BASE_REF}"
 
           echo -e "\n\n--- Workflow (Custom) Variables ---\n"
-          echo "::set-env name=SUFFIX::pr-${{ github.event.number }}"
-          echo "SUFFIX: pr-${{ github.event.number }}"
+          echo "SUFFIX=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v2
